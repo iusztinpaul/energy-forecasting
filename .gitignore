@@ -131,3 +131,6 @@ dmypy.json
 # IDEs
 .idea
 .vscode
+
+# Tools
+/mage_data/**

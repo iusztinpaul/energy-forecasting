@@ -1,4 +1,3 @@
-import io
 import pandas as pd
 import requests
 if 'data_loader' not in globals():
@@ -12,10 +11,16 @@ def load_data_from_api(*args, **kwargs):
     """
     Template for loading data from API
     """
-    url = ''
+
+    url = 'https://api.energidataservice.dk/dataset/ConsumptionDE35Hour?offset=0&start=2023-01-01T00:00&sort=HourUTC%20DESC&timezone=dk'
 
     response = requests.get(url)
-    return pd.read_csv(io.StringIO(response.text), sep=',')
+    response = response.json()
+
+    records = response["records"]
+    records = pd.DataFrame.from_records(records)
+
+    return records
 
 
 @test
