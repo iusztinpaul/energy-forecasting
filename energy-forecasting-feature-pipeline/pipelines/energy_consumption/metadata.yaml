@@ -77,6 +77,17 @@ blocks:
   upstream_blocks:
   - add_datetime_features
   uuid: compute_rolling_average
+- all_upstream_blocks_executed: true
+  configuration: {}
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  language: python
+  name: dark haze
+  status: updated
+  type: scratchpad
+  upstream_blocks: []
+  uuid: dark_haze
 data_integration: null
 name: energy-consumption
 type: python
