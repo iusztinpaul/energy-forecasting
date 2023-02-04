@@ -31,7 +31,7 @@ blocks:
   executor_type: local_python
   language: python
   name: export_to_feature_store
-  status: not_executed
+  status: executed
   type: data_exporter
   upstream_blocks:
   - indexing
