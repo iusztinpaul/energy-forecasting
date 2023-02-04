@@ -1,0 +1,30 @@
+blocks:
+- all_upstream_blocks_executed: true
+  configuration: {}
+  downstream_blocks:
+  - indexing
+  executor_config: null
+  executor_type: local_python
+  language: python
+  name: ingest_hourly_energy_consumption
+  status: executed
+  type: data_loader
+  upstream_blocks: []
+  uuid: ingest_hourly_energy_consumption
+- all_upstream_blocks_executed: true
+  configuration: {}
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  language: python
+  name: indexing
+  status: executed
+  type: transformer
+  upstream_blocks:
+  - ingest_hourly_energy_consumption
+  uuid: indexing
+data_integration: null
+name: energy-consumption
+type: python
+uuid: energy_consumption
+widgets: []
