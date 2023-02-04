@@ -13,7 +13,8 @@ blocks:
   uuid: ingest_hourly_energy_consumption
 - all_upstream_blocks_executed: true
   configuration: {}
-  downstream_blocks: []
+  downstream_blocks:
+  - export_to_feature_store
   executor_config: null
   executor_type: local_python
   language: python
@@ -23,6 +24,18 @@ blocks:
   upstream_blocks:
   - ingest_hourly_energy_consumption
   uuid: indexing
+- all_upstream_blocks_executed: true
+  configuration: {}
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  language: python
+  name: export_to_feature_store
+  status: not_executed
+  type: data_exporter
+  upstream_blocks:
+  - indexing
+  uuid: export_to_feature_store
 data_integration: null
 name: energy-consumption
 type: python
