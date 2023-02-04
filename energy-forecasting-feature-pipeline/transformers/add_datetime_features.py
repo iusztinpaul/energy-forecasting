@@ -1,3 +1,5 @@
+import pandas as pd
+
 from pandas import DataFrame
 
 if 'transformer' not in globals():
@@ -21,9 +23,10 @@ def transform_df(df: DataFrame, *args, **kwargs) -> DataFrame:
         DataFrame: Transformed data frame
     """
 
-    df["hour"] = df.index.hour
-    df["day"] = df.index.day
-    df["month"] = df.index.month
+    df["UTC Datetime"] = pd.to_datetime(df["UTC Datetime"])
+    df["hour"] = df["UTC Datetime"].dt.hour
+    df["day"] = df["UTC Datetime"].dt.day
+    df["month"] = df["UTC Datetime"].dt.month
 
     return df
 

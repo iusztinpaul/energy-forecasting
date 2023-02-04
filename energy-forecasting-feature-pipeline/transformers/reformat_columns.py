@@ -16,9 +16,20 @@ def execute_transformer_action(df: DataFrame, *args, **kwargs) -> DataFrame:
     Docs: https://docs.mage.ai/guides/transformer-blocks#reformat-values
     """
 
-    df["HourUTC"] = pd.to_datetime(df["HourUTC"])
-    df = df.set_index("HourUTC")
+    # Renaming
+    df = df.rename(columns={
+        "HourUTC": "UTC Datetime",
+        "PriceArea": "Area",
+        "ConsumerType_DE35": "Consumer Type",
+        "TotalCon": "Energy Consumption"
+    })
     df = df.drop(columns=["HourDK"])
+
+    # Casting
+    df["UTC Datetime"] = pd.to_datetime(df["UTC Datetime"])
+    df["Area"] = df["Area"].astype("string")
+    df["Consumer Type"] = df["Consumer Type"].astype("string")
+    df["Energy Consumption"] = df["Energy Consumption"].astype("float64")
 
     return df
 

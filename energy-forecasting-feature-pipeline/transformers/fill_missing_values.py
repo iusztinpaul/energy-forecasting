@@ -31,10 +31,4 @@ def test_output(df, *args) -> None:
 
     assert df is not None, 'The output is undefined'
 
-
-    print("$" * 50)
-    print(df.isna().any().any())
-    print(df.isna().any())
-    print(type(df.isna().any().any()))
-
     assert df.isna().any().any() is np.bool_(False), "Found missing values."

@@ -2,7 +2,7 @@ blocks:
 - all_upstream_blocks_executed: true
   configuration: {}
   downstream_blocks:
-  - indexing
+  - reformat_columns
   executor_config: null
   executor_type: local_python
   language: python
@@ -18,12 +18,12 @@ blocks:
   executor_config: null
   executor_type: local_python
   language: python
-  name: indexing
+  name: reformat_columns
   status: executed
   type: transformer
   upstream_blocks:
   - ingest_hourly_energy_consumption
-  uuid: indexing
+  uuid: reformat_columns
 - all_upstream_blocks_executed: true
   configuration: {}
   downstream_blocks:
@@ -61,7 +61,7 @@ blocks:
   status: executed
   type: transformer
   upstream_blocks:
-  - indexing
+  - reformat_columns
   uuid: fill_missing_values
 - all_upstream_blocks_executed: true
   configuration: {}

@@ -1,3 +1,6 @@
+import pandas as pd
+
+from functools import partial
 from pandas import DataFrame
 
 if 'transformer' not in globals():
@@ -20,12 +23,19 @@ def transform_df(df: DataFrame, *args, **kwargs) -> DataFrame:
     Returns:
         DataFrame: Transformed data frame
     """
-    # Specify your transformation logic here
 
-    df['TotalConMovingAverage7'] = df.\
-        groupby(["PriceArea", "ConsumerType_DE35"])["TotalCon"].\
-        transform(lambda x: x.rolling(7, 1).mean())
+    days_rolling_average = kwargs.get("days_rolling_average", 1)
+    # Convert days to hours
+    hours_rolling_average = days_rolling_average * 24 
 
+    df[f"Energy Consumption Rolling Average {days_rolling_average}"] = df.\
+        groupby(["Area", "Consumer Type"])["Energy Consumption"].\
+        transform(lambda x: x.rolling(hours_rolling_average, min_periods=hours_rolling_average).mean())
+
+    # Remove extra data that was added to compute the rolling average values.
+    valid_data_mask = df[f"Energy Consumption Rolling Average {days_rolling_average}"].notna()
+    df = df[valid_data_mask]
+    
     return df
 
 

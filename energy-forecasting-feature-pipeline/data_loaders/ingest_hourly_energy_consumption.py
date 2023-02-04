@@ -21,13 +21,14 @@ def load_data_from_api(*args, **kwargs):
     
     days_delay = kwargs.get("days_delay", 15)
     days_export = kwargs.get("days_export", 30)
+    days_rolling_average = kwargs.get("days_rolling_average", 1)
     current_datetime = datetime.datetime.utcnow()
-    export_start = current_datetime - datetime.timedelta(days=days_delay + days_export)
+    export_start = current_datetime - datetime.timedelta(days=days_delay + days_export + days_rolling_average)
     export_start = export_start.strftime("%Y-%m-%dT%H:%M")
 
     query_params = {
         "offset": 0,
-        "sort": "HourUTC DESC",
+        "sort": "HourUTC",
         "timezone": "utc",
         "start": export_start
     }
