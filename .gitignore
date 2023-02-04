@@ -133,4 +133,4 @@ dmypy.json
 .vscode
 
 # Tools
-/mage_data/**
+mage_data
