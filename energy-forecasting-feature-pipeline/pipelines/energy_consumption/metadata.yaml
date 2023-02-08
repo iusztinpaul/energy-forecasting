@@ -35,7 +35,7 @@ blocks:
   status: executed
   type: data_exporter
   upstream_blocks:
-  - compute_rolling_average
+  - remove_extra_data
   uuid: export_to_feature_store
 - all_upstream_blocks_executed: true
   configuration: {}
@@ -66,8 +66,8 @@ blocks:
 - all_upstream_blocks_executed: true
   configuration: {}
   downstream_blocks:
-  - export_to_feature_store
   - table_for_compute_rolling_average_1675519576364
+  - create_past_data_points
   executor_config: null
   executor_type: local_python
   language: python
@@ -88,6 +88,32 @@ blocks:
   type: scratchpad
   upstream_blocks: []
   uuid: dark_haze
+- all_upstream_blocks_executed: true
+  configuration: {}
+  downstream_blocks:
+  - remove_extra_data
+  executor_config: null
+  executor_type: local_python
+  language: python
+  name: create_past_data_points
+  status: executed
+  type: transformer
+  upstream_blocks:
+  - compute_rolling_average
+  uuid: create_past_data_points
+- all_upstream_blocks_executed: true
+  configuration: {}
+  downstream_blocks:
+  - export_to_feature_store
+  executor_config: null
+  executor_type: local_python
+  language: python
+  name: remove_extra_data
+  status: executed
+  type: transformer
+  upstream_blocks:
+  - create_past_data_points
+  uuid: remove_extra_data
 data_integration: null
 name: energy-consumption
 type: python

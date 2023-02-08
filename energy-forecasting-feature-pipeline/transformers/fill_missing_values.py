@@ -16,7 +16,6 @@ if 'test' not in globals():
 def execute_transformer_action(df: DataFrame, *args, **kwargs) -> DataFrame:
     """
     Execute Transformer Action: ActionType.IMPUTE
-
     Docs: https://docs.mage.ai/guides/transformer-blocks#fill-in-missing-values
     """
 

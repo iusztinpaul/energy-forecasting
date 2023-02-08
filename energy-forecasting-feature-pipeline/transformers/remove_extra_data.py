@@ -1,6 +1,5 @@
-import pandas as pd
+import numpy as np
 
-from functools import partial
 from pandas import DataFrame
 
 if 'transformer' not in globals():
@@ -24,14 +23,11 @@ def transform_df(df: DataFrame, *args, **kwargs) -> DataFrame:
         DataFrame: Transformed data frame
     """
 
-    days_rolling_average = kwargs.get("days_rolling_average", 1)
-    # Convert days to hours
-    hours_rolling_average = days_rolling_average * 24 
+     # Remove extra data that was added to compute the rolling average values.
+    valid_data_mask = df.notna()
+    valid_data_mask = valid_data_mask.all(axis=1)
+    df = df[valid_data_mask]
 
-    df[f"Energy Consumption Rolling Average {days_rolling_average}"] = df.\
-        groupby(["Area", "Consumer Type"])["Energy Consumption"].\
-        transform(lambda x: x.rolling(hours_rolling_average, min_periods=hours_rolling_average).mean())
-    
     return df
 
 
@@ -41,3 +37,5 @@ def test_output(df, *args) -> None:
     Template code for testing the output of the block.
     """
     assert df is not None, 'The output is undefined'
+
+    assert df.isna().any().any() is np.bool_(False), "Found missing values."

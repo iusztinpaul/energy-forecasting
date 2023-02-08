@@ -1,6 +1,5 @@
 import pandas as pd
 
-from functools import partial
 from pandas import DataFrame
 
 if 'transformer' not in globals():
@@ -23,15 +22,22 @@ def transform_df(df: DataFrame, *args, **kwargs) -> DataFrame:
     Returns:
         DataFrame: Transformed data frame
     """
-
-    days_rolling_average = kwargs.get("days_rolling_average", 1)
-    # Convert days to hours
-    hours_rolling_average = days_rolling_average * 24 
-
-    df[f"Energy Consumption Rolling Average {days_rolling_average}"] = df.\
-        groupby(["Area", "Consumer Type"])["Energy Consumption"].\
-        transform(lambda x: x.rolling(hours_rolling_average, min_periods=hours_rolling_average).mean())
     
+    n_past_days = kwargs.get("n_past_days", 3)
+    n_past_hours = n_past_days * 24
+    n_past_hours_step = kwargs.get("n_past_hours_step", 3)
+
+    df["UTC Datetime"] = pd.to_datetime(df["UTC Datetime"])
+
+    for n_past_hour in range(1, n_past_hours + 1, n_past_hours_step):
+        lagged_df = df[["Area", "Consumer Type", "UTC Datetime", "Energy Consumption"]].copy()
+        lagged_df["UTC Datetime"] = lagged_df["UTC Datetime"] + pd.DateOffset(hours=n_past_hour)
+        lagged_df = lagged_df.rename(columns={
+            "Energy Consumption": f"Energy Consumption {n_past_hour}"
+        })
+
+        df = df.merge(lagged_df, how="left", on=["Area", "Consumer Type", "UTC Datetime"])
+
     return df
 
 
