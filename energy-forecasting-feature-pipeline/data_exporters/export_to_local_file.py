@@ -12,5 +12,5 @@ def export_data_to_file(df: DataFrame, **kwargs) -> None:
 
     Docs: https://docs.mage.ai/design/data-loading
     """
-    filepath = '/home/src/energy_consumption_data.parquet'
+    filepath = "/home/src/energy_consumption_data.parquet"
     FileIO().export(df, filepath)
