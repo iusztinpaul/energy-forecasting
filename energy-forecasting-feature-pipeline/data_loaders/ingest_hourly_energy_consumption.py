@@ -1,6 +1,7 @@
 import datetime
 import pandas as pd
 import requests
+import logging
 
 from yarl import URL
 
@@ -15,15 +16,21 @@ def load_data_from_api(*args, **kwargs):
     """
     Template for loading data from API
     """
+    
+    logging.basicConfig(level=logging.DEBUG)
 
     url = kwargs.get("api_url", "https://api.energidataservice.dk/dataset/ConsumptionDE35Hour") 
     url = URL(url)
     
+    # Data has a delay of 15 days. Thus, we have to shift our window with 15 days.
     days_delay = kwargs.get("days_delay", 15)
+    # This is the actual time window of data we will use to train our model on.
     days_export = kwargs.get("days_export", 30)
+    # To compute the rolling average and lagged values for all the 30 days of data, 
+    # we need to grab some additional days to compute these values for the first elements of the time series.
     days_rolling_average = kwargs.get("days_rolling_average", 1)
-    n_past_days = kwargs.get("n_past_days", 3)
-    days_extra = max(days_rolling_average, n_past_days)
+    n_lagged_days = kwargs.get("n_lagged_days", 3)
+    days_extra = max(days_rolling_average, n_lagged_days)
     
     current_datetime = datetime.datetime.utcnow()
     export_start = current_datetime - datetime.timedelta(days=days_delay + days_export + days_extra)
@@ -37,8 +44,8 @@ def load_data_from_api(*args, **kwargs):
     }
     url = url % query_params
 
-    # url = '?offset=0&start=2023-01-01T00:00&sort=HourUTC%20DESC&timezone=dk'
-    print(url)
+    # TODO: Fix the logger. See why it is not working.
+    logging.info(f"Calling {url}")
 
     response = requests.get(url)
     response = response.json()

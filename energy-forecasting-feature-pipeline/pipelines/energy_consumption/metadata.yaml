@@ -7,11 +7,11 @@ blocks:
   executor_type: local_python
   language: python
   name: ingest_hourly_energy_consumption
-  status: executed
+  status: updated
   type: data_loader
   upstream_blocks: []
   uuid: ingest_hourly_energy_consumption
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   configuration: {}
   downstream_blocks:
   - fill_missing_values
@@ -24,7 +24,7 @@ blocks:
   upstream_blocks:
   - ingest_hourly_energy_consumption
   uuid: reformat_columns
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   configuration: {}
   downstream_blocks:
   - table_for_export_to_feature_store_1675515791750
@@ -37,7 +37,7 @@ blocks:
   upstream_blocks:
   - remove_extra_data
   uuid: export_to_feature_store
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   configuration: {}
   downstream_blocks:
   - compute_rolling_average
@@ -50,7 +50,7 @@ blocks:
   upstream_blocks:
   - fill_missing_values
   uuid: add_datetime_features
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   configuration: {}
   downstream_blocks:
   - add_datetime_features
@@ -63,11 +63,11 @@ blocks:
   upstream_blocks:
   - reformat_columns
   uuid: fill_missing_values
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   configuration: {}
   downstream_blocks:
   - table_for_compute_rolling_average_1675519576364
-  - create_past_data_points
+  - compute_lagged_values
   executor_config: null
   executor_type: local_python
   language: python
@@ -83,25 +83,25 @@ blocks:
   executor_config: null
   executor_type: local_python
   language: python
-  name: dark haze
+  name: visualize_data
   status: updated
   type: scratchpad
   upstream_blocks: []
-  uuid: dark_haze
-- all_upstream_blocks_executed: true
+  uuid: visualize_data
+- all_upstream_blocks_executed: false
   configuration: {}
   downstream_blocks:
-  - remove_extra_data
+  - compute_future_values
   executor_config: null
   executor_type: local_python
   language: python
-  name: create_past_data_points
+  name: compute_lagged_values
   status: executed
   type: transformer
   upstream_blocks:
   - compute_rolling_average
-  uuid: create_past_data_points
-- all_upstream_blocks_executed: true
+  uuid: compute_lagged_values
+- all_upstream_blocks_executed: false
   configuration: {}
   downstream_blocks:
   - export_to_feature_store
@@ -112,14 +112,27 @@ blocks:
   status: executed
   type: transformer
   upstream_blocks:
-  - create_past_data_points
+  - compute_future_values
   uuid: remove_extra_data
+- all_upstream_blocks_executed: false
+  configuration: {}
+  downstream_blocks:
+  - remove_extra_data
+  executor_config: null
+  executor_type: local_python
+  language: python
+  name: compute_future_values
+  status: executed
+  type: transformer
+  upstream_blocks:
+  - compute_lagged_values
+  uuid: compute_future_values
 data_integration: null
 name: energy-consumption
 type: python
 uuid: energy_consumption
 widgets:
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   configuration:
     chart_type: table
     limit: 10
@@ -135,7 +148,7 @@ widgets:
   upstream_blocks:
   - export_to_feature_store
   uuid: table_for_export_to_feature_store_1675515791750
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   configuration:
     chart_type: table
     limit: 10

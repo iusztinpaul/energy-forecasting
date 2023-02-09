@@ -23,23 +23,23 @@ def transform_df(df: DataFrame, *args, **kwargs) -> DataFrame:
         DataFrame: Transformed data frame
     """
     
-    n_past_days = kwargs.get("n_past_days", 3)
-    n_past_hours = n_past_days * 24
-    n_past_hours_step = kwargs.get("n_past_hours_step", 3)
+    n_lagged_days = kwargs.get("n_lagged_days", 3)
+    n_lagged_hours = n_lagged_days * 24
+    n_lagged_hours_step = kwargs.get("n_lagged_hours_step", 3)
 
-    df["UTC Datetime"] = pd.to_datetime(df["UTC Datetime"])
+    df["UTCDatetime"] = pd.to_datetime(df["UTCDatetime"])
 
-    for n_past_hour in range(1, n_past_hours + 1, n_past_hours_step):
-        lagged_df = df[["Area", "Consumer Type", "UTC Datetime", "Energy Consumption"]].copy()
-        lagged_df["UTC Datetime"] = lagged_df["UTC Datetime"] + pd.DateOffset(hours=n_past_hour)
+    for n_lagged_hour in range(1, n_lagged_hours + 1, n_lagged_hours_step):
+        lagged_df = df[["Area", "ConsumerType", "UTCDatetime", "EnergyConsumption"]].copy()
+        lagged_df["UTCDatetime"] = lagged_df["UTCDatetime"] + pd.DateOffset(hours=n_lagged_hour)
 
-        lagged_data_column_name = f"Energy Consumption {n_past_hour}"
+        lagged_data_column_name = f"EnergyConsumptionLaggedHours{n_lagged_hour}"
         lagged_df = lagged_df.rename(columns={
-            "Energy Consumption": lagged_data_column_name
+            "EnergyConsumption": lagged_data_column_name
         })
 
-        df = df.merge(lagged_df, how="left", on=["Area", "Consumer Type", "UTC Datetime"], copy=False)
-        df[lagged_data_column_name] = df[lagged_data_column_name].astype(df["Energy Consumption"].dtype)
+        df = df.merge(lagged_df, how="left", on=["Area", "ConsumerType", "UTCDatetime"], copy=False)
+        df[lagged_data_column_name] = df[lagged_data_column_name].astype(df["EnergyConsumption"].dtype)
 
     return df
 

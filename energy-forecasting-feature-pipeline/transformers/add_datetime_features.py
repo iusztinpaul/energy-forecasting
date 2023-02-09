@@ -23,10 +23,10 @@ def transform_df(df: DataFrame, *args, **kwargs) -> DataFrame:
         DataFrame: Transformed data frame
     """
 
-    df["UTC Datetime"] = pd.to_datetime(df["UTC Datetime"])
-    df["hour"] = df["UTC Datetime"].dt.hour
-    df["day"] = df["UTC Datetime"].dt.day
-    df["month"] = df["UTC Datetime"].dt.month
+    df["UTCDatetime"] = pd.to_datetime(df["UTCDatetime"])
+    df["hour"] = df["UTCDatetime"].dt.hour
+    df["day"] = df["UTCDatetime"].dt.day
+    df["month"] = df["UTCDatetime"].dt.month
 
     return df
 

@@ -18,18 +18,18 @@ def execute_transformer_action(df: DataFrame, *args, **kwargs) -> DataFrame:
 
     # Renaming
     df = df.rename(columns={
-        "HourUTC": "UTC Datetime",
+        "HourUTC": "UTCDatetime",
         "PriceArea": "Area",
-        "ConsumerType_DE35": "Consumer Type",
-        "TotalCon": "Energy Consumption"
+        "ConsumerType_DE35": "ConsumerType",
+        "TotalCon": "EnergyConsumption"
     })
     df = df.drop(columns=["HourDK"])
 
     # Casting
-    df["UTC Datetime"] = pd.to_datetime(df["UTC Datetime"])
+    df["UTCDatetime"] = pd.to_datetime(df["UTCDatetime"])
     df["Area"] = df["Area"].astype("string")
-    df["Consumer Type"] = df["Consumer Type"].astype("string")
-    df["Energy Consumption"] = df["Energy Consumption"].astype("float64")
+    df["ConsumerType"] = df["ConsumerType"].astype("string")
+    df["EnergyConsumption"] = df["EnergyConsumption"].astype("float64")
 
     return df
 
