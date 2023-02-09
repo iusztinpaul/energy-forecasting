@@ -16,7 +16,6 @@ if 'test' not in globals():
 def execute_transformer_action(df: DataFrame, *args, **kwargs) -> DataFrame:
     """
     Execute Transformer Action: ActionType.IMPUTE
-
     Docs: https://docs.mage.ai/guides/transformer-blocks#fill-in-missing-values
     """
 
@@ -30,11 +29,5 @@ def test_output(df, *args) -> None:
     """
 
     assert df is not None, 'The output is undefined'
-
-
-    print("$" * 50)
-    print(df.isna().any().any())
-    print(df.isna().any())
-    print(type(df.isna().any().any()))
 
     assert df.isna().any().any() is np.bool_(False), "Found missing values."
