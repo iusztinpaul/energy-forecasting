@@ -136,7 +136,7 @@ dmypy.json
 mage_data/
 
 # Data
-#*.parquet
+*.parquet
 
 # Models
 *.pkl

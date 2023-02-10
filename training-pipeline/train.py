@@ -5,8 +5,9 @@ import pandas as pd
 
 import preprocess
 
+
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 
 def train(data_path: str, model_path: str) -> None:
@@ -28,13 +29,13 @@ def train(data_path: str, model_path: str) -> None:
 
     # evaluate model
     rmse = evaluate_model(model, train_df, target="energy_consumption_future_hours_0")
-    print(f"Train RMSE: {rmse}")
-    print(f"Train Mean Energy Consumption: {train_df['energy_consumption_future_hours_0'].mean()}")
+    logger.info(f"Train RMSE: {rmse:.2f}")
+    logger.info(f"Train Mean Energy Consumption: {train_df['energy_consumption_future_hours_0'].mean():.2f}")
 
     # evaluate model
     rmse = evaluate_model(model, test_df, target="energy_consumption_future_hours_0")
-    print(f"Test RMSE: {rmse}")
-    print(f"Test Mean Energy Consumption: {test_df['energy_consumption_future_hours_0'].mean()}")
+    logger.info(f"Test RMSE: {rmse:.2f}")
+    logger.info(f"Test Mean Energy Consumption: {test_df['energy_consumption_future_hours_0'].mean():.2f}")
 
     # save model
     save_model(model, model_path)
