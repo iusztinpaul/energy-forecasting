@@ -11,10 +11,7 @@ if 'test' not in globals():
 @transformer
 def transform_df(df: DataFrame, *args, **kwargs) -> DataFrame:
     """
-    Template code for a transformer block.
-
-    Add more parameters to this function if this block has multiple parent blocks.
-    There should be one parameter for each output variable from each parent block.
+    Function that computes the target columns in the 'EnergyConsumptionFutureHours{hour}' format.
 
     Args:
         df (DataFrame): Data frame from parent block.
@@ -23,23 +20,24 @@ def transform_df(df: DataFrame, *args, **kwargs) -> DataFrame:
         DataFrame: Transformed data frame
     """
     
-    n_future_days = kwargs.get("n_future_days", 3)
+    n_future_days = kwargs.get("n_future_days", 0)
     n_future_hours = n_future_days * 24
     n_future_hours_step = kwargs.get("n_future_hours_step", 1)
 
-    df["UTC Datetime"] = pd.to_datetime(df["UTCDatetime"])
-
     for n_future_hour in range(1, n_future_hours + 1, n_future_hours_step):
-        lagged_df = df[["Area", "ConsumerType", "UTCDatetime", "EnergyConsumption"]].copy()
-        lagged_df["UTCDatetime"] = lagged_df["UTCDatetime"] - pd.DateOffset(hours=n_future_hour)
+        lagged_df = df[["area", "consumer_type", "datetime_utc", "energy_consumption"]].copy()
+        lagged_df["datetime_utc"] = lagged_df["datetime_utc"] - pd.DateOffset(hours=n_future_hour)
 
-        lagged_data_column_name = f"EnergyConsumptionFutureHours{n_future_hour}"
+        lagged_data_column_name = f"energy_consumption_future_hours_{n_future_hour}"
         lagged_df = lagged_df.rename(columns={
-            "EnergyConsumption": lagged_data_column_name
+            "energy_consumption": lagged_data_column_name
         })
 
-        df = df.merge(lagged_df, how="left", on=["Area", "ConsumerType", "UTCDatetime"], copy=False)
-        df[lagged_data_column_name] = df[lagged_data_column_name].astype(df["EnergyConsumption"].dtype)
+        df = df.merge(lagged_df, how="left", on=["area", "consumer_type", "datetime_utc"], copy=False)
+        df[lagged_data_column_name] = df[lagged_data_column_name].astype(df["energy_consumption"].dtype)
+
+    # Rename the original column for consistency.
+    df = df.rename(columns={"energy_consumption": "energy_consumption_future_hours_0"})
 
     return df
 

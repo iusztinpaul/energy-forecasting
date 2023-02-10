@@ -115,17 +115,6 @@ blocks:
   - compute_lagged_values
   uuid: compute_future_values
 - all_upstream_blocks_executed: true
-  configuration: {}
-  downstream_blocks: []
-  executor_config: null
-  executor_type: local_python
-  language: python
-  name: little dawn
-  status: updated
-  type: scratchpad
-  upstream_blocks: []
-  uuid: little_dawn
-- all_upstream_blocks_executed: true
   configuration:
     file_path: null
   downstream_blocks: []
@@ -133,11 +122,22 @@ blocks:
   executor_type: local_python
   language: python
   name: export_to_local_file
-  status: not_executed
+  status: executed
   type: data_exporter
   upstream_blocks:
   - remove_extra_data
   uuid: export_to_local_file
+- all_upstream_blocks_executed: true
+  configuration: {}
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  language: python
+  name: quiet shadow
+  status: updated
+  type: scratchpad
+  upstream_blocks: []
+  uuid: quiet_shadow
 data_integration: null
 name: energy-consumption
 type: python

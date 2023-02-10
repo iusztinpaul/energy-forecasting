@@ -28,8 +28,8 @@ def transform_df(df: DataFrame, *args, **kwargs) -> DataFrame:
     # Convert days to hours
     hours_rolling_average = days_rolling_average * 24 
 
-    df[f"EnergyConsumptionRollingAverageDays{days_rolling_average}"] = df.\
-        groupby(["Area", "ConsumerType"])["EnergyConsumption"].\
+    df[f"energy_consumption_rolling_average_days_{days_rolling_average}"] = df.\
+        groupby(["area", "consumer_type"])["energy_consumption"].\
         transform(lambda x: x.rolling(hours_rolling_average, min_periods=hours_rolling_average).mean())
     
     return df

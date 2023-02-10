@@ -27,19 +27,17 @@ def transform_df(df: DataFrame, *args, **kwargs) -> DataFrame:
     n_lagged_hours = n_lagged_days * 24
     n_lagged_hours_step = kwargs.get("n_lagged_hours_step", 3)
 
-    df["UTCDatetime"] = pd.to_datetime(df["UTCDatetime"])
-
     for n_lagged_hour in range(1, n_lagged_hours + 1, n_lagged_hours_step):
-        lagged_df = df[["Area", "ConsumerType", "UTCDatetime", "EnergyConsumption"]].copy()
-        lagged_df["UTCDatetime"] = lagged_df["UTCDatetime"] + pd.DateOffset(hours=n_lagged_hour)
+        lagged_df = df[["area", "consumer_type", "datetime_utc", "energy_consumption"]].copy()
+        lagged_df["datetime_utc"] = lagged_df["datetime_utc"] + pd.DateOffset(hours=n_lagged_hour)
 
-        lagged_data_column_name = f"EnergyConsumptionLaggedHours{n_lagged_hour}"
+        lagged_data_column_name = f"energy_consumption_lagged_hours_{n_lagged_hour}"
         lagged_df = lagged_df.rename(columns={
-            "EnergyConsumption": lagged_data_column_name
+            "energy_consumption": lagged_data_column_name
         })
 
-        df = df.merge(lagged_df, how="left", on=["Area", "ConsumerType", "UTCDatetime"], copy=False)
-        df[lagged_data_column_name] = df[lagged_data_column_name].astype(df["EnergyConsumption"].dtype)
+        df = df.merge(lagged_df, how="left", on=["area", "consumer_type", "datetime_utc"], copy=False)
+        df[lagged_data_column_name] = df[lagged_data_column_name].astype(df["energy_consumption"].dtype)
 
     return df
 
