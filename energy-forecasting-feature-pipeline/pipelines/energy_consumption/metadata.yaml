@@ -7,11 +7,11 @@ blocks:
   executor_type: local_python
   language: python
   name: ingest_hourly_energy_consumption
-  status: updated
+  status: executed
   type: data_loader
   upstream_blocks: []
   uuid: ingest_hourly_energy_consumption
-- all_upstream_blocks_executed: false
+- all_upstream_blocks_executed: true
   configuration: {}
   downstream_blocks:
   - fill_missing_values
@@ -24,7 +24,7 @@ blocks:
   upstream_blocks:
   - ingest_hourly_energy_consumption
   uuid: reformat_columns
-- all_upstream_blocks_executed: false
+- all_upstream_blocks_executed: true
   configuration: {}
   downstream_blocks:
   - table_for_export_to_feature_store_1675515791750
@@ -37,7 +37,7 @@ blocks:
   upstream_blocks:
   - remove_extra_data
   uuid: export_to_feature_store
-- all_upstream_blocks_executed: false
+- all_upstream_blocks_executed: true
   configuration: {}
   downstream_blocks:
   - compute_rolling_average
@@ -50,7 +50,7 @@ blocks:
   upstream_blocks:
   - fill_missing_values
   uuid: add_datetime_features
-- all_upstream_blocks_executed: false
+- all_upstream_blocks_executed: true
   configuration: {}
   downstream_blocks:
   - add_datetime_features
@@ -63,7 +63,7 @@ blocks:
   upstream_blocks:
   - reformat_columns
   uuid: fill_missing_values
-- all_upstream_blocks_executed: false
+- all_upstream_blocks_executed: true
   configuration: {}
   downstream_blocks:
   - table_for_compute_rolling_average_1675519576364
@@ -88,7 +88,7 @@ blocks:
   type: scratchpad
   upstream_blocks: []
   uuid: visualize_data
-- all_upstream_blocks_executed: false
+- all_upstream_blocks_executed: true
   configuration: {}
   downstream_blocks:
   - compute_future_values
@@ -101,7 +101,7 @@ blocks:
   upstream_blocks:
   - compute_rolling_average
   uuid: compute_lagged_values
-- all_upstream_blocks_executed: false
+- all_upstream_blocks_executed: true
   configuration: {}
   downstream_blocks:
   - export_to_feature_store
@@ -114,7 +114,7 @@ blocks:
   upstream_blocks:
   - compute_future_values
   uuid: remove_extra_data
-- all_upstream_blocks_executed: false
+- all_upstream_blocks_executed: true
   configuration: {}
   downstream_blocks:
   - remove_extra_data
@@ -127,12 +127,23 @@ blocks:
   upstream_blocks:
   - compute_lagged_values
   uuid: compute_future_values
+- all_upstream_blocks_executed: true
+  configuration: {}
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  language: python
+  name: little dawn
+  status: updated
+  type: scratchpad
+  upstream_blocks: []
+  uuid: little_dawn
 data_integration: null
 name: energy-consumption
 type: python
 uuid: energy_consumption
 widgets:
-- all_upstream_blocks_executed: false
+- all_upstream_blocks_executed: true
   configuration:
     chart_type: table
     limit: 10
@@ -148,7 +159,7 @@ widgets:
   upstream_blocks:
   - export_to_feature_store
   uuid: table_for_export_to_feature_store_1675515791750
-- all_upstream_blocks_executed: false
+- all_upstream_blocks_executed: true
   configuration:
     chart_type: table
     limit: 10
