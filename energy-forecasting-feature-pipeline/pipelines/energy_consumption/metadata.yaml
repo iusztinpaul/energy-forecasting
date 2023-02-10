@@ -67,6 +67,7 @@ blocks:
   configuration: {}
   downstream_blocks:
   - table_for_compute_rolling_average_1675519576364
+  - export_to_local_file
   - compute_lagged_values
   executor_config: null
   executor_type: local_python
@@ -83,6 +84,12 @@ blocks:
   executor_config: null
   executor_type: local_python
   language: python
+  name: export_to_local_file
+  status: executed
+  type: data_exporter
+  upstream_blocks:
+  - compute_rolling_average
+  uuid: export_to_local_file
   name: visualize_data
   status: updated
   type: scratchpad
