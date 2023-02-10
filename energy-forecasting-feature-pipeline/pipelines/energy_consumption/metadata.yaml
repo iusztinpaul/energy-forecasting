@@ -27,19 +27,6 @@ blocks:
 - all_upstream_blocks_executed: true
   configuration: {}
   downstream_blocks:
-  - table_for_export_to_feature_store_1675515791750
-  executor_config: null
-  executor_type: local_python
-  language: python
-  name: export_to_feature_store
-  status: executed
-  type: data_exporter
-  upstream_blocks:
-  - remove_extra_data
-  uuid: export_to_feature_store
-- all_upstream_blocks_executed: true
-  configuration: {}
-  downstream_blocks:
   - compute_rolling_average
   executor_config: null
   executor_type: local_python
@@ -67,7 +54,6 @@ blocks:
   configuration: {}
   downstream_blocks:
   - table_for_compute_rolling_average_1675519576364
-  - export_to_local_file
   - compute_lagged_values
   executor_config: null
   executor_type: local_python
@@ -84,12 +70,6 @@ blocks:
   executor_config: null
   executor_type: local_python
   language: python
-  name: export_to_local_file
-  status: executed
-  type: data_exporter
-  upstream_blocks:
-  - compute_rolling_average
-  uuid: export_to_local_file
   name: visualize_data
   status: updated
   type: scratchpad
@@ -111,7 +91,7 @@ blocks:
 - all_upstream_blocks_executed: true
   configuration: {}
   downstream_blocks:
-  - export_to_feature_store
+  - export_to_local_file
   executor_config: null
   executor_type: local_python
   language: python
@@ -145,27 +125,24 @@ blocks:
   type: scratchpad
   upstream_blocks: []
   uuid: little_dawn
+- all_upstream_blocks_executed: true
+  configuration:
+    file_path: null
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  language: python
+  name: export_to_local_file
+  status: not_executed
+  type: data_exporter
+  upstream_blocks:
+  - remove_extra_data
+  uuid: export_to_local_file
 data_integration: null
 name: energy-consumption
 type: python
 uuid: energy_consumption
 widgets:
-- all_upstream_blocks_executed: true
-  configuration:
-    chart_type: table
-    limit: 10
-    x: x
-    y: y
-  downstream_blocks: []
-  executor_config: null
-  executor_type: local_python
-  language: python
-  name: table for export_to_feature_store 1675515791750
-  status: failed
-  type: chart
-  upstream_blocks:
-  - export_to_feature_store
-  uuid: table_for_export_to_feature_store_1675515791750
 - all_upstream_blocks_executed: true
   configuration:
     chart_type: table
