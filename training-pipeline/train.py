@@ -1,4 +1,6 @@
 import logging
+
+import fire
 import joblib
 import lightgbm as lgb
 import pandas as pd
@@ -10,7 +12,10 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def train(data_path: str, model_path: str) -> None:
+def train(
+        data_path: str = "../energy_consumption_data.parquet",
+        model_path: str = "../energy_consumption_model.pkl"
+) -> None:
     """
     Template for training a model.
 
@@ -114,7 +119,4 @@ def save_model(model, model_path: str):
 
 
 if __name__ == "__main__":
-    train(
-        "/home/iusztin/Documents/projects/energy-forecasting/energy_consumption_data.parquet",
-        "/home/iusztin/Documents/projects/energy-forecasting/energy_consumption_model.pkl"
-    )
+    fire.Fire(train)
