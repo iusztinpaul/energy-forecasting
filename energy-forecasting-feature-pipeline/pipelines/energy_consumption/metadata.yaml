@@ -27,7 +27,7 @@ blocks:
 - all_upstream_blocks_executed: true
   configuration: {}
   downstream_blocks:
-  - compute_rolling_average
+  - compute_rolling_values
   executor_config: null
   executor_type: local_python
   language: python
@@ -54,16 +54,16 @@ blocks:
   configuration: {}
   downstream_blocks:
   - table_for_compute_rolling_average_1675519576364
-  - compute_lagged_values
+  - compute_energy_consumption_lagged_values
   executor_config: null
   executor_type: local_python
   language: python
-  name: compute_rolling_average
+  name: compute_rolling_values
   status: executed
   type: transformer
   upstream_blocks:
   - add_datetime_features
-  uuid: compute_rolling_average
+  uuid: compute_rolling_values
 - all_upstream_blocks_executed: true
   configuration: {}
   downstream_blocks: []
@@ -78,16 +78,16 @@ blocks:
 - all_upstream_blocks_executed: true
   configuration: {}
   downstream_blocks:
-  - compute_future_values
+  - compute_rolling_lagged_values
   executor_config: null
   executor_type: local_python
   language: python
-  name: compute_lagged_values
+  name: compute_energy_consumption_lagged_values
   status: executed
   type: transformer
   upstream_blocks:
-  - compute_rolling_average
-  uuid: compute_lagged_values
+  - compute_rolling_values
+  uuid: compute_energy_consumption_lagged_values
 - all_upstream_blocks_executed: true
   configuration: {}
   downstream_blocks:
@@ -99,7 +99,7 @@ blocks:
   status: executed
   type: transformer
   upstream_blocks:
-  - compute_future_values
+  - compute_energy_consumption_future_values
   uuid: remove_extra_data
 - all_upstream_blocks_executed: true
   configuration: {}
@@ -108,12 +108,12 @@ blocks:
   executor_config: null
   executor_type: local_python
   language: python
-  name: compute_future_values
+  name: compute_energy_consumption_future_values
   status: executed
   type: transformer
   upstream_blocks:
-  - compute_lagged_values
-  uuid: compute_future_values
+  - compute_rolling_lagged_values
+  uuid: compute_energy_consumption_future_values
 - all_upstream_blocks_executed: true
   configuration:
     file_path: null
@@ -129,15 +129,17 @@ blocks:
   uuid: export_to_local_file
 - all_upstream_blocks_executed: true
   configuration: {}
-  downstream_blocks: []
+  downstream_blocks:
+  - compute_energy_consumption_future_values
   executor_config: null
   executor_type: local_python
   language: python
-  name: quiet shadow
-  status: updated
-  type: scratchpad
-  upstream_blocks: []
-  uuid: quiet_shadow
+  name: compute_rolling_lagged_values
+  status: executed
+  type: transformer
+  upstream_blocks:
+  - compute_energy_consumption_lagged_values
+  uuid: compute_rolling_lagged_values
 data_integration: null
 name: energy-consumption
 type: python
@@ -157,5 +159,5 @@ widgets:
   status: executed
   type: chart
   upstream_blocks:
-  - compute_rolling_average
+  - compute_rolling_values
   uuid: table_for_compute_rolling_average_1675519576364

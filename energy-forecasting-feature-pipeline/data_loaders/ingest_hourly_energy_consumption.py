@@ -28,9 +28,10 @@ def load_data_from_api(*args, **kwargs):
     days_export = kwargs.get("days_export", 30)
     # To compute the rolling average and lagged values for all the 30 days of data, 
     # we need to grab some additional days to compute these values for the first elements of the time series.
-    days_rolling_average = kwargs.get("days_rolling_average", 1)
+    days_rolling_average = kwargs.get("days_rolling_average", [1, 7])
     n_lagged_days = kwargs.get("n_lagged_days", 3)
-    days_extra = max(days_rolling_average, n_lagged_days)
+    max_days_rolling_average = max(days_rolling_average)
+    days_extra = max(max_days_rolling_average, n_lagged_days)
     
     current_datetime = datetime.datetime.utcnow()
     export_start = current_datetime - datetime.timedelta(days=days_delay + days_export + days_extra)
