@@ -1,1 +1,0 @@
-{"train": {"rmse": 9328.80062811703}, "_timestamp": 1676629458.7082984, "_runtime": 2.937856435775757, "_step": 1, "validation": {"rmse": 16829.13377401035}, "_wandb": {"runtime": 1}}

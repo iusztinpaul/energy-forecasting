@@ -1,4 +1,0 @@
-wandb_version: 1
-
-n_estimators:
-  value: 100
