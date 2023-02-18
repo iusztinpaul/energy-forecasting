@@ -19,6 +19,8 @@ def transform_df(df: DataFrame, *args, **kwargs) -> DataFrame:
     Returns:
         DataFrame: Transformed data frame
     """
+
+    df["datetime_utc"] = pd.to_datetime(df["datetime_utc"])
     
     n_lagged_days = kwargs.get("n_lagged_days", 3)
     n_lagged_hours = n_lagged_days * 24

@@ -7,7 +7,6 @@ if 'transformer' not in globals():
 if 'test' not in globals():
     from mage_ai.data_preparation.decorators import test
 
-
 @transformer
 def transform_df(df: DataFrame, *args, **kwargs) -> DataFrame:
     """

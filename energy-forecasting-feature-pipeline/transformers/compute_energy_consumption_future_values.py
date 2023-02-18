@@ -20,6 +20,8 @@ def transform_df(df: DataFrame, *args, **kwargs) -> DataFrame:
         DataFrame: Transformed data frame
     """
     
+    df["datetime_utc"] = pd.to_datetime(df["datetime_utc"])
+
     n_future_days = kwargs.get("n_future_days", 0)
     n_future_hours = n_future_days * 24
     n_future_hours_step = kwargs.get("n_future_hours_step", 1)

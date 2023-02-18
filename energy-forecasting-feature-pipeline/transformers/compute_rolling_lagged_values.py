@@ -20,6 +20,8 @@ def transform_df(df: DataFrame, *args, **kwargs) -> DataFrame:
         DataFrame: Transformed data frame
     """
     
+    df["datetime_utc"] = pd.to_datetime(df["datetime_utc"])
+
     n_lagged_rolling_days = kwargs.get("n_lagged_rolling_days", 1 / 24)
     n_lagged_rolling_hours = int(n_lagged_rolling_days * 24)
 
