@@ -12,6 +12,7 @@ df = get_variable('energy_consumption', 'remove_extra_data', 'output_0')
 df = df[(df["area"] == "DK1") & (df["consumer_type"] == "111")]
 
 fig, ax = plt.subplots(figsize=(20, 6))
-ax = df.plot(x="datetime_utc", y="energy_consumption", ax=ax)
-df.plot(x="datetime_utc", y="energy_consumption_rolling_average_days_1", ax=ax)
+ax = df.plot(x="datetime_utc", y="energy_consumption_future_hours_0", ax=ax)
+df.plot(x="datetime_utc", y="energy_consumption_rolling_average_days_1_lagged_hours_1", ax=ax)
+df.plot(x="datetime_utc", y="energy_consumption_rolling_average_days_7_lagged_hours_1", ax=ax)
 df.plot(x="datetime_utc", y="energy_consumption_lagged_hours_22", ax=ax)

@@ -134,6 +134,7 @@ dmypy.json
 
 # Tools
 mage_data/
+wandb/
 
 # Data
 *.parquet
