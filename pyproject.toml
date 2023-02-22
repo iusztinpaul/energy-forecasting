@@ -8,12 +8,14 @@ authors = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "~3.9"
 pyarrow = "^11.0.0"
 tqdm = "^4.64.1"
 category-encoders = "^2.6.0"
 wandb = "^0.13.10"
 matplotlib = "^3.7.0"
+hopsworks = "^3.0.5"
+python-dotenv = "^0.21.1"
 
 [tool.poetry.dev-dependencies]
 
