@@ -32,7 +32,7 @@ blocks:
   executor_type: local_python
   language: python
   name: add_datetime_features
-  status: executed
+  status: updated
   type: transformer
   upstream_blocks:
   - fill_missing_values
@@ -50,7 +50,7 @@ blocks:
   upstream_blocks:
   - reformat_columns
   uuid: fill_missing_values
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   configuration: {}
   downstream_blocks:
   - table_for_compute_rolling_average_1675519576364
@@ -75,7 +75,7 @@ blocks:
   type: scratchpad
   upstream_blocks: []
   uuid: visualize_data
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   configuration: {}
   downstream_blocks:
   - compute_rolling_lagged_values
@@ -88,7 +88,7 @@ blocks:
   upstream_blocks:
   - compute_rolling_values
   uuid: compute_energy_consumption_lagged_values
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   configuration: {}
   downstream_blocks:
   - export_to_local_file
@@ -96,12 +96,12 @@ blocks:
   executor_type: local_python
   language: python
   name: remove_extra_data
-  status: executed
+  status: updated
   type: transformer
   upstream_blocks:
   - compute_energy_consumption_future_values
   uuid: remove_extra_data
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   configuration: {}
   downstream_blocks:
   - remove_extra_data
@@ -114,7 +114,7 @@ blocks:
   upstream_blocks:
   - compute_rolling_lagged_values
   uuid: compute_energy_consumption_future_values
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   configuration:
     file_path: null
   downstream_blocks: []
@@ -127,7 +127,7 @@ blocks:
   upstream_blocks:
   - remove_extra_data
   uuid: export_to_local_file
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   configuration: {}
   downstream_blocks:
   - compute_energy_consumption_future_values
@@ -145,7 +145,7 @@ name: energy-consumption
 type: python
 uuid: energy_consumption
 widgets:
-- all_upstream_blocks_executed: true
+- all_upstream_blocks_executed: false
   configuration:
     chart_type: table
     limit: 10

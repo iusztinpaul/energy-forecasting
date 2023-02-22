@@ -22,6 +22,8 @@ def transform_df(df: DataFrame, *args, **kwargs) -> DataFrame:
     Returns:
         DataFrame: Transformed data frame
     """
+    
+    df["datetime_utc"] = pd.to_datetime(df["datetime_utc"])
 
     df["hour"] = df["datetime_utc"].dt.hour
     df["day"] = df["datetime_utc"].dt.day

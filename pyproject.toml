@@ -8,10 +8,7 @@ authors = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.8, <3.10"
-pandas = "^1.5.3"
-lightgbm = "^3.3.5"
-fire = "^0.5.0"
+python = "^3.9"
 pyarrow = "^11.0.0"
 tqdm = "^4.64.1"
 category-encoders = "^2.6.0"
