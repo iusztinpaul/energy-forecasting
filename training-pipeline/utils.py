@@ -1,8 +1,11 @@
+from pathlib import Path
+from typing import Union
+
 import joblib
 import pandas as pd
 
 
-def save_model(model, model_path: str):
+def save_model(model, model_path: Union[str, Path]):
     """
     Template for saving a model.
 
@@ -12,6 +15,19 @@ def save_model(model, model_path: str):
     """
 
     joblib.dump(model, model_path)
+
+
+def load_model(model_path: Union[str, Path]):
+    """
+    Template for loading a model.
+
+    Args:
+        model_path: Path to the model.
+
+    Returns: Loaded model.
+    """
+
+    return joblib.load(model_path)
 
 
 def load_data_from_parquet(data_path: str) -> pd.DataFrame:

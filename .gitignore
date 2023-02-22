@@ -138,6 +138,7 @@ wandb/
 
 # Data
 *.parquet
+models/
 
 # Models
 *.pkl

@@ -16,6 +16,7 @@ pyarrow = "^11.0.0"
 tqdm = "^4.64.1"
 category-encoders = "^2.6.0"
 wandb = "^0.13.10"
+matplotlib = "^3.7.0"
 
 [tool.poetry.dev-dependencies]
 
