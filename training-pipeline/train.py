@@ -1,13 +1,15 @@
 import logging
-from functools import partial
+import os
 from pathlib import Path
 from typing import Tuple
 
+import hopsworks
 import lightgbm as lgb
 import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
 import wandb
+from dotenv import load_dotenv
 from sklearn.metrics import mean_squared_error
 
 import preprocess
@@ -18,8 +20,11 @@ matplotlib.use('Agg')
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+load_dotenv()
+
 WANDB_ENTITY = "p-b-iusztin"
 WANDB_PROJECT = "energy_consumption"
+FS_API_KEY = os.getenv("FS_API_KEY")
 
 sweep_configs = {
     "method": "grid",
@@ -45,7 +50,53 @@ sweep_configs = {
 #         "lambda_l2": {"values": [0.0]},
 #     },
 # }
-sweep_id = wandb.sweep(sweep=sweep_configs, project="energy_consumption")
+# sweep_id = wandb.sweep(sweep=sweep_configs, project="energy_consumption")
+
+
+def get_dataset_hopsworks(target: str = "energy_consumption_future_hours_0"):
+    project = hopsworks.login(api_key_value=FS_API_KEY, project="energy_consumption")
+    fs = project.get_feature_store()
+
+    energy_consumption_fg = fs.get_feature_group('energy_consumption', version=1)
+    ds_query = energy_consumption_fg.select_all()
+    # TODO: Write transformation functions.
+    standard_scaler = fs.get_transformation_function(name='label_encoder')
+    transformation_functions = {
+        "consumer_type": standard_scaler,
+        "area": standard_scaler
+    }
+
+    feature_view = fs.create_feature_view(
+        name="energy_consumption_view",
+        description="Energy consumption forecasting batch model.",
+        query=ds_query,
+        labels=[target],
+        transformation_functions=transformation_functions,
+    )
+
+    # TODO: Make the split time based.
+    td_version, td_job = feature_view.create_train_validation_test_split(
+        description='Energy consumption training dataset',
+        data_format='csv',
+        validation_size=0.1,
+        test_size=0.1,
+        write_options={'wait_for_job': True},
+        coalesce=True,
+    )
+
+    feature_views = fs.get_feature_views("energy_consumption_view")
+    feature_view = feature_views[-1]
+    X_train, X_val, X_test, y_train, y_val, y_test = feature_view.get_train_validation_test_split(
+        training_dataset_version=1
+    )
+
+    return X_train, X_val, X_test, y_train, y_val, y_test
+
+
+
+
+
+
 
 
 def get_dataset(data_path: str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
@@ -348,22 +399,23 @@ def plot_results(
 
 
 if __name__ == "__main__":
-    train_df, validation_df, test_df = get_dataset(
-        data_path="../energy_consumption_data.parquet"
-    )
+    # train_df, validation_df, test_df = get_dataset(
+    #     data_path="../energy_consumption_data.parquet"
+    # )
+    get_dataset_hopsworks()
 
-    wandb.agent(
-        project="energy_consumption",
-        sweep_id=sweep_id,
-        function=partial(train_sweep, train_df=train_df, validation_df=validation_df),
-    )
-    train_best_model(
-        train_df=train_df,
-        validation_df=validation_df,
-        test_df=test_df,
-    )
-    plot_results(
-        train_df=train_df,
-        validation_df=validation_df,
-        test_df=test_df,
-    )
+    # wandb.agent(
+    #     project="energy_consumption",
+    #     sweep_id=sweep_id,
+    #     function=partial(train_sweep, train_df=train_df, validation_df=validation_df),
+    # )
+    # train_best_model(
+    #     train_df=train_df,
+    #     validation_df=validation_df,
+    #     test_df=test_df,
+    # )
+    # plot_results(
+    #     train_df=train_df,
+    #     validation_df=validation_df,
+    #     test_df=test_df,
+    # )

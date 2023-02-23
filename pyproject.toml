@@ -16,6 +16,7 @@ wandb = "^0.13.10"
 matplotlib = "^3.7.0"
 hopsworks = "^3.0.5"
 python-dotenv = "^0.21.1"
+lightgbm = "^3.3.5"
 
 [tool.poetry.dev-dependencies]
 
