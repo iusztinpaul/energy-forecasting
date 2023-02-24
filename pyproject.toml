@@ -17,6 +17,8 @@ matplotlib = "^3.7.0"
 hopsworks = "^3.0.5"
 python-dotenv = "^0.21.1"
 lightgbm = "^3.3.5"
+sktime = "^0.16.1"
+seaborn = "^0.12.2"
 
 [tool.poetry.dev-dependencies]
 
