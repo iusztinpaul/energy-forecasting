@@ -2,7 +2,7 @@ blocks:
 - all_upstream_blocks_executed: true
   configuration: {}
   downstream_blocks:
-  - reformat_columns
+  - clean_columns
   executor_config: null
   executor_type: local_python
   language: python
@@ -11,109 +11,6 @@ blocks:
   type: data_loader
   upstream_blocks: []
   uuid: ingest_hourly_energy_consumption
-- all_upstream_blocks_executed: true
-  configuration: {}
-  downstream_blocks:
-  - fill_missing_values
-  executor_config: null
-  executor_type: local_python
-  language: python
-  name: reformat_columns
-  status: executed
-  type: transformer
-  upstream_blocks:
-  - ingest_hourly_energy_consumption
-  uuid: reformat_columns
-- all_upstream_blocks_executed: true
-  configuration: {}
-  downstream_blocks:
-  - compute_rolling_values
-  executor_config: null
-  executor_type: local_python
-  language: python
-  name: add_datetime_features
-  status: updated
-  type: transformer
-  upstream_blocks:
-  - fill_missing_values
-  uuid: add_datetime_features
-- all_upstream_blocks_executed: true
-  configuration: {}
-  downstream_blocks:
-  - add_datetime_features
-  executor_config: null
-  executor_type: local_python
-  language: python
-  name: fill_missing_values
-  status: executed
-  type: transformer
-  upstream_blocks:
-  - reformat_columns
-  uuid: fill_missing_values
-- all_upstream_blocks_executed: false
-  configuration: {}
-  downstream_blocks:
-  - table_for_compute_rolling_average_1675519576364
-  - compute_energy_consumption_lagged_values
-  executor_config: null
-  executor_type: local_python
-  language: python
-  name: compute_rolling_values
-  status: executed
-  type: transformer
-  upstream_blocks:
-  - add_datetime_features
-  uuid: compute_rolling_values
-- all_upstream_blocks_executed: true
-  configuration: {}
-  downstream_blocks: []
-  executor_config: null
-  executor_type: local_python
-  language: python
-  name: visualize_data
-  status: updated
-  type: scratchpad
-  upstream_blocks: []
-  uuid: visualize_data
-- all_upstream_blocks_executed: false
-  configuration: {}
-  downstream_blocks:
-  - compute_rolling_lagged_values
-  executor_config: null
-  executor_type: local_python
-  language: python
-  name: compute_energy_consumption_lagged_values
-  status: executed
-  type: transformer
-  upstream_blocks:
-  - compute_rolling_values
-  uuid: compute_energy_consumption_lagged_values
-- all_upstream_blocks_executed: false
-  configuration: {}
-  downstream_blocks:
-  - export_to_local_file
-  executor_config: null
-  executor_type: local_python
-  language: python
-  name: remove_extra_data
-  status: updated
-  type: transformer
-  upstream_blocks:
-  - compute_energy_consumption_future_values
-  uuid: remove_extra_data
-- all_upstream_blocks_executed: false
-  configuration: {}
-  downstream_blocks:
-  - remove_extra_data
-  executor_config: null
-  executor_type: local_python
-  language: python
-  name: compute_energy_consumption_future_values
-  status: executed
-  type: transformer
-  upstream_blocks:
-  - compute_rolling_lagged_values
-  uuid: compute_energy_consumption_future_values
 - all_upstream_blocks_executed: false
   configuration:
     file_path: null
@@ -125,27 +22,70 @@ blocks:
   status: executed
   type: data_exporter
   upstream_blocks:
-  - remove_extra_data
+  - validate_data
   uuid: export_to_local_file
-- all_upstream_blocks_executed: false
-  configuration: {}
+- all_upstream_blocks_executed: true
+  configuration:
+    file_path: null
   downstream_blocks:
-  - compute_energy_consumption_future_values
+  - standardize_categorical_data
   executor_config: null
   executor_type: local_python
   language: python
-  name: compute_rolling_lagged_values
+  name: cast_columns
   status: executed
   type: transformer
   upstream_blocks:
-  - compute_energy_consumption_lagged_values
-  uuid: compute_rolling_lagged_values
+  - clean_columns
+  uuid: cast_columns
+- all_upstream_blocks_executed: true
+  configuration:
+    file_path: null
+  downstream_blocks:
+  - cast_columns
+  executor_config: null
+  executor_type: local_python
+  language: python
+  name: clean_columns
+  status: executed
+  type: transformer
+  upstream_blocks:
+  - ingest_hourly_energy_consumption
+  uuid: clean_columns
+- all_upstream_blocks_executed: true
+  configuration:
+    file_path: null
+  downstream_blocks:
+  - export_to_local_file
+  executor_config: null
+  executor_type: local_python
+  language: python
+  name: validate_data
+  status: not_executed
+  type: transformer
+  upstream_blocks:
+  - standardize_categorical_data
+  uuid: validate_data
+- all_upstream_blocks_executed: true
+  configuration:
+    file_path: null
+  downstream_blocks:
+  - validate_data
+  executor_config: null
+  executor_type: local_python
+  language: python
+  name: standardize_categorical_data
+  status: executed
+  type: transformer
+  upstream_blocks:
+  - cast_columns
+  uuid: standardize_categorical_data
 data_integration: null
 name: energy-consumption
 type: python
 uuid: energy_consumption
 widgets:
-- all_upstream_blocks_executed: false
+- all_upstream_blocks_executed: true
   configuration:
     chart_type: table
     limit: 10
@@ -158,6 +98,5 @@ widgets:
   name: table for compute_rolling_average 1675519576364
   status: executed
   type: chart
-  upstream_blocks:
-  - compute_rolling_values
+  upstream_blocks: []
   uuid: table_for_compute_rolling_average_1675519576364

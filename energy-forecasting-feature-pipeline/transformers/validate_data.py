@@ -31,3 +31,6 @@ def test_output(df, *args) -> None:
     assert df is not None, 'The output is undefined'
 
     assert df.isna().any().any() is np.bool_(False), "Found missing values."
+
+    num_duplicates  = df.groupby(["datetime_utc", "area", "consumer_type"], observed=True)["energy_consumption"].count()
+    assert (num_duplicates > 1).any() is np.bool_(False), "Found duplicated observed measures within a single hour."

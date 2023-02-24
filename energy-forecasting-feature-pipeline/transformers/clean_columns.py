@@ -19,30 +19,25 @@ def execute_transformer_action(df: DataFrame, *args, **kwargs) -> DataFrame:
     Docs: https://docs.mage.ai/guides/transformer-blocks#reformat-values
     """
 
-    # Renaming
+    # Drop irrelevant columns.
+    df = df.drop(columns=["HourDK"])
+
+    # Rename columns
     df = df.rename(columns={
         "HourUTC": "DatetimeUtc",
         "PriceArea": "Area",
         "ConsumerType_DE35": "ConsumerType",
         "TotalCon": "EnergyConsumption"
     })
-    df = df.drop(columns=["HourDK"])
-
+    # Standardize columns
     action = build_transformer_action(
         df,
         action_type=ActionType.CLEAN_COLUMN_NAME,
         arguments=df.columns,
         axis=Axis.COLUMN,
     )
-    df = BaseAction(action).execute(df)
 
-    # Casting
-    df["datetime_utc"] = pd.to_datetime(df["datetime_utc"])
-    df["area"] = df["area"].astype("string")
-    df["consumer_type"] = df["consumer_type"].astype("string")
-    df["energy_consumption"] = df["energy_consumption"].astype("float64")
-
-    return df
+    return BaseAction(action).execute(df)
 
 
 @test

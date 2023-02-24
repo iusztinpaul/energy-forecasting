@@ -60,18 +60,18 @@ def get_dataset_hopsworks(target: str = "energy_consumption_future_hours_0"):
     energy_consumption_fg = fs.get_feature_group('energy_consumption', version=1)
     ds_query = energy_consumption_fg.select_all()
     # TODO: Write transformation functions.
-    standard_scaler = fs.get_transformation_function(name='label_encoder')
-    transformation_functions = {
-        "consumer_type": standard_scaler,
-        "area": standard_scaler
-    }
+    # standard_scaler = fs.get_transformation_function(name='label_encoder')
+    # transformation_functions = {
+    #     "consumer_type": standard_scaler,
+    #     "area": standard_scaler
+    # }
 
     feature_view = fs.create_feature_view(
         name="energy_consumption_view",
         description="Energy consumption forecasting batch model.",
         query=ds_query,
         labels=[target],
-        transformation_functions=transformation_functions,
+        # transformation_functions=transformation_functions,
     )
 
     # TODO: Make the split time based.
@@ -91,12 +91,6 @@ def get_dataset_hopsworks(target: str = "energy_consumption_future_hours_0"):
     )
 
     return X_train, X_val, X_test, y_train, y_val, y_test
-
-
-
-
-
-
 
 
 def get_dataset(data_path: str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
