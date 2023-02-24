@@ -29,7 +29,7 @@ def transform_df(df: DataFrame, *args, **kwargs) -> DataFrame:
     }
     df["area"] = df["area"].map(lambda string_area: area_mappings.get(string_area))
     df["area"] = df["area"].astype("int8")
-    df["consumer_type"] = df["consumer_type"].astype("int64")
+    df["consumer_type"] = df["consumer_type"].astype("int32")
 
     return df
 

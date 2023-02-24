@@ -56,8 +56,9 @@ sweep_configs = {
 def get_dataset_hopsworks(target: str = "energy_consumption_future_hours_0"):
     project = hopsworks.login(api_key_value=FS_API_KEY, project="energy_consumption")
     fs = project.get_feature_store()
-
     energy_consumption_fg = fs.get_feature_group('energy_consumption', version=1)
+
+    # Create feature view.
     ds_query = energy_consumption_fg.select_all()
     # TODO: Write transformation functions.
     # standard_scaler = fs.get_transformation_function(name='label_encoder')
@@ -65,6 +66,7 @@ def get_dataset_hopsworks(target: str = "energy_consumption_future_hours_0"):
     #     "consumer_type": standard_scaler,
     #     "area": standard_scaler
     # }
+
 
     feature_view = fs.create_feature_view(
         name="energy_consumption_view",
@@ -74,6 +76,7 @@ def get_dataset_hopsworks(target: str = "energy_consumption_future_hours_0"):
         # transformation_functions=transformation_functions,
     )
 
+    # Create the train, validation and test splits.
     # TODO: Make the split time based.
     td_version, td_job = feature_view.create_train_validation_test_split(
         description='Energy consumption training dataset',
@@ -84,6 +87,7 @@ def get_dataset_hopsworks(target: str = "energy_consumption_future_hours_0"):
         coalesce=True,
     )
 
+    # Get the train, validation and test splits.
     feature_views = fs.get_feature_views("energy_consumption_view")
     feature_view = feature_views[-1]
     X_train, X_val, X_test, y_train, y_val, y_test = feature_view.get_train_validation_test_split(

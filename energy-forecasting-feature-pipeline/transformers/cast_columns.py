@@ -24,7 +24,7 @@ def transform_df(df: DataFrame, *args, **kwargs) -> DataFrame:
     """
     
     print(df.dtypes)
-    # df["datetime_utc"] = pd.to_datetime(df["datetime_utc"])
+    df["datetime_utc"] = pd.to_datetime(df["datetime_utc"])
     df["area"] = df["area"].astype("string")
     df["consumer_type"] = df["consumer_type"].astype("string")
     df["energy_consumption"] = df["energy_consumption"].astype("float64")

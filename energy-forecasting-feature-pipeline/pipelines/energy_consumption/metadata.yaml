@@ -11,7 +11,7 @@ blocks:
   type: data_loader
   upstream_blocks: []
   uuid: ingest_hourly_energy_consumption
-- all_upstream_blocks_executed: false
+- all_upstream_blocks_executed: true
   configuration:
     file_path: null
   downstream_blocks: []
@@ -61,7 +61,7 @@ blocks:
   executor_type: local_python
   language: python
   name: validate_data
-  status: not_executed
+  status: executed
   type: transformer
   upstream_blocks:
   - standardize_categorical_data
