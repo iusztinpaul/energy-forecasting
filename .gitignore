@@ -135,10 +135,12 @@ dmypy.json
 # Tools
 mage_data/
 wandb/
+energy_consumption/
 
 # Data
 *.parquet
 models/
+output/
 
 # Models
 *.pkl

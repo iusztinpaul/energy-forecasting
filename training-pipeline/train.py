@@ -1,16 +1,23 @@
 import logging
 import os
+from collections import OrderedDict
 from pathlib import Path
-from typing import Tuple
+from typing import OrderedDict as OrderedDictType, Optional
 
 import hopsworks
 import lightgbm as lgb
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import wandb
 from dotenv import load_dotenv
 from sklearn.metrics import mean_squared_error
+from sktime.forecasting.compose import make_reduction
+from sktime.forecasting.naive import NaiveForecaster
+from sktime.performance_metrics.forecasting import mean_squared_percentage_error
+from sktime.transformations.series.summarize import WindowSummarizer
+from sktime.utils.plotting import plot_series
 
 import preprocess
 import utils
@@ -25,6 +32,8 @@ load_dotenv()
 WANDB_ENTITY = "p-b-iusztin"
 WANDB_PROJECT = "energy_consumption"
 FS_API_KEY = os.getenv("FS_API_KEY")
+OUTPUT_DIR = Path("output")
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 sweep_configs = {
     "method": "grid",
@@ -53,137 +62,247 @@ sweep_configs = {
 # sweep_id = wandb.sweep(sweep=sweep_configs, project="energy_consumption")
 
 
-def get_dataset_hopsworks(target: str = "energy_consumption_future_hours_0"):
+def main():
+    y_train, y_test, X_train, X_test = get_dataset_hopsworks()
+
+    # baseline_forecaster = train_baseline(y_train)
+    # y_pred_baseline, metrics_baseline = evaluate(baseline_forecaster, y_test)
+    # logger.info(f"Baseline RMPE: {metrics_baseline}")
+
+    forecaster = train_sweep(y_train)
+    y_pred, metrics = evaluate(forecaster, y_test)
+    logger.info(f"Model RMPE: {metrics}")
+
+    results = OrderedDict({
+        "y_train": y_train,
+        "y_test": y_test,
+        # "y_pred_baseline": y_pred_baseline,
+        "y_pred": y_pred
+    })
+    render(results, prefix="images_test")
+
+    forecaster = forecaster.update(y_test)
+
+    y_forecast = forecast(forecaster)
+    results = OrderedDict({
+        "y_train": y_train,
+        "y_test": y_test,
+        "y_forecast": y_forecast,
+    })
+    render(results, prefix="images_forecast")
+
+
+def get_dataset_hopsworks():
     project = hopsworks.login(api_key_value=FS_API_KEY, project="energy_consumption")
     fs = project.get_feature_store()
-    energy_consumption_fg = fs.get_feature_group('energy_consumption', version=1)
-
-    # Create feature view.
-    ds_query = energy_consumption_fg.select_all()
-    # TODO: Write transformation functions.
-    # standard_scaler = fs.get_transformation_function(name='label_encoder')
-    # transformation_functions = {
-    #     "consumer_type": standard_scaler,
-    #     "area": standard_scaler
-    # }
-
-
-    feature_view = fs.create_feature_view(
-        name="energy_consumption_view",
-        description="Energy consumption forecasting batch model.",
-        query=ds_query,
-        labels=[target],
-        # transformation_functions=transformation_functions,
-    )
-
-    # Create the train, validation and test splits.
-    # TODO: Make the split time based.
-    td_version, td_job = feature_view.create_train_validation_test_split(
-        description='Energy consumption training dataset',
-        data_format='csv',
-        validation_size=0.1,
-        test_size=0.1,
-        write_options={'wait_for_job': True},
-        coalesce=True,
-    )
 
     # Get the train, validation and test splits.
-    feature_views = fs.get_feature_views("energy_consumption_view")
+    feature_views = fs.get_feature_views("energy_consumption_denmark_view")
     feature_view = feature_views[-1]
-    X_train, X_val, X_test, y_train, y_val, y_test = feature_view.get_train_validation_test_split(
+    X, y = feature_view.get_training_data(
         training_dataset_version=1
     )
 
-    return X_train, X_val, X_test, y_train, y_val, y_test
+    # TODO: Call close?
+
+    data = pd.concat([X, y], axis=1)
+    data["datetime_utc"] = pd.PeriodIndex(data["datetime_utc"], freq="H")
+    data = data.set_index(["area", "consumer_type", "datetime_utc"]).sort_index()
+
+    X = data.drop(columns=["energy_consumption"])
+    y = data[["energy_consumption"]]
+
+    y_train, y_test, X_train, X_test = prepare_data(X, y)
+
+    return y_train, y_test, X_train, X_test
 
 
-def get_dataset(data_path: str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    # load data
-    df = utils.load_data_from_parquet(data_path)
-    # preprocess data
-    train_df, validation_df, test_df = preprocess.split_data(df)
-    train_df, validation_df, test_df = preprocess.encode_categorical(
-        train_df, validation_df, test_df
-    )
+def prepare_data(X: pd.DataFrame, y: pd.DataFrame, periods: int = 24):
+    # Split data
+    y_train, y_test, X_train, X_test = create_train_test_split(y, X, periods=periods)
 
-    metadata = {
-        "features": list(df.columns),
+    return y_train, y_test, X_train, X_test
+
+
+def create_train_test_split(y: pd.DataFrame, X: pd.DataFrame, periods: int):
+    max_datetime = y.index.get_level_values(-1).max()
+    min_datetime = max_datetime - periods + 1
+
+    # TODO: Double check this mask.
+    test_mask = y.index.get_level_values(-1) >= min_datetime
+    train_mask = ~test_mask
+
+    y_train = y.loc[train_mask]
+    X_train = X.loc[train_mask]
+
+    y_test = y.loc[test_mask]
+    X_test = X.loc[test_mask]
+
+    return y_train, y_test, X_train, X_test
+
+
+def train_baseline(y_train: pd.DataFrame, periods: int = 24):
+    fh = np.arange(periods) + 1
+
+    forecaster = NaiveForecaster(strategy="last", sp=fh)
+    forecaster.fit(y_train, fh=fh)
+
+    return forecaster
+
+
+def train_sweep(y_train: pd.DataFrame, periods: int = 24):
+    # forecaster = ForecastingPipeline(
+    #     [("hampel", HampelFilter()),
+    #      ("log", LogTransformer()),
+    #      ("forecaster", ThetaForecaster(sp=24))])
+
+    fh = np.arange(periods) + 1
+
+    kwargs = {
+        "lag_feature": {
+            "lag": [1, 2, 3, 4, 8, 12, 16, 24, 48, 72],
+            "mean": [[1, 24], [1, 48], [1, 72]],
+            "std": [[1, 24], [1, 48], [1, 72]],
+        }
     }
-    with init_wandb_run(name="feature_view", job_type="upload_feature_view") as run:
-        raw_data_at = wandb.Artifact(
-            "energy_consumption_data",
-            type="feature_view",
-            metadata=metadata,
-        )
-        run.log_artifact(raw_data_at)
 
-    with init_wandb_run(name="train_validation_test_split", job_type="split") as run:
-        data_at = run.use_artifact("energy_consumption_data:latest")
-        data_dir = data_at.download()
+    regressor = lgb.LGBMRegressor()
+    forecaster = make_reduction(
+        regressor,
+        transformers=[WindowSummarizer(**kwargs, n_jobs=1)],
+        strategy="recursive",
+        pooling="global",
+        window_length=None
+    )
+    forecaster.fit(y_train, fh=fh)
 
-        artifacts = {}
-        for split in ["train", "validation", "test"]:
-            split_df = locals()[f"{split}_df"]
-            starting_datetime = split_df["datetime_utc"].min()
-            ending_datetime = split_df["datetime_utc"].max()
-            metadata = {
-                "starting_datetime": starting_datetime,
-                "ending_datetime": ending_datetime,
+    return forecaster
+
+
+def evaluate(forecaster, y_test: pd.DataFrame):
+    y_pred = forecaster.predict()
+
+    rspe = mean_squared_percentage_error(y_test, y_pred, squared=False)
+
+    return y_pred, rspe
+
+
+def render(timeseries: OrderedDictType[str, pd.DataFrame], prefix: Optional[str] = None):
+
+    grouped_timeseries = OrderedDict()
+    for split, df in timeseries.items():
+        df = df.reset_index(level=[0, 1])
+        groups = df.groupby(["area", "consumer_type"])
+        for group_name, split_group_values in groups:
+            group_values = grouped_timeseries.get(group_name, {})
+
+            grouped_timeseries[group_name] = {
+                f"{split}": split_group_values["energy_consumption"],
+                **group_values
             }
 
-            artifacts[split] = wandb.Artifact(
-                f"{split}_split", type="split", metadata=metadata
-            )
+    output_dir = OUTPUT_DIR / prefix if prefix else OUTPUT_DIR
+    output_dir.mkdir(parents=True, exist_ok=True)
+    for group_name, group_values_dict in grouped_timeseries.items():
+        fig, ax = plot_series(*group_values_dict.values(), labels=group_values_dict.keys())
+        fig.suptitle(f"Area: {group_name[0]} - Consumer type: {group_name[1]}")
 
-        for split, artifact in artifacts.items():
-            run.log_artifact(artifact)
+        # save matplotlib image
+        plt.savefig(output_dir / f"{group_name[0]}_{group_name[1]}.png")
+        plt.close(fig)
 
-    return train_df, validation_df, test_df
+def forecast(forecaster):
+    y_forecast = forecaster.predict()
+
+    return y_forecast
+
+# def get_dataset(data_path: str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+#     # load data
+#     df = utils.load_data_from_parquet(data_path)
+#     # preprocess data
+#     train_df, validation_df, test_df = preprocess.split_data(df)
+#     train_df, validation_df, test_df = preprocess.encode_categorical(
+#         train_df, validation_df, test_df
+#     )
+#
+#     metadata = {
+#         "features": list(df.columns),
+#     }
+#     with init_wandb_run(name="feature_view", job_type="upload_feature_view") as run:
+#         raw_data_at = wandb.Artifact(
+#             "energy_consumption_data",
+#             type="feature_view",
+#             metadata=metadata,
+#         )
+#         run.log_artifact(raw_data_at)
+#
+#     with init_wandb_run(name="train_validation_test_split", job_type="split") as run:
+#         data_at = run.use_artifact("energy_consumption_data:latest")
+#         data_dir = data_at.download()
+#
+#         artifacts = {}
+#         for split in ["train", "validation", "test"]:
+#             split_df = locals()[f"{split}_df"]
+#             starting_datetime = split_df["datetime_utc"].min()
+#             ending_datetime = split_df["datetime_utc"].max()
+#             metadata = {
+#                 "starting_datetime": starting_datetime,
+#                 "ending_datetime": ending_datetime,
+#             }
+#
+#             artifacts[split] = wandb.Artifact(
+#                 f"{split}_split", type="split", metadata=metadata
+#             )
+#
+#         for split, artifact in artifacts.items():
+#             run.log_artifact(artifact)
+#
+#     return train_df, validation_df, test_df
 
 
-def train_sweep(
-    train_df: pd.DataFrame,
-    validation_df: pd.DataFrame,
-    target: str = "energy_consumption_future_hours_0",
-) -> lgb.LGBMRegressor:
-    """
-    Function that is training a LGBM model.
-
-     Args:
-         train_df: Training data.
-         validation_df: Validation data.
-         target: Name of the target column.
-
-     Returns: Trained LightGBM model
-    """
-
-    with init_wandb_run(name="experiment", job_type="hpo") as run:
-        config = wandb.config
-        data_at = run.use_artifact(
-            f"{WANDB_ENTITY}/{WANDB_PROJECT}/test_split:latest", type="split"
-        )
-        data_at = run.use_artifact(
-            f"{WANDB_ENTITY}/{WANDB_PROJECT}/train_split:latest", type="split"
-        )
-
-        model = train_lgbm_regressor(df=train_df, target=target, config=config)
-
-        # evaluate model
-        rmse = evaluate_model(model, train_df, target=target)
-        logger.info(f"Train RMSE: {rmse:.2f}")
-        logger.info(
-            f"Train Mean Energy Consumption: {train_df['energy_consumption_future_hours_0'].mean():.2f}"
-        )
-        wandb.log({"train": {"rmse": rmse}})
-
-        rmse = evaluate_model(model, validation_df, target=target)
-        logger.info(f"Validation RMSE: {rmse:.2f}")
-        logger.info(
-            f"Validation Mean Energy Consumption: {validation_df['energy_consumption_future_hours_0'].mean():.2f}"
-        )
-        wandb.log({"validation": {"rmse": rmse}})
-
-    return model
+# def train_sweep(
+#     train_df: pd.DataFrame,
+#     validation_df: pd.DataFrame,
+#     target: str = "energy_consumption_future_hours_0",
+# ) -> lgb.LGBMRegressor:
+#     """
+#     Function that is training a LGBM model.
+#
+#      Args:
+#          train_df: Training data.
+#          validation_df: Validation data.
+#          target: Name of the target column.
+#
+#      Returns: Trained LightGBM model
+#     """
+#
+#     with init_wandb_run(name="experiment", job_type="hpo") as run:
+#         config = wandb.config
+#         data_at = run.use_artifact(
+#             f"{WANDB_ENTITY}/{WANDB_PROJECT}/test_split:latest", type="split"
+#         )
+#         data_at = run.use_artifact(
+#             f"{WANDB_ENTITY}/{WANDB_PROJECT}/train_split:latest", type="split"
+#         )
+#
+#         model = train_lgbm_regressor(df=train_df, target=target, config=config)
+#
+#         # evaluate model
+#         rmse = evaluate_model(model, train_df, target=target)
+#         logger.info(f"Train RMSE: {rmse:.2f}")
+#         logger.info(
+#             f"Train Mean Energy Consumption: {train_df['energy_consumption_future_hours_0'].mean():.2f}"
+#         )
+#         wandb.log({"train": {"rmse": rmse}})
+#
+#         rmse = evaluate_model(model, validation_df, target=target)
+#         logger.info(f"Validation RMSE: {rmse:.2f}")
+#         logger.info(
+#             f"Validation Mean Energy Consumption: {validation_df['energy_consumption_future_hours_0'].mean():.2f}"
+#         )
+#         wandb.log({"validation": {"rmse": rmse}})
+#
+#     return model
 
 
 def train_lgbm_regressor(
@@ -400,7 +519,7 @@ if __name__ == "__main__":
     # train_df, validation_df, test_df = get_dataset(
     #     data_path="../energy_consumption_data.parquet"
     # )
-    get_dataset_hopsworks()
+    main()
 
     # wandb.agent(
     #     project="energy_consumption",

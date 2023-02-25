@@ -19,6 +19,7 @@ python-dotenv = "^0.21.1"
 lightgbm = "^3.3.5"
 sktime = "^0.16.1"
 seaborn = "^0.12.2"
+pmdarima = "^2.0.2"
 
 [tool.poetry.dev-dependencies]
 
