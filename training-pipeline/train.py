@@ -82,7 +82,7 @@ def main():
     render(results, prefix="images_test")
 
     forecaster = forecaster.update(y_test, X=X_test)
-
+    # TODO: Make the forecast function independent from X_test.
     y_forecast = forecast(forecaster, X_test)
     results = OrderedDict(
         {
