@@ -20,6 +20,7 @@ lightgbm = "^3.3.5"
 sktime = "^0.16.1"
 seaborn = "^0.12.2"
 pmdarima = "^2.0.2"
+google-cloud-storage = "^2.7.0"
 
 [tool.poetry.dev-dependencies]
 

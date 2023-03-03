@@ -45,7 +45,7 @@ WANDB_ENTITY = os.getenv("WANDB_ENTITY")
 WANDB_PROJECT = os.getenv("WANDB_PROJECT")
 FS_API_KEY = os.getenv("FS_API_KEY")
 
-# TODO: Make output dir configurable
+# TODO: Change output dir with a tmp dir.
 OUTPUT_DIR = Path("output")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -115,7 +115,6 @@ def main(fh: int = 24, validation_metric_key: str = "MAPE"):
     with wandb.init(name="train_best_model", job_type="train_best_model", group="model") as run:
         best_forecaster = train_model(best_forecaster, y_train, X_train)
         save_model_path = OUTPUT_DIR / "best_model.pkl"
-        utils.save_model(best_forecaster, save_model_path)
 
         y_pred, metrics = evaluate(best_forecaster, y_test, X_test)
         for k, v in metrics.items():
@@ -124,9 +123,9 @@ def main(fh: int = 24, validation_metric_key: str = "MAPE"):
         results = OrderedDict({"y_train": y_train, "y_test": y_test, "y_pred": y_pred})
         render(results, prefix="images_test")
 
-        forecaster = best_forecaster.update(y_test, X=X_test)
+        best_forecaster = best_forecaster.update(y_test, X=X_test)
         # TODO: Make the forecast function independent from X_test.
-        y_forecast = forecast(forecaster, X_test)
+        y_forecast = forecast(best_forecaster, X_test)
         results = OrderedDict(
             {
                 "y_train": y_train,
@@ -136,6 +135,7 @@ def main(fh: int = 24, validation_metric_key: str = "MAPE"):
         )
         render(results, prefix="images_forecast")
 
+        utils.save_model(best_forecaster, save_model_path)
         metadata = {
             "results": {
                 "test": metrics
@@ -200,6 +200,8 @@ def get_dataset_hopsworks():
 
 
 def prepare_data(X: pd.DataFrame, y: pd.DataFrame, fh: int = 24):
+    # TODO: Move these transformation to the FS. They are repeated in the batch prediction pipeline.
+
     # Set the index as is required by sktime.
     data = pd.concat([X, y], axis=1)
     data["datetime_utc"] = pd.PeriodIndex(data["datetime_utc"], freq="H")
