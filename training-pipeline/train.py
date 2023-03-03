@@ -112,7 +112,9 @@ def main(fh: int = 24, validation_metric_key: str = "MAPE"):
     )
 
     best_forecaster = build_model_from_artifact()
-    with wandb.init(name="train_best_model", job_type="train_best_model", group="model") as run:
+    with wandb.init(
+        name="train_best_model", job_type="train_best_model", group="model"
+    ) as run:
         best_forecaster = train_model(best_forecaster, y_train, X_train)
         save_model_path = OUTPUT_DIR / "best_model.pkl"
 
@@ -136,16 +138,8 @@ def main(fh: int = 24, validation_metric_key: str = "MAPE"):
         render(results, prefix="images_forecast")
 
         utils.save_model(best_forecaster, save_model_path)
-        metadata = {
-            "results": {
-                "test": metrics
-            }
-        }
-        artifact = wandb.Artifact(
-            name="best_model",
-            type="model",
-            metadata=metadata
-        )
+        metadata = {"results": {"test": metrics}}
+        artifact = wandb.Artifact(name="best_model", type="model", metadata=metadata)
         artifact.add_file(str(save_model_path))
         run.log_artifact(artifact)
 
@@ -162,7 +156,9 @@ def get_dataset_hopsworks():
     # TODO: Handle hopsworks versions overall.
     X, y = feature_view.get_training_data(training_dataset_version=1)
 
-    with init_wandb_run(name="feature_view", job_type="load_dataset", group="dataset") as run:
+    with init_wandb_run(
+        name="feature_view", job_type="load_dataset", group="dataset"
+    ) as run:
         fv_metadata = feature_view.to_dict()
         fv_metadata["query"] = fv_metadata["query"].to_string()
         fv_metadata["features"] = [f.name for f in fv_metadata["features"]]
@@ -177,7 +173,9 @@ def get_dataset_hopsworks():
         )
         run.log_artifact(raw_data_at)
 
-    with init_wandb_run(name="train_test_split", job_type="prepare_dataset", group="dataset") as run:
+    with init_wandb_run(
+        name="train_test_split", job_type="prepare_dataset", group="dataset"
+    ) as run:
         y_train, y_test, X_train, X_test = prepare_data(X, y)
 
         for split in ["train", "test"]:
@@ -237,10 +235,10 @@ def create_train_test_split(y: pd.DataFrame, X: pd.DataFrame, fh: int):
 
 
 def find_best_model(
-        y_train: pd.DataFrame,
-        X_train: pd.DataFrame,
-        fh: int = 24,
-        validation_metric_key: str = "MAPE",
+    y_train: pd.DataFrame,
+    X_train: pd.DataFrame,
+    fh: int = 24,
+    validation_metric_key: str = "MAPE",
 ) -> dict:
     sweep_id = run_hyperparameter_optimization(y_train, X_train, fh=fh)
 
@@ -249,12 +247,16 @@ def find_best_model(
     best_run = sweep.best_run()
     config = dict(best_run.config)
 
-    with init_wandb_run(name="config", job_type="find_best_model", group="model") as run:
+    with init_wandb_run(
+        name="config", job_type="find_best_model", group="model"
+    ) as run:
         config_path = OUTPUT_DIR / "best_config.json"
         with open(config_path, "w") as f:
             json.dump(config, f, indent=4)
 
-        metric_value = best_run.summary.get("validation", {}).get(validation_metric_key, 0)
+        metric_value = best_run.summary.get("validation", {}).get(
+            validation_metric_key, 0
+        )
         metadata = {
             "experiment": {
                 "name": best_run.name,
@@ -263,7 +265,7 @@ def find_best_model(
                 "validation": {
                     validation_metric_key: metric_value,
                 }
-            }
+            },
         }
         artifact = wandb.Artifact(
             name=f"best_model_config",
@@ -285,7 +287,7 @@ def find_best_model(
 
 
 def run_hyperparameter_optimization(
-        y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int = 24
+    y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int = 24
 ):
     sweep_id = wandb.sweep(sweep=sweep_configs, project=WANDB_PROJECT)
 
@@ -308,7 +310,7 @@ def run_sweep(y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int = 24):
 
 
 def build_and_train_model_cv(
-        config: dict, y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int = 24
+    config: dict, y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int = 24
 ):
     model = build_model(config)
     model, results = train_model_cv(model, y_train, X_train, fh=fh)
@@ -464,7 +466,7 @@ def evaluate(forecaster, y_test: pd.DataFrame, X_test: pd.DataFrame):
 
 
 def render(
-        timeseries: OrderedDictType[str, pd.DataFrame], prefix: Optional[str] = None
+    timeseries: OrderedDictType[str, pd.DataFrame], prefix: Optional[str] = None
 ):
     grouped_timeseries = OrderedDict()
     for split, df in timeseries.items():
@@ -505,18 +507,25 @@ def forecast(forecaster, X_test, fh: int = 24):
 
 
 def init_wandb_run(
-        name: str,
-        group: Optional[str] = None,
-        job_type: Optional[str] = None,
-        add_timestamp_to_name: bool = False,
-        project: str = WANDB_PROJECT,
-        entity: str = WANDB_ENTITY,
-        **kwargs,
+    name: str,
+    group: Optional[str] = None,
+    job_type: Optional[str] = None,
+    add_timestamp_to_name: bool = False,
+    project: str = WANDB_PROJECT,
+    entity: str = WANDB_ENTITY,
+    **kwargs,
 ):
     if add_timestamp_to_name:
         name = f"{name}_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}"
 
-    run = wandb.init(project=project, entity=entity, name=name, group=group, job_type=job_type, **kwargs)
+    run = wandb.init(
+        project=project,
+        entity=entity,
+        name=name,
+        group=group,
+        job_type=job_type,
+        **kwargs,
+    )
 
     return run
 
@@ -535,34 +544,26 @@ def attach_best_model_to_feature_store():
         "version": f"v{model_version}",
         "type": "model",
         "url": f"https://wandb.ai/{WANDB_ENTITY}/{WANDB_PROJECT}/artifacts/model/best_model/v{model_version}/overview",
-        "artifact_name": f"{WANDB_ENTITY}/{WANDB_PROJECT}/best_model:latest"
+        "artifact_name": f"{WANDB_ENTITY}/{WANDB_PROJECT}/best_model:latest",
     }
     feature_view.add_tag(name="wandb", value=fs_tag)
     feature_view.add_training_dataset_tag(
-        training_dataset_version=1,
-        name="wandb",
-        value=fs_tag
+        training_dataset_version=1, name="wandb", value=fs_tag
     )
 
     feature_store_metadata = {
         "feature_view": feature_view.name,
         "feature_view_version": feature_view.version,
-        "training_dataset_version": training_dataset_version
+        "training_dataset_version": training_dataset_version,
     }
 
     api = wandb.Api()
     artifact = api.artifact(f"{WANDB_ENTITY}/{WANDB_PROJECT}/best_model:latest")
-    artifact.metadata = {
-        **artifact.metadata,
-        "feature_store": feature_store_metadata
-    }
+    artifact.metadata = {**artifact.metadata, "feature_store": feature_store_metadata}
     artifact.save()
 
     artifact = api.artifact(f"{WANDB_ENTITY}/{WANDB_PROJECT}/best_model_config:latest")
-    artifact.metadata = {
-        **artifact.metadata,
-        "feature_store": feature_store_metadata
-    }
+    artifact.metadata = {**artifact.metadata, "feature_store": feature_store_metadata}
     artifact.save()
 
     # TODO: Also save model to Hopsworks model registry.

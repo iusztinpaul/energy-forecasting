@@ -55,12 +55,13 @@ def load_data_from_feature_store(fs: FeatureStore):
     return X, y
 
 
-
 def load_model_from_model_registry(fs: FeatureStore):
     feature_views = fs.get_feature_views("energy_consumption_denmark_view")
     feature_view = feature_views[-1]
 
-    model_metadata = feature_view.get_training_dataset_tag(name="wandb", training_dataset_version=1)
+    model_metadata = feature_view.get_training_dataset_tag(
+        name="wandb", training_dataset_version=1
+    )
     model_artifact_name = model_metadata["artifact_name"]
 
     api = wandb.Api()
@@ -94,15 +95,13 @@ def forecast(model, X: pd.DataFrame, fh: int = 24):
     start = latest_datetime + 1
     end = start + fh - 1
     fh_range = pd.date_range(
-        start=start.to_timestamp(),
-        end=end.to_timestamp(),
-        freq="H"
+        start=start.to_timestamp(), end=end.to_timestamp(), freq="H"
     )
     fh_range = pd.PeriodIndex(fh_range, freq="H")
 
     index = pd.MultiIndex.from_product(
         [all_areas, all_consumer_types, fh_range],
-        names=["area", "consumer_type", "datetime_utc"]
+        names=["area", "consumer_type", "datetime_utc"],
     )
     X_forecast = pd.DataFrame(index=index)
     X_forecast["area_exog"] = X_forecast.index.get_level_values(0)
