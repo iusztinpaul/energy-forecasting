@@ -20,6 +20,7 @@ WANDB_PROJECT = os.getenv("WANDB_PROJECT")
 FS_API_KEY = os.getenv("FS_API_KEY")
 
 
+# TODO: Configure fh.
 def main(fh: int = 24):
     project = hopsworks.login(api_key_value=FS_API_KEY, project="energy_consumption")
     fs = project.get_feature_store()
@@ -40,6 +41,7 @@ def load_data_from_feature_store(fs: FeatureStore):
     # TODO: Handle hopsworks versions overall.
     X, y = feature_view.get_training_data(training_dataset_version=1)
 
+    # TODO: Standardize these preprocessing steps in Hopsworks.
     # Set the index as is required by sktime.
     data = pd.concat([X, y], axis=1)
     data["datetime_utc"] = pd.PeriodIndex(data["datetime_utc"], freq="H")
@@ -118,6 +120,7 @@ def save(X: pd.DataFrame, y: pd.DataFrame, predictions: pd.DataFrame):
     bucket_name = "hourly-batch-predictions"
     bucket = storage_client.bucket(bucket_name=bucket_name)
 
+    # TODO: Standardize to blob process.
     X_blob = bucket.blob(blob_name="X.parquet")
     with X_blob.open("wb") as f:
         X.to_parquet(f)

@@ -98,6 +98,7 @@ sweep_configs = {
 }
 
 
+# TODO: Inject fh and validation_metric_key from config.
 def main(fh: int = 24, validation_metric_key: str = "MAPE"):
     y_train, y_test, X_train, X_test = get_dataset_hopsworks()
 
