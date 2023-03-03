@@ -64,6 +64,14 @@ def export_to_feature_store(filepath):
             description["name"], description["description"]
         )
 
+    energy_feature_group.statistics_config = {
+        "enabled": True,
+        "histograms": True,
+        "correlations": True
+    }
+    energy_feature_group.update_statistics_config()
+    energy_feature_group.compute_statistics()
+
 
 if __name__ == "__main__":
     export_to_feature_store("energy_consumption_data.parquet")

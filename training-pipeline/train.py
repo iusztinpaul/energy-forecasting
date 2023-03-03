@@ -1,6 +1,9 @@
+import json
 import logging
 import os
+import warnings
 from collections import OrderedDict
+from functools import partial
 from pathlib import Path
 from typing import OrderedDict as OrderedDictType, Optional
 
@@ -14,120 +17,209 @@ import wandb
 from category_encoders import hashing
 from dotenv import load_dotenv
 from sktime.forecasting.compose import make_reduction, ForecastingPipeline
+from sktime.forecasting.model_evaluation import evaluate as cv_evaluate
+from sktime.forecasting.model_selection import ExpandingWindowSplitter
 from sktime.forecasting.naive import NaiveForecaster
 from sktime.performance_metrics.forecasting import (
     mean_squared_percentage_error,
     mean_absolute_percentage_error,
+    MeanAbsolutePercentageError,
 )
 from sktime.transformations.series.adapt import TabularToSeriesAdaptor
 from sktime.transformations.series.date import DateTimeFeatures
 from sktime.transformations.series.summarize import WindowSummarizer
-from sktime.utils.plotting import plot_series
+from sktime.utils.plotting import plot_series, plot_windows
 
+import utils
+
+warnings.filterwarnings(action="ignore", category=FutureWarning, module="sktime")
 matplotlib.use("Agg")
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-load_dotenv()
+load_dotenv(dotenv_path="../.env.default")
+load_dotenv(dotenv_path="../.env", override=True)
 
-WANDB_ENTITY = "p-b-iusztin"
-WANDB_PROJECT = "energy_consumption"
+WANDB_ENTITY = os.getenv("WANDB_ENTITY")
+WANDB_PROJECT = os.getenv("WANDB_PROJECT")
 FS_API_KEY = os.getenv("FS_API_KEY")
+
+# TODO: Make output dir configurable
 OUTPUT_DIR = Path("output")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-sweep_configs = {
-    "method": "grid",
-    "metric": {"name": "validation.rmse", "goal": "minimize"},
-    "parameters": {
-        "n_estimators": {"values": [400, 800]},
-        "max_depth": {"values": [3, 5]},
-        "learning_rate": {"values": [0.05, 0.1]},
-        "bagging_fraction": {"values": [0.8, 1.0]},
-        "feature_fraction": {"values": [0.8, 1.0]},
-        "lambda_l2": {"values": [0.0, 0.01]},
-    },
-}
+# TODO: Inject sweep configs from YAML
+# TODO: Use random or bayesian search + early stopping
 # sweep_configs = {
 #     "method": "grid",
-#     "metric": {"name": "validation.rmse", "goal": "minimize"},
+#     "metric": {"name": "validation.MAPE", "goal": "minimize"},
 #     "parameters": {
-#         "n_estimators": {"values": [1000]},
-#         "max_depth": {"values": [3]},
-#         "learning_rate": {"values": [0.05]},
-#         "bagging_fraction": {"values": [0.8]},
-#         "feature_fraction": {"values": [0.8]},
-#         "lambda_l2": {"values": [0.0]},
+#         "forecaster__estimator__n_jobs": {"values": [-1]},
+#         "forecaster__estimator__n_estimators": {"values": [1000, 1200]},
+#         "forecaster__estimator__learning_rate": {"values": [0.1, 0.15]},
+#         "forecaster__estimator__max_depth": {"values": [-1, 4]},
+#         "forecaster__estimator__reg_lambda": {"values": [0.0, 0.01]},
+#         "daily_season__manual_selection": {"values": [["day_of_week", "hour_of_day"]]},
+#         "forecaster_transformers__window_summarizer__lag_feature__lag": {
+#             "values": [list(range(1, 25)), list(range(1, 49)), list(range(1, 73))]
+#         },
+#         "forecaster_transformers__window_summarizer__lag_feature__mean": {
+#             "values": [[[1, 24], [1, 48]], [[1, 24], [1, 48], [1, 72]]]
+#         },
+#         "forecaster_transformers__window_summarizer__lag_feature__std": {
+#             "values": [[[1, 24], [1, 48]], [[1, 24], [1, 48], [1, 72]]]
+#         },
+#         "forecaster_transformers__window_summarizer__n_jobs": {"values": [-1]},
 #     },
 # }
-# sweep_id = wandb.sweep(sweep=sweep_configs, project="energy_consumption")
+
+sweep_configs = {
+    "method": "grid",
+    "metric": {"name": "validation.MAPE", "goal": "minimize"},
+    "parameters": {
+        "forecaster__estimator__n_jobs": {"values": [-1]},
+        "forecaster__estimator__n_estimators": {"values": [1200]},
+        "forecaster__estimator__learning_rate": {"values": [0.15]},
+        "forecaster__estimator__max_depth": {"values": [-4]},
+        "forecaster__estimator__reg_lambda": {"values": [0.01]},
+        "daily_season__manual_selection": {"values": [["day_of_week", "hour_of_day"]]},
+        "forecaster_transformers__window_summarizer__lag_feature__lag": {
+            "values": [list(range(1, 73))]
+        },
+        "forecaster_transformers__window_summarizer__lag_feature__mean": {
+            "values": [[[1, 24], [1, 48], [1, 72]]]
+        },
+        "forecaster_transformers__window_summarizer__lag_feature__std": {
+            "values": [[[1, 24], [1, 48]]]
+        },
+        "forecaster_transformers__window_summarizer__n_jobs": {"values": [1]},
+    },
+}
 
 
-def main():
+def main(fh: int = 24, validation_metric_key: str = "MAPE"):
     y_train, y_test, X_train, X_test = get_dataset_hopsworks()
 
-    # TODO: Split the training functions between: build model & fit model.
-    baseline_forecaster = train_baseline(y_train, X_train)
+    baseline_forecaster = build_baseline_model()
+    baseline_forecaster = train_model(baseline_forecaster, y_train, X_train)
     y_pred_baseline, metrics_baseline = evaluate(baseline_forecaster, y_test, X_test)
     for k, v in metrics_baseline.items():
-        logger.info(f"Baseline {k.upper()}: {v}")
+        logger.info(f"Baseline test {k.upper()}: {v}")
 
-    forecaster = train_sweep(y_train, X_train)
-    y_pred, metrics = evaluate(forecaster, y_test, X_test)
-    for k, v in metrics.items():
-        logger.info(f"Model {k.upper()}: {v}")
-
-    results = OrderedDict({"y_train": y_train, "y_test": y_test, "y_pred": y_pred})
-    render(results, prefix="images_test")
-
-    forecaster = forecaster.update(y_test, X=X_test)
-    # TODO: Make the forecast function independent from X_test.
-    y_forecast = forecast(forecaster, X_test)
-    results = OrderedDict(
-        {
-            "y_train": y_train,
-            "y_test": y_test,
-            "y_forecast": y_forecast,
-        }
+    find_best_model(
+        y_train, X_train, fh=fh, validation_metric_key=validation_metric_key
     )
-    render(results, prefix="images_forecast")
+
+    best_forecaster = build_model_from_artifact()
+    with wandb.init(name="train_best_model", job_type="train_best_model", group="model") as run:
+        best_forecaster = train_model(best_forecaster, y_train, X_train)
+        save_model_path = OUTPUT_DIR / "best_model.pkl"
+        utils.save_model(best_forecaster, save_model_path)
+
+        y_pred, metrics = evaluate(best_forecaster, y_test, X_test)
+        for k, v in metrics.items():
+            logger.info(f"Model test {k.upper()}: {v}")
+
+        results = OrderedDict({"y_train": y_train, "y_test": y_test, "y_pred": y_pred})
+        render(results, prefix="images_test")
+
+        forecaster = best_forecaster.update(y_test, X=X_test)
+        # TODO: Make the forecast function independent from X_test.
+        y_forecast = forecast(forecaster, X_test)
+        results = OrderedDict(
+            {
+                "y_train": y_train,
+                "y_test": y_test,
+                "y_forecast": y_forecast,
+            }
+        )
+        render(results, prefix="images_forecast")
+
+        metadata = {
+            "results": {
+                "test": metrics
+            }
+        }
+        artifact = wandb.Artifact(
+            name="best_model",
+            type="model",
+            metadata=metadata
+        )
+        artifact.add_file(str(save_model_path))
+        run.log_artifact(artifact)
+
+    attach_best_model_to_feature_store()
 
 
 def get_dataset_hopsworks():
     project = hopsworks.login(api_key_value=FS_API_KEY, project="energy_consumption")
     fs = project.get_feature_store()
 
-    # Get the train, validation and test splits.
     feature_views = fs.get_feature_views("energy_consumption_denmark_view")
     feature_view = feature_views[-1]
+    # TODO: Get the latest training dataset.
+    # TODO: Handle hopsworks versions overall.
     X, y = feature_view.get_training_data(training_dataset_version=1)
 
-    # TODO: Call close?
+    with init_wandb_run(name="feature_view", job_type="load_dataset", group="dataset") as run:
+        fv_metadata = feature_view.to_dict()
+        fv_metadata["query"] = fv_metadata["query"].to_string()
+        fv_metadata["features"] = [f.name for f in fv_metadata["features"]]
+        fv_metadata["link"] = feature_view._feature_view_engine._get_feature_view_url(
+            feature_view
+        )
 
+        raw_data_at = wandb.Artifact(
+            name="energy_consumption_denmark_feature_view",
+            type="feature_view",
+            metadata=fv_metadata,
+        )
+        run.log_artifact(raw_data_at)
+
+    with init_wandb_run(name="train_test_split", job_type="prepare_dataset", group="dataset") as run:
+        y_train, y_test, X_train, X_test = prepare_data(X, y)
+
+        for split in ["train", "test"]:
+            split_X = locals()[f"X_{split}"]
+            split_y = locals()[f"y_{split}"]
+
+            split_metadata = {
+                "timespan": [split_X.index.min(), split_X.index.max()],
+                "y_features": split_y.columns.tolist(),
+                "X_features": split_X.columns.tolist(),
+            }
+            artifact = wandb.Artifact(
+                name=f"split_{split}",
+                type="split",
+                metadata=split_metadata,
+            )
+            run.log_artifact(artifact)
+
+    return y_train, y_test, X_train, X_test
+
+
+def prepare_data(X: pd.DataFrame, y: pd.DataFrame, fh: int = 24):
+    # Set the index as is required by sktime.
     data = pd.concat([X, y], axis=1)
     data["datetime_utc"] = pd.PeriodIndex(data["datetime_utc"], freq="H")
     data = data.set_index(["area", "consumer_type", "datetime_utc"]).sort_index()
 
+    # Prepare exogenous variables.
     X = data.drop(columns=["energy_consumption"])
     X["area_exog"] = X.index.get_level_values(0)
     X["consumer_type_exog"] = X.index.get_level_values(1)
+    # Prepare the time series to be forecasted.
     y = data[["energy_consumption"]]
 
-    y_train, y_test, X_train, X_test = prepare_data(X, y)
+    y_train, y_test, X_train, X_test = create_train_test_split(y, X, fh=fh)
 
     return y_train, y_test, X_train, X_test
 
 
-def prepare_data(X: pd.DataFrame, y: pd.DataFrame, periods: int = 24):
-    y_train, y_test, X_train, X_test = create_train_test_split(y, X, periods=periods)
-
-    return y_train, y_test, X_train, X_test
-
-
-def create_train_test_split(y: pd.DataFrame, X: pd.DataFrame, periods: int):
+def create_train_test_split(y: pd.DataFrame, X: pd.DataFrame, fh: int):
     max_datetime = y.index.get_level_values(-1).max()
-    min_datetime = max_datetime - periods + 1
+    min_datetime = max_datetime - fh + 1
 
     # TODO: Double check this mask.
     test_mask = y.index.get_level_values(-1) >= min_datetime
@@ -142,30 +234,185 @@ def create_train_test_split(y: pd.DataFrame, X: pd.DataFrame, periods: int):
     return y_train, y_test, X_train, X_test
 
 
-def train_baseline(y_train: pd.DataFrame, X_train: pd.DataFrame, periods: int = 24):
-    fh = np.arange(periods) + 1
+def find_best_model(
+        y_train: pd.DataFrame,
+        X_train: pd.DataFrame,
+        fh: int = 24,
+        validation_metric_key: str = "MAPE",
+) -> dict:
+    sweep_id = run_hyperparameter_optimization(y_train, X_train, fh=fh)
 
+    api = wandb.Api()
+    sweep = api.sweep(f"{WANDB_ENTITY}/{WANDB_PROJECT}/{sweep_id}")
+    best_run = sweep.best_run()
+    config = dict(best_run.config)
+
+    with init_wandb_run(name="config", job_type="find_best_model", group="model") as run:
+        config_path = OUTPUT_DIR / "best_config.json"
+        with open(config_path, "w") as f:
+            json.dump(config, f, indent=4)
+
+        metric_value = best_run.summary.get("validation", {}).get(validation_metric_key, 0)
+        metadata = {
+            "experiment": {
+                "name": best_run.name,
+            },
+            "results": {
+                "validation": {
+                    validation_metric_key: metric_value,
+                }
+            }
+        }
+        artifact = wandb.Artifact(
+            name=f"best_model_config",
+            type="model",
+            metadata=metadata,
+        )
+        artifact.add_file(str(config_path))
+        run.log_artifact(artifact)
+
+    logger.info(f"Best run {best_run.name}")
+    logger.info("Best run config:")
+    logger.info(config)
+
+    logger.info(
+        f"Best run = {best_run.name} with validation {validation_metric_key} = {metric_value}"
+    )
+
+    return config
+
+
+def run_hyperparameter_optimization(
+        y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int = 24
+):
+    sweep_id = wandb.sweep(sweep=sweep_configs, project=WANDB_PROJECT)
+
+    wandb.agent(
+        project=WANDB_PROJECT,
+        sweep_id=sweep_id,
+        function=partial(run_sweep, y_train=y_train, X_train=X_train, fh=fh),
+    )
+
+    return sweep_id
+
+
+def run_sweep(y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int = 24):
+    with init_wandb_run(name="experiment", job_type="hpo", add_timestamp_to_name=True):
+        config = wandb.config
+
+        model, results = build_and_train_model_cv(dict(config), y_train, X_train, fh=fh)
+
+        wandb.log(results)
+
+
+def build_and_train_model_cv(
+        config: dict, y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int = 24
+):
+    model = build_model(config)
+    model, results = train_model_cv(model, y_train, X_train, fh=fh)
+
+    return model, results
+
+
+def train_model_cv(model, y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int = 24):
+    # TODO: Find a smarter way to compute a 3 fold CV.
+    cv = ExpandingWindowSplitter(
+        step_length=fh * 9, fh=np.arange(fh) + 1, initial_window=fh * 4
+    )
+    render_cv_scheme(cv, y_train)
+
+    results = cv_evaluate(
+        forecaster=model,
+        y=y_train,
+        X=X_train,
+        cv=cv,
+        strategy="refit",
+        scoring=MeanAbsolutePercentageError(symmetric=False),
+        error_score="raise",
+        return_data=False,
+    )
+
+    results = results.rename(
+        columns={
+            "test_MeanAbsolutePercentageError": "MAPE",
+            "fit_time": "fit_time",
+            "pred_time": "prediction_time",
+        }
+    )
+    mean_results = results[["MAPE", "fit_time", "prediction_time"]].mean(axis=0)
+    mean_results = mean_results.to_dict()
+    results = {"validation": mean_results}
+
+    logger.info(f"Validation MAPE: {results['validation']['MAPE']:.2f}")
+    logger.info(f"Mean fit time: {results['validation']['fit_time']:.2f} s")
+    logger.info(f"Mean predict time: {results['validation']['prediction_time']:.2f} s")
+
+    return model, results
+
+
+def train_model(model, y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int = 24):
+    fh = np.arange(fh) + 1
+
+    model.fit(y_train, X=X_train, fh=fh)
+
+    return model
+
+
+def render_cv_scheme(cv, y_train: pd.DataFrame):
+    random_time_series = (
+        y_train.groupby(level=[0, 1])
+        .get_group((1, 111))
+        .reset_index(level=[0, 1], drop=True)
+    )
+    plot_windows(cv, random_time_series)
+
+    plt.savefig(OUTPUT_DIR / f"cv_scheme.png")
+
+    # TODO: Save to wandb
+
+
+def build_baseline_model():
     forecaster = NaiveForecaster(sp=24)
-    forecaster.fit(y_train, X=X_train, fh=fh)
 
     return forecaster
 
 
-def train_sweep(y_train: pd.DataFrame, X_train: pd.DataFrame, periods: int = 24):
-    fh = np.arange(periods) + 1
+def build_model_from_artifact():
+    with init_wandb_run(name="config", job_type="best_model", group="model") as run:
+        artifact = run.use_artifact(
+            "best_model_config:latest",
+            type="model",
+        )
+        download_dir = artifact.download()
+        config_path = Path(download_dir) / "best_config.json"
+        with open(config_path) as f:
+            config = json.load(f)
 
+    model = build_model(config)
+
+    return model
+
+
+def build_model(config: dict):
+    lag = config.pop(
+        "forecaster_transformers__window_summarizer__lag_feature__lag",
+        list(range(1, 72 + 1)),
+    )
+    mean = config.pop(
+        "forecaster_transformers__window_summarizer__lag_feature__mean",
+        [[1, 24], [1, 48], [1, 72]],
+    )
+    std = config.pop(
+        "forecaster_transformers__window_summarizer__lag_feature__std",
+        [[1, 24], [1, 48], [1, 72]],
+    )
+    n_jobs = config.pop("forecaster_transformers__window_summarizer__n_jobs", 1)
     window_summarizer = WindowSummarizer(
-        **{
-            "lag_feature": {
-                "lag": list(range(1, 72 + 1)),
-                "mean": [[1, 24], [1, 48], [1, 72]],
-                "std": [[1, 24], [1, 48], [1, 72]],
-            }
-        },
-        n_jobs=1,
+        **{"lag_feature": {"lag": lag, "mean": mean, "std": std}},
+        n_jobs=n_jobs,
     )
 
-    regressor = lgb.LGBMRegressor(n_estimators=1000)
+    regressor = lgb.LGBMRegressor()
     forecaster = make_reduction(
         regressor,
         transformers=[window_summarizer],
@@ -200,8 +447,7 @@ def train_sweep(y_train: pd.DataFrame, X_train: pd.DataFrame, periods: int = 24)
             ("forecaster", forecaster),
         ]
     )
-
-    pipe.fit(y_train, X=X_train, fh=fh)
+    pipe = pipe.set_params(**config)
 
     return pipe
 
@@ -210,13 +456,13 @@ def evaluate(forecaster, y_test: pd.DataFrame, X_test: pd.DataFrame):
     y_pred = forecaster.predict(X=X_test)
 
     rmspe = mean_squared_percentage_error(y_test, y_pred, squared=False)
-    mape = mean_absolute_percentage_error(y_test, y_pred)
+    mape = mean_absolute_percentage_error(y_test, y_pred, symmetric=False)
 
     return y_pred, {"rmspe": rmspe, "mape": mape}
 
 
 def render(
-    timeseries: OrderedDictType[str, pd.DataFrame], prefix: Optional[str] = None
+        timeseries: OrderedDictType[str, pd.DataFrame], prefix: Optional[str] = None
 ):
     grouped_timeseries = OrderedDict()
     for split, df in timeseries.items():
@@ -242,11 +488,13 @@ def render(
         plt.savefig(output_dir / f"{group_name[0]}_{group_name[1]}.png")
         plt.close(fig)
 
+        # TODO: Save to wandb.
 
-def forecast(forecaster, X_test, periods: int = 24):
+
+def forecast(forecaster, X_test, fh: int = 24):
     X_forecast = X_test.copy()
     X_forecast.index.set_levels(
-        X_forecast.index.levels[-1] + periods, level=-1, inplace=True
+        X_forecast.index.levels[-1] + fh, level=-1, inplace=True
     )
 
     y_forecast = forecaster.predict(X=X_forecast)
@@ -254,239 +502,69 @@ def forecast(forecaster, X_test, periods: int = 24):
     return y_forecast
 
 
-# def get_dataset(data_path: str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-#     # load data
-#     df = utils.load_data_from_parquet(data_path)
-#     # preprocess data
-#     train_df, validation_df, test_df = preprocess.split_data(df)
-#     train_df, validation_df, test_df = preprocess.encode_categorical(
-#         train_df, validation_df, test_df
-#     )
-#
-#     metadata = {
-#         "features": list(df.columns),
-#     }
-#     with init_wandb_run(name="feature_view", job_type="upload_feature_view") as run:
-#         raw_data_at = wandb.Artifact(
-#             "energy_consumption_data",
-#             type="feature_view",
-#             metadata=metadata,
-#         )
-#         run.log_artifact(raw_data_at)
-#
-#     with init_wandb_run(name="train_validation_test_split", job_type="split") as run:
-#         data_at = run.use_artifact("energy_consumption_data:latest")
-#         data_dir = data_at.download()
-#
-#         artifacts = {}
-#         for split in ["train", "validation", "test"]:
-#             split_df = locals()[f"{split}_df"]
-#             starting_datetime = split_df["datetime_utc"].min()
-#             ending_datetime = split_df["datetime_utc"].max()
-#             metadata = {
-#                 "starting_datetime": starting_datetime,
-#                 "ending_datetime": ending_datetime,
-#             }
-#
-#             artifacts[split] = wandb.Artifact(
-#                 f"{split}_split", type="split", metadata=metadata
-#             )
-#
-#         for split, artifact in artifacts.items():
-#             run.log_artifact(artifact)
-#
-#     return train_df, validation_df, test_df
-
-
-# def train_sweep(
-#     train_df: pd.DataFrame,
-#     validation_df: pd.DataFrame,
-#     target: str = "energy_consumption_future_hours_0",
-# ) -> lgb.LGBMRegressor:
-#     """
-#     Function that is training a LGBM model.
-#
-#      Args:
-#          train_df: Training data.
-#          validation_df: Validation data.
-#          target: Name of the target column.
-#
-#      Returns: Trained LightGBM model
-#     """
-#
-#     with init_wandb_run(name="experiment", job_type="hpo") as run:
-#         config = wandb.config
-#         data_at = run.use_artifact(
-#             f"{WANDB_ENTITY}/{WANDB_PROJECT}/test_split:latest", type="split"
-#         )
-#         data_at = run.use_artifact(
-#             f"{WANDB_ENTITY}/{WANDB_PROJECT}/train_split:latest", type="split"
-#         )
-#
-#         model = train_lgbm_regressor(df=train_df, target=target, config=config)
-#
-#         # evaluate model
-#         rmse = evaluate_model(model, train_df, target=target)
-#         logger.info(f"Train RMSE: {rmse:.2f}")
-#         logger.info(
-#             f"Train Mean Energy Consumption: {train_df['energy_consumption_future_hours_0'].mean():.2f}"
-#         )
-#         wandb.log({"train": {"rmse": rmse}})
-#
-#         rmse = evaluate_model(model, validation_df, target=target)
-#         logger.info(f"Validation RMSE: {rmse:.2f}")
-#         logger.info(
-#             f"Validation Mean Energy Consumption: {validation_df['energy_consumption_future_hours_0'].mean():.2f}"
-#         )
-#         wandb.log({"validation": {"rmse": rmse}})
-#
-#     return model
-
-
-# def train_lgbm_regressor(
-#     df: pd.DataFrame, target: str, config: dict, **kwargs
-# ) -> lgb.LGBMRegressor:
-#     model = lgb.LGBMRegressor(
-#         objective=config.get("objective", "regression"),
-#         metric=config.get("metric", "rmse"),
-#         n_estimators=config["n_estimators"],
-#         max_depth=config["max_depth"],
-#         learning_rate=config["learning_rate"],
-#         bagging_fraction=config["bagging_fraction"],
-#         feature_fraction=config["feature_fraction"],
-#         lambda_l2=config["lambda_l2"],
-#         n_jobs=-1,
-#         random_state=42,
-#         **kwargs,
-#     )
-#
-#     feature_columns = list(set(df.columns) - set([target, "datetime_utc"]))
-#     model.fit(X=df[feature_columns], y=df[target])
-#
-#     return model
-
-
-# def evaluate_model(model, df: pd.DataFrame, target: str):
-#     """
-#     Template for evaluating a model.
-#
-#     Args:
-#         model: Trained model.
-#         df: Dataframe containing the evaluation data.
-#         target: Name of the target column.
-#
-#     Returns: RMSE
-#     """
-#
-#     feature_columns = list(set(df.columns) - set([target, "datetime_utc"]))
-#     y_pred = model.predict(df[feature_columns])
-#     y_true = df[target]
-#
-#     return mean_squared_error(y_true, y_pred, squared=False)
-
-
 def init_wandb_run(
-    name: str, project: str = WANDB_PROJECT, entity: str = WANDB_ENTITY, **kwargs
+        name: str,
+        group: Optional[str] = None,
+        job_type: Optional[str] = None,
+        add_timestamp_to_name: bool = False,
+        project: str = WANDB_PROJECT,
+        entity: str = WANDB_ENTITY,
+        **kwargs,
 ):
-    name = f"{name}_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}"
+    if add_timestamp_to_name:
+        name = f"{name}_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}"
 
-    run = wandb.init(project=project, entity=entity, name=name, **kwargs)
+    run = wandb.init(project=project, entity=entity, name=name, group=group, job_type=job_type, **kwargs)
 
     return run
 
 
-# def train_best_model(
-#     train_df: pd.DataFrame,
-#     validation_df: pd.DataFrame,
-#     test_df: pd.DataFrame,
-#     save_model_dir: str = "../models",
-#     target: str = "energy_consumption_future_hours_0",
-# ) -> None:
-#     """
-#     Template for training a model.
-#
-#     Args:
-#         train_df: Training data.
-#         validation_df: Validation data.
-#         test_df: Test data.
-#         save_model_dir: Directory where the models will be saved.
-#         target: Name of the target column.
-#     """
-#
-#     api = wandb.Api()
-#     sweep = api.sweep(f"{WANDB_ENTITY}/{WANDB_PROJECT}/sweeps/{sweep_id}")
-#     best_run = sweep.best_run()
-#     config = best_run.config
-#     config_quantile = config.copy()
-#     config_quantile["objective"] = "quantile"
-#     config_quantile["metric"] = "quantile"
-#
-#     # train on everything for the final model
-#     save_model_dir = Path(save_model_dir)
-#     save_model_dir.mkdir(parents=True, exist_ok=True)
-#
-#     with init_wandb_run(name="best_model", job_type="best_model") as run:
-#         results = {"test": {}}
-#         models = {}
-#         for quantile in [0.05, 0.5, 0.95]:
-#             # train on train + validation split to compute test score
-#             model = train_lgbm_regressor(
-#                 df=pd.concat([train_df, validation_df], axis=0),
-#                 target=target,
-#                 config=config_quantile,
-#                 alpha=quantile,
-#             )
-#
-#             rmse = evaluate_model(
-#                 model, test_df, target="energy_consumption_future_hours_0"
-#             )
-#             logger.info(f"[quantile = {quantile}] Test RMSE: {rmse:.2f}")
-#             logger.info(
-#                 f"[quantile = {quantile}] Test Mean Energy Consumption: {test_df['energy_consumption_future_hours_0'].mean():.2f}"
-#             )
-#             results["test"] = {
-#                 f"rmse_{quantile=}": rmse,
-#             }
-#
-#             # train on all the dataset for the final model
-#             model = train_lgbm_regressor(
-#                 df=pd.concat([train_df, validation_df, test_df], axis=0),
-#                 target=target,
-#                 config=config_quantile,
-#                 alpha=quantile,
-#             )
-#             models[quantile] = model
-#             model_path = str(
-#                 save_model_dir / f"energy_consumption_model_quantile={quantile}.pkl"
-#             )
-#             utils.save_model(model, model_path)
-#
-#             metadata = dict(config_quantile)
-#             metadata["target"] = target
-#             metadata["test_rmse"] = rmse
-#             description = f"""
-#             LightGBM Regressor trained on the whole dataset with the best hyperparameters found
-#             using wandb sweeps as a hyperparamter tuning tool.
-#             The model is trained with {quantile=} and {target=}.
-#             """
-#             model_artifact = wandb.Artifact(
-#                 f"LGBMRegressorQuantile{quantile}",
-#                 type=f"model",
-#                 description=description,
-#                 metadata=metadata,
-#             )
-#             # wandb.save(model_path)
-#             model_artifact.add_file(model_path)
-#
-#             run.log_artifact(model_artifact)
-#
-#         wandb.log(results)
+def attach_best_model_to_feature_store():
+    project = hopsworks.login(api_key_value=FS_API_KEY, project="energy_consumption")
+    fs = project.get_feature_store()
+
+    feature_views = fs.get_feature_views("energy_consumption_denmark_view")
+    feature_view = feature_views[-1]
+
+    model_version = 0
+    training_dataset_version = 2
+    fs_tag = {
+        "name": "best_model",
+        "version": f"v{model_version}",
+        "type": "model",
+        "url": f"https://wandb.ai/{WANDB_ENTITY}/{WANDB_PROJECT}/artifacts/model/best_model/v{model_version}/overview",
+        "artifact_name": f"{WANDB_ENTITY}/{WANDB_PROJECT}/best_model:latest"
+    }
+    feature_view.add_tag(name="wandb", value=fs_tag)
+    feature_view.add_training_dataset_tag(
+        training_dataset_version=1,
+        name="wandb",
+        value=fs_tag
+    )
+
+    feature_store_metadata = {
+        "feature_view": feature_view.name,
+        "feature_view_version": feature_view.version,
+        "training_dataset_version": training_dataset_version
+    }
+
+    api = wandb.Api()
+    artifact = api.artifact(f"{WANDB_ENTITY}/{WANDB_PROJECT}/best_model:latest")
+    artifact.metadata = {
+        **artifact.metadata,
+        "feature_store": feature_store_metadata
+    }
+    artifact.save()
+
+    artifact = api.artifact(f"{WANDB_ENTITY}/{WANDB_PROJECT}/best_model_config:latest")
+    artifact.metadata = {
+        **artifact.metadata,
+        "feature_store": feature_store_metadata
+    }
+    artifact.save()
+
+    # TODO: Also save model to Hopsworks model registry.
 
 
 if __name__ == "__main__":
     main()
-    # wandb.agent(
-    #     project="energy_consumption",
-    #     sweep_id=sweep_id,
-    #     function=partial(train_sweep, train_df=train_df, validation_df=validation_df),
-    # )
