@@ -141,6 +141,7 @@ energy_consumption/
 *.parquet
 models/
 output/
+artifacts/
 
 # Models
 *.pkl
