@@ -1,23 +1,13 @@
 import datetime
 import pandas as pd
 import requests
-import logging
 
 from yarl import URL
 
-if 'data_loader' not in globals():
-    from mage_ai.data_preparation.decorators import data_loader
-if 'test' not in globals():
-    from mage_ai.data_preparation.decorators import test
-
-
-@data_loader
-def load_data_from_api(*args, **kwargs):
+def load_api_data(*args, **kwargs):
     """
     Template for loading data from API
     """
-    
-    logging.basicConfig(level=logging.DEBUG)
 
     url = kwargs.get("api_url", "https://api.energidataservice.dk/dataset/ConsumptionDE35Hour") 
     url = URL(url)
@@ -44,10 +34,8 @@ def load_data_from_api(*args, **kwargs):
         "timezone": "utc",
         "start": export_start
     }
-    url = url % query_params
 
-    # TODO: Fix the logger. See why it is not working.
-    logging.info(f"Calling {url}")
+    url = url % query_params
 
     response = requests.get(url)
     response = response.json()
@@ -57,10 +45,3 @@ def load_data_from_api(*args, **kwargs):
 
     return records
 
-
-@test
-def test_output(df, *args) -> None:
-    """
-    Template code for testing the output of the block.
-    """
-    assert df is not None, 'The output is undefined'
