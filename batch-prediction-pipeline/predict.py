@@ -5,7 +5,6 @@ from typing import Union
 import hopsworks
 import joblib
 import pandas as pd
-import wandb
 
 from dotenv import load_dotenv
 from google.cloud import storage
@@ -26,7 +25,7 @@ def main(fh: int = 24):
     fs = project.get_feature_store()
 
     X, y = load_data_from_feature_store(fs)
-    model = load_model_from_model_registry(fs)
+    model = load_model_from_model_registry(project)
 
     predictions = forecast(model, X, fh=fh)
 
@@ -34,16 +33,21 @@ def main(fh: int = 24):
     read()
 
 
-def load_data_from_feature_store(fs: FeatureStore):
-    feature_views = fs.get_feature_views("energy_consumption_denmark_view")
-    feature_view = feature_views[-1]
-    # TODO: Get the latest training dataset.
-    # TODO: Handle hopsworks versions overall.
-    X, y = feature_view.get_training_data(training_dataset_version=1)
+def load_data_from_feature_store(fs: FeatureStore, feature_view_version: int = 4):
+    # TODO: Get latest feature view version.
+    feature_view = fs.get_feature_view(name="energy_consumption_denmark_view", version=feature_view_version)
+
+    current_datetime = pd.Timestamp.now(tz="UTC")
+    # Data is 15 days old, so we always have to shift it with 15 days back as our starting point.
+    current_datetime = current_datetime - pd.Timedelta(days=15)
+    start_datetime = current_datetime - pd.Timedelta(days=14)
+
+    data = feature_view.get_batch_data(
+        start_time=start_datetime, end_time=current_datetime
+    )
 
     # TODO: Standardize these preprocessing steps in Hopsworks.
     # Set the index as is required by sktime.
-    data = pd.concat([X, y], axis=1)
     data["datetime_utc"] = pd.PeriodIndex(data["datetime_utc"], freq="H")
     data = data.set_index(["area", "consumer_type", "datetime_utc"]).sort_index()
 
@@ -57,20 +61,12 @@ def load_data_from_feature_store(fs: FeatureStore):
     return X, y
 
 
-def load_model_from_model_registry(fs: FeatureStore):
-    feature_views = fs.get_feature_views("energy_consumption_denmark_view")
-    feature_view = feature_views[-1]
+def load_model_from_model_registry(project, model_version: int = 1):
+    mr = project.get_model_registry()
+    model_registry_reference = mr.get_model(name="best_model", version=model_version)
+    model_dir = model_registry_reference.download()
+    model_path = Path(model_dir) / "best_model.pkl"
 
-    model_metadata = feature_view.get_training_dataset_tag(
-        name="wandb", training_dataset_version=1
-    )
-    model_artifact_name = model_metadata["artifact_name"]
-
-    api = wandb.Api()
-    artifact = api.artifact(model_artifact_name)
-    download_dir = artifact.download()
-
-    model_path = Path(download_dir) / "best_model.pkl"
     model = load_model(model_path)
 
     return model

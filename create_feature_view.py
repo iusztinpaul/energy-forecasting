@@ -27,7 +27,8 @@ def main(target: str = "energy_consumption", **kwargs):
         name="energy_consumption_denmark_view",
         description="Energy consumption for Denmark forecasting model.",
         query=ds_query,
-        labels=[target],
+        labels=[]
+        # labels=[target],
         # transformation_functions=transformation_functions,
     )
 
