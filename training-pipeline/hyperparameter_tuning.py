@@ -1,4 +1,3 @@
-
 import json
 from functools import partial
 
@@ -53,9 +52,9 @@ sweep_configs = {
     "metric": {"name": "validation.MAPE", "goal": "minimize"},
     "parameters": {
         "forecaster__estimator__n_jobs": {"values": [-1]},
-        "forecaster__estimator__n_estimators": {"values": [1500, 2000, 100]},
+        "forecaster__estimator__n_estimators": {"values": [1000, 2000, 100]},
         "forecaster__estimator__learning_rate": {"values": [0.15]},
-        "forecaster__estimator__max_depth": {"values": [-4]},
+        "forecaster__estimator__max_depth": {"values": [4]},
         "forecaster__estimator__reg_lambda": {"values": [0.01]},
         "daily_season__manual_selection": {"values": [["day_of_week", "hour_of_day"]]},
         "forecaster_transformers__window_summarizer__lag_feature__lag": {
@@ -73,57 +72,12 @@ sweep_configs = {
 
 
 # TODO: Inject fh and validation_metric_key from config.
-def main(fh: int = 24):
+def main(fh: int = 24) -> str:
     y_train, y_test, X_train, X_test = load_dataset_from_feature_store()
 
-    find_best_model(
-        y_train, X_train, fh=fh
-    )
-
-
-def find_best_model(
-    y_train: pd.DataFrame,
-    X_train: pd.DataFrame,
-    fh: int,
-) -> dict:
     sweep_id = run_hyperparameter_optimization(y_train, X_train, fh=fh)
 
-    api = wandb.Api()
-    sweep = api.sweep(f"{CREDENTIALS['WANDB_ENTITY']}/{CREDENTIALS['WANDB_PROJECT']}/{sweep_id}")
-    best_run = sweep.best_run()
-
-    with init_wandb_run(
-        name="best_experiment", job_type="hpo", group="train", run_id=best_run.id
-    ) as run:
-        # TODO: Try to initialize from scratch the run with the best config and NOT to override the last run.
-        #   Otherwise it might override the wrong run.
-        #   IDEA: Initialize the run with the id of the best_run --->
-        #   !!! Now it takes the latest run, maybe the sweep.best_run() method is returning the wrong run.
-        best_config_artifact = run.use_artifact("config:latest")
-        best_config = best_config_artifact.metadata["config"]
-
-        logger.info(f"Best run {best_run.name}")
-        logger.info("Best run config:")
-        logger.info(best_config)
-        logger.info(
-            f"Best run = {best_run.name} with results {best_config_artifact.metadata['results']}"
-        )
-
-        config_path = OUTPUT_DIR / "best_config.json"
-        with open(config_path, "w") as f:
-            json.dump(best_config, f, indent=4)
-
-        artifact = wandb.Artifact(
-            name=f"best_config",
-            type="model",
-            metadata=best_config_artifact.metadata,
-        )
-        artifact.add_file(str(config_path))
-        run.log_artifact(artifact)
-
-        run.finish()
-
-    return best_config
+    return sweep_id
 
 
 def run_hyperparameter_optimization(
@@ -141,7 +95,9 @@ def run_hyperparameter_optimization(
 
 
 def run_sweep(y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int = 24):
-    with init_wandb_run(name="experiment", job_type="hpo", group="train", add_timestamp_to_name=True) as run:
+    with init_wandb_run(
+        name="experiment", job_type="hpo", group="train", add_timestamp_to_name=True
+    ) as run:
         run.use_artifact("split_train:latest")
 
         config = wandb.config

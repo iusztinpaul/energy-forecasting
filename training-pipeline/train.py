@@ -32,9 +32,6 @@ def main(fh: int = 24):
     with utils.init_wandb_run(
         name="best_model", job_type="train_best_model", group="train", reinit=True
     ) as run:
-        # TODO: Try to initialize from scratch the run with the best config and NOT to override the last run.
-        #    Otherwise the artifact lineage won't be correct.
-        #    IDEA: Move the find_best_model() function in a different process.
         run.use_artifact("split_train:latest")
         run.use_artifact("split_test:latest")
         # Load the best config from sweep.
