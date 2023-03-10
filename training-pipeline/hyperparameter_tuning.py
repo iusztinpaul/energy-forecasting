@@ -23,39 +23,15 @@ logger = utils.get_logger(__name__)
 
 # TODO: Inject sweep configs from YAML
 # TODO: Use random or bayesian search + early stopping
-# sweep_configs = {
-#     "method": "grid",
-#     "metric": {"name": "validation.MAPE", "goal": "minimize"},
-#     "parameters": {
-#         "forecaster__estimator__n_jobs": {"values": [-1]},
-#         "forecaster__estimator__n_estimators": {"values": [1500, 1700, 2000]},
-#         "forecaster__estimator__learning_rate": {"values": [0.1, 0.15]},
-#         "forecaster__estimator__max_depth": {"values": [-1, 4]},
-#         "forecaster__estimator__reg_lambda": {"values": [0.0, 0.01]},
-#         "daily_season__manual_selection": {"values": [["day_of_week", "hour_of_day"]]},
-#         "forecaster_transformers__window_summarizer__lag_feature__lag": {
-#             "values": [list(range(1, 25)), list(range(1, 49)), list(range(1, 73))]
-#         },
-#         "forecaster_transformers__window_summarizer__lag_feature__mean": {
-#             "values": [[[1, 24], [1, 48]], [[1, 24], [1, 48], [1, 72]]]
-#         },
-#         "forecaster_transformers__window_summarizer__lag_feature__std": {
-#             "values": [[[1, 24], [1, 48]], [[1, 24], [1, 48], [1, 72]]]
-#         },
-#         "forecaster_transformers__window_summarizer__n_jobs": {"values": [-1]},
-#     },
-# }
-
-
 sweep_configs = {
     "method": "grid",
     "metric": {"name": "validation.MAPE", "goal": "minimize"},
     "parameters": {
         "forecaster__estimator__n_jobs": {"values": [-1]},
-        "forecaster__estimator__n_estimators": {"values": [1000, 2000, 100]},
-        "forecaster__estimator__learning_rate": {"values": [0.15]},
-        "forecaster__estimator__max_depth": {"values": [4]},
-        "forecaster__estimator__reg_lambda": {"values": [0.01]},
+        "forecaster__estimator__n_estimators": {"values": [1000, 2000, 2500]},
+        "forecaster__estimator__learning_rate": {"values": [0.1, 0.15]},
+        "forecaster__estimator__max_depth": {"values": [-1, 5]},
+        "forecaster__estimator__reg_lambda": {"values": [0, 0.01, 0.015]},
         "daily_season__manual_selection": {"values": [["day_of_week", "hour_of_day"]]},
         "forecaster_transformers__window_summarizer__lag_feature__lag": {
             "values": [list(range(1, 73))]
@@ -137,6 +113,7 @@ def train_model_cv(
     )
     render_cv_scheme(cv, y_train)
 
+    # TODO: Check - Is the model trained or just evaluated in cv_evaluate() ?
     results = cv_evaluate(
         forecaster=model,
         y=y_train,

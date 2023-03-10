@@ -69,19 +69,17 @@ def load_dataset_from_feature_store(
     return y_train, y_test, X_train, X_test
 
 
-def prepare_data(data: pd.DataFrame, fh: int = 24):
-    # TODO: Move these transformation to the FS. They are repeated in the batch prediction pipeline.
+def prepare_data(data: pd.DataFrame, target: str = "energy_consumption", fh: int = 24):
+    # TODO: Can I move the index preparation to the model pipeline?
 
     # Set the index as is required by sktime.
     data["datetime_utc"] = pd.PeriodIndex(data["datetime_utc"], freq="H")
     data = data.set_index(["area", "consumer_type", "datetime_utc"]).sort_index()
 
     # Prepare exogenous variables.
-    X = data.drop(columns=["energy_consumption"])
-    X["area_exog"] = X.index.get_level_values(0)
-    X["consumer_type_exog"] = X.index.get_level_values(1)
+    X = data.drop(columns=[target])
     # Prepare the time series to be forecasted.
-    y = data[["energy_consumption"]]
+    y = data[[target]]
 
     y_train, y_test, X_train, X_test = create_train_test_split(y, X, fh=fh)
 

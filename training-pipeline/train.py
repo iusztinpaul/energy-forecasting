@@ -25,12 +25,12 @@ from models import build_model, build_baseline_model
 logger = utils.get_logger(__name__)
 
 
-# TODO: Inject fh and validation_metric_key from config.
+# TODO: Inject fh from config.
 def main(fh: int = 24):
     y_train, y_test, X_train, X_test = load_dataset_from_feature_store()
 
     with utils.init_wandb_run(
-        name="best_model", job_type="train_best_model", group="train", reinit=True
+        name="best_model", job_type="train_best_model", group="train", reinit=True, add_timestamp_to_name=True
     ) as run:
         run.use_artifact("split_train:latest")
         run.use_artifact("split_test:latest")
@@ -44,7 +44,6 @@ def main(fh: int = 24):
         with open(config_path) as f:
             config = json.load(f)
         # Log the config to the experiment.
-        # TODO: Check why the config lacks forecaster_transformers__window_summarizer__lag_feature__std, etc fields.
         run.config.update(config)
 
         # Baseline model
@@ -63,7 +62,7 @@ def main(fh: int = 24):
         best_model = build_model(config)
         best_forecaster = train_model(best_model, y_train, X_train, fh=fh)
 
-        # Evaluate best model
+        # # Evaluate best model
         y_pred, metrics = evaluate(best_forecaster, y_test, X_test)
         for k, v in metrics.items():
             logger.info(f"Model test {k}: {v}")
@@ -156,6 +155,7 @@ def render(
 
 
 def forecast(forecaster, X_test, fh: int = 24):
+    # TODO: Make this function independent from X_test.
     X_forecast = X_test.copy()
     X_forecast.index.set_levels(
         X_forecast.index.levels[-1] + fh, level=-1, inplace=True

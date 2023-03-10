@@ -33,11 +33,11 @@ def main(fh: int = 24):
     read()
 
 
-def load_data_from_feature_store(fs: FeatureStore, feature_view_version: int = 4):
-    # TODO: Get latest feature view version.
+def load_data_from_feature_store(fs: FeatureStore, target: str = "energy_consumption", feature_view_version: int = 4):
     feature_view = fs.get_feature_view(name="energy_consumption_denmark_view", version=feature_view_version)
 
-    current_datetime = pd.Timestamp.now(tz="UTC")
+    # TODO: Set these days somewhere outside the script.
+    current_datetime = pd.Timestamp.now(tz="UTC").replace(minute=0, second=0, microsecond=0)
     # Data is 15 days old, so we always have to shift it with 15 days back as our starting point.
     current_datetime = current_datetime - pd.Timedelta(days=15)
     start_datetime = current_datetime - pd.Timedelta(days=14)
@@ -46,17 +46,15 @@ def load_data_from_feature_store(fs: FeatureStore, feature_view_version: int = 4
         start_time=start_datetime, end_time=current_datetime
     )
 
-    # TODO: Standardize these preprocessing steps in Hopsworks.
+    # TODO: Can I move the index preparation to the model pipeline?
     # Set the index as is required by sktime.
     data["datetime_utc"] = pd.PeriodIndex(data["datetime_utc"], freq="H")
     data = data.set_index(["area", "consumer_type", "datetime_utc"]).sort_index()
 
     # Prepare exogenous variables.
-    X = data.drop(columns=["energy_consumption"])
-    X["area_exog"] = X.index.get_level_values(0)
-    X["consumer_type_exog"] = X.index.get_level_values(1)
+    X = data.drop(columns=[target])
     # Prepare the time series to be forecasted.
-    y = data[["energy_consumption"]]
+    y = data[[target]]
 
     return X, y
 
@@ -86,6 +84,7 @@ def load_model(model_path: Union[str, Path]):
 
 
 def forecast(model, X: pd.DataFrame, fh: int = 24):
+    # TODO: Make this function independent of X.
     all_areas = X.index.get_level_values(level=0).unique()
     all_consumer_types = X.index.get_level_values(level=1).unique()
     latest_datetime = X.index.get_level_values(level=2).max()
@@ -131,6 +130,7 @@ def save(X: pd.DataFrame, y: pd.DataFrame, predictions: pd.DataFrame):
 
 
 def read():
+    # TODO: Delete this function.
     storage_client = storage.Client()
 
     bucket_name = "hourly-batch-predictions"
@@ -139,16 +139,19 @@ def read():
     X_blob = bucket.blob(blob_name="X.parquet")
     with X_blob.open("rb") as f:
         X = pd.read_parquet(f)
+        print("X:")
         print(X.head())
 
     y_blob = bucket.blob(blob_name="y.parquet")
     with y_blob.open("rb") as f:
         y = pd.read_parquet(f)
+        print("y:")
         print(y.head())
 
     predictions_blob = bucket.blob(blob_name="predictions.parquet")
     with predictions_blob.open("rb") as f:
         predictions = pd.read_parquet(f)
+        print("predictions:")
         print(predictions.head())
 
 

@@ -6,6 +6,8 @@ from sktime.transformations.series.adapt import TabularToSeriesAdaptor
 from sktime.transformations.series.date import DateTimeFeatures
 from sktime.transformations.series.summarize import WindowSummarizer
 
+import transformers
+
 
 def build_model(config: dict):
     lag = config.pop(
@@ -38,24 +40,18 @@ def build_model(config: dict):
     pipe = ForecastingPipeline(
         steps=[
             (
+                "attach_area_and_consumer_type",
+                transformers.AttachAreaConsumerType()
+            ),
+            (
+              "encode_categorical",
+              transformers.HashingEncoder(cols=["area_exog", "consumer_type_exog"], n_components=8)
+             ),
+            (
                 "daily_season",
                 DateTimeFeatures(
                     manual_selection=["day_of_week", "hour_of_day"],
                     keep_original_columns=True,
-                ),
-                (
-                    "encode_categorical",
-                    TabularToSeriesAdaptor(
-                        hashing.HashingEncoder(
-                            return_df=True,
-                            cols=[
-                                "area",
-                                "consumer_type",
-                                "day_of_week",
-                                "hour_of_day",
-                            ],
-                        )
-                    ),
                 ),
             ),
             ("forecaster", forecaster),
