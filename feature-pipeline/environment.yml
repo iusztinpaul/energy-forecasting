@@ -16,3 +16,4 @@ dependencies:
     - category-encoders==2.6.0
     - fire==0.5.0
     - python-dotenv==0.21.1
+    - yarl==1.8.2
