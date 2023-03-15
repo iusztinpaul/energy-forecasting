@@ -5,7 +5,7 @@ from hsfs.feature_group import FeatureGroup
 from settings import CREDENTIALS
 
 
-def to_feature_store(data: pd.DataFrame) -> FeatureGroup:
+def to_feature_store(data: pd.DataFrame, validation_expectation_suite) -> FeatureGroup:
     # Connect to feature store.
     project = hopsworks.login(api_key_value=CREDENTIALS["FS_API_KEY"], project="energy_consumption")
     feature_store = project.get_feature_store()
@@ -18,6 +18,12 @@ def to_feature_store(data: pd.DataFrame) -> FeatureGroup:
         primary_key=["area", "consumer_type"],
         event_time="datetime_utc",
         online_enabled=False,
+    )
+    # TODO: Is it ok to add the expectation suite here?
+    # Save validation expectation suite.
+    energy_feature_group.save_expectation_suite(
+        expectation_suite=validation_expectation_suite,
+        validation_ingestion_policy="STRICT",
     )
     energy_feature_group.insert(data)
 
@@ -56,5 +62,14 @@ def to_feature_store(data: pd.DataFrame) -> FeatureGroup:
         energy_feature_group.update_feature_description(
             description["name"], description["description"]
         )
+
+    # Update statistics.
+    energy_feature_group.statistics_config = {
+        "enabled": True,
+        "histograms": True,
+        "correlations": True
+    }
+    energy_feature_group.update_statistics_config()
+    energy_feature_group.compute_statistics()
         
     return energy_feature_group

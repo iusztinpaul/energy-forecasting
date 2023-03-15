@@ -1,5 +1,8 @@
 # energy-forecasting
 
+# Data
+We used the data from [here](https://www.energidataservice.dk/tso-electricity/ConsumptionDE35Hour).
+
 ## Feature Engineering Pipeline
 
 ### Run

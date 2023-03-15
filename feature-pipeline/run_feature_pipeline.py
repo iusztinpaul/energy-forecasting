@@ -1,13 +1,28 @@
+import pandas as pd
+
 import cleaning
 import extract
 import load
+import utils
 import validation
 
 
-def main():
-    # Ingest data
-    data = extract.from_api()
+def main() -> dict:
+    data, metadata = extract.from_api()
 
+    data = transform(data)
+
+    load.to_feature_store(
+        data,
+        validation_expectation_suite=validation.expectation_suite_energy_consumption
+    )
+
+    utils.save_json(metadata)
+
+    return metadata
+
+
+def transform(data: pd.DataFrame):
     # Clean columns
     data = cleaning.rename_columns(data)
 
@@ -17,14 +32,7 @@ def main():
     # Standardize categorical data
     data = cleaning.standardize_categorical_data(data)
 
-    # Export to feature store
-    feature_group = load.to_feature_store(data)
-
-    # Perform data validation
-    feature_group.save_expectation_suite(
-        expectation_suite=validation.expectation_suite_energy_consumption,
-        validation_ingestion_policy="STRICT",
-    )
+    return data
 
 
 if __name__ == "__main__":

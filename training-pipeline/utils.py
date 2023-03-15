@@ -58,7 +58,7 @@ def get_logger(name: str) -> logging.Logger:
     """
 
     logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger(name)
 
     return logger
 

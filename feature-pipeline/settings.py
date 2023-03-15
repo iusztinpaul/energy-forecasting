@@ -26,3 +26,6 @@ def load_env_vars(root_dir: Union[str, Path]) -> dict:
 
 
 CREDENTIALS = load_env_vars(root_dir="..")
+# TODO: Change output dir with a tmp dir that is deleted at the end of the training script.
+OUTPUT_DIR = Path("output")
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
