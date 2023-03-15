@@ -1,24 +1,27 @@
 import pandas as pd
 
+
 def rename_columns(df: pd.DataFrame) -> pd.DataFrame:
     """
     Clean feature columns
     """
+
     data = df.copy()
 
     # Drop irrelevant columns.
     data.drop(columns=["HourDK"], inplace=True)
 
     # Rename columns
-    data.rename(columns={
-        "HourUTC": "datetime_utc",
-        "PriceArea": "area",
-        "ConsumerType_DE35": "consumer_type",
-        "TotalCon": "energy_consumption"
-        }, 
-        inplace=True
+    data.rename(
+        columns={
+            "HourUTC": "datetime_utc",
+            "PriceArea": "area",
+            "ConsumerType_DE35": "consumer_type",
+            "TotalCon": "energy_consumption",
+        },
+        inplace=True,
     )
-    
+
     return data
 
 
@@ -35,6 +38,7 @@ def cast_columns(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         DataFrame: Transformed data frame
     """
+
     data = df.copy()
 
     data["datetime_utc"] = pd.to_datetime(data["datetime_utc"])
@@ -43,6 +47,7 @@ def cast_columns(df: pd.DataFrame) -> pd.DataFrame:
     data["energy_consumption"] = data["energy_consumption"].astype("float64")
 
     return data
+
 
 def standardize_categorical_data(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -54,16 +59,13 @@ def standardize_categorical_data(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         DataFrame: Transformed data frame
     """
+
     data = df.copy()
-    
-    area_mappings = {
-        "DK": 0,
-        "DK1": 1,
-        "DK2": 2
-    }
-    
+
+    area_mappings = {"DK": 0, "DK1": 1, "DK2": 2}
+
     data["area"] = data["area"].map(lambda string_area: area_mappings.get(string_area))
     data["area"] = data["area"].astype("int8")
-    data["consumer_type"] = data ["consumer_type"].astype("int32")
+    data["consumer_type"] = data["consumer_type"].astype("int32")
 
     return data

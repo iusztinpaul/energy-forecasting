@@ -12,7 +12,9 @@ FS_API_KEY = os.getenv("FS_API_KEY")
 def main(target: str = "energy_consumption", **kwargs):
     project = hopsworks.login(api_key_value=FS_API_KEY, project="energy_consumption")
     fs = project.get_feature_store()
-    energy_consumption_fg = fs.get_feature_group('energy_consumption_denmark', version=1)
+    energy_consumption_fg = fs.get_feature_group(
+        "energy_consumption_denmark", version=1
+    )
 
     # Create feature view.
     ds_query = energy_consumption_fg.select_all()
@@ -41,18 +43,20 @@ def main(target: str = "energy_consumption", **kwargs):
     export_end = datetime.datetime.utcnow().replace(minute=0, second=0, microsecond=0)
     export_start = export_end - datetime.timedelta(days=days_delay + days_export)
 
-    train_start, train_end = export_start, export_end - datetime.timedelta(days=7, minutes=1)
+    train_start, train_end = export_start, export_end - datetime.timedelta(
+        days=7, minutes=1
+    )
     test_start, test_end = export_end - datetime.timedelta(days=7), export_end
 
     # TODO: Try to make the splits within Hopsworks. But the last time I tried it, it thrown an error.
     feature_view.create_training_data(
-        description='Energy consumption training dataset',
-        data_format='csv',
+        description="Energy consumption training dataset",
+        data_format="csv",
         # train_start=train_start,
         # train_end=train_end,
         # test_start=test_start,
         # test_end=test_end,
-        write_options={'wait_for_job': False},
+        write_options={"wait_for_job": False},
         coalesce=True,
     )
 

@@ -21,6 +21,7 @@ sktime = "^0.16.1"
 seaborn = "^0.12.2"
 pmdarima = "^2.0.2"
 google-cloud-storage = "^2.7.0"
+yarl = "^1.8.2"
 
 [tool.poetry.dev-dependencies]
 
