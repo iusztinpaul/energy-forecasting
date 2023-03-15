@@ -43,10 +43,11 @@ def build_model(config: dict):
                 "attach_area_and_consumer_type",
                 transformers.AttachAreaConsumerType()
             ),
-            (
-              "encode_categorical",
-              transformers.HashingEncoder(cols=["area_exog", "consumer_type_exog"], n_components=8)
-             ),
+            # TODO: Hyperparameter tuning for HashingEncoder
+            # (
+            #   "encode_categorical",
+            #   transformers.HashingEncoder(cols=["area_exog", "consumer_type_exog"], n_components=8)
+            #  ),
             (
                 "daily_season",
                 DateTimeFeatures(
