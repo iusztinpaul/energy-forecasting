@@ -1,31 +1,51 @@
-import os
+from datetime import datetime
 from pathlib import Path
-from typing import Union
+from typing import Union, Optional
 
 import hopsworks
 import joblib
 import pandas as pd
 
-from dotenv import load_dotenv
 from google.cloud import storage
 from hsfs.feature_store import FeatureStore
 
-load_dotenv(dotenv_path="../.env.default")
-load_dotenv(dotenv_path="../.env", override=True)
+import settings
+import utils
 
 
-WANDB_ENTITY = os.getenv("WANDB_ENTITY")
-WANDB_PROJECT = os.getenv("WANDB_PROJECT")
-FS_API_KEY = os.getenv("FS_API_KEY")
+def main(
+    fh: int = 24,
+    feature_view_version: Optional[int] = None,
+    model_version: Optional[int] = None,
+):
+    if feature_view_version is None:
+        feature_view_metadata = utils.load_json("feature_view_metadata.json")
+        feature_view_version = feature_view_metadata["feature_view_version"]
+    if model_version is None:
+        model_metadata = utils.load_json("train_metadata.json")
+        model_version = model_metadata["model_version"]
 
-
-# TODO: Configure fh.
-def main(fh: int = 24):
-    project = hopsworks.login(api_key_value=FS_API_KEY, project="energy_consumption")
+    project = hopsworks.login(
+        api_key_value=settings.CREDENTIALS["FS_API_KEY"], project="energy_consumption"
+    )
     fs = project.get_feature_store()
 
-    X, y = load_data_from_feature_store(fs)
-    model = load_model_from_model_registry(project)
+    feature_pipeline_metadata = utils.load_json("feature_pipeline_metadata.json")
+    export_datetime_utc_start = datetime.strptime(
+        feature_pipeline_metadata["export_datetime_utc_start"],
+        feature_pipeline_metadata["datetime_format"],
+    )
+    export_datetime_utc_end = datetime.strptime(
+        feature_pipeline_metadata["export_datetime_utc_end"],
+        feature_pipeline_metadata["datetime_format"],
+    )
+    X, y = load_data_from_feature_store(
+        fs,
+        feature_view_version,
+        start_datetime=export_datetime_utc_start,
+        end_datetime=export_datetime_utc_end,
+    )
+    model = load_model_from_model_registry(project, model_version)
 
     predictions = forecast(model, X, fh=fh)
 
@@ -33,18 +53,18 @@ def main(fh: int = 24):
     read()
 
 
-def load_data_from_feature_store(fs: FeatureStore, target: str = "energy_consumption", feature_view_version: int = 4):
-    feature_view = fs.get_feature_view(name="energy_consumption_denmark_view", version=feature_view_version)
-
-    # TODO: Set these days somewhere outside the script.
-    current_datetime = pd.Timestamp.now(tz="UTC").replace(minute=0, second=0, microsecond=0)
-    # Data is 15 days old, so we always have to shift it with 15 days back as our starting point.
-    current_datetime = current_datetime - pd.Timedelta(days=15)
-    start_datetime = current_datetime - pd.Timedelta(days=14)
-
-    data = feature_view.get_batch_data(
-        start_time=start_datetime, end_time=current_datetime
+def load_data_from_feature_store(
+    fs: FeatureStore,
+    feature_view_version: int,
+    start_datetime: datetime,
+    end_datetime: datetime,
+    target: str = "energy_consumption",
+):
+    feature_view = fs.get_feature_view(
+        name="energy_consumption_denmark_view", version=feature_view_version
     )
+
+    data = feature_view.get_batch_data(start_time=start_datetime, end_time=end_datetime)
 
     # TODO: Can I move the index preparation to the model pipeline?
     # Set the index as is required by sktime.
@@ -59,12 +79,13 @@ def load_data_from_feature_store(fs: FeatureStore, target: str = "energy_consump
     return X, y
 
 
-def load_model_from_model_registry(project, model_version: int = 1):
+def load_model_from_model_registry(project, model_version: int):
     mr = project.get_model_registry()
     model_registry_reference = mr.get_model(name="best_model", version=model_version)
     model_dir = model_registry_reference.download()
     model_path = Path(model_dir) / "best_model.pkl"
 
+    # TODO: See how to automatically save & load the transformers.py file using the Hopsworks Model Registry.
     model = load_model(model_path)
 
     return model

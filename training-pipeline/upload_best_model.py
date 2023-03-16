@@ -1,4 +1,7 @@
 import json
+from typing import Optional
+
+import fire
 
 import wandb
 
@@ -14,7 +17,13 @@ when you create a new run after a sweep, it will override the last run of the sw
 This will result in overriding the wrong run and getting the wrong config.
 """
 
-def main(sweep_id: str):
+
+def main(sweep_id: Optional[str] = None):
+    if sweep_id is None:
+        last_sweep_metadata = utils.load_json("last_sweep_metadata.json")
+        sweep_id = last_sweep_metadata["sweep_id"]
+
+        logger.info(f"Loading sweep_id from last_sweep_metadata.json with {sweep_id=}")
 
     api = wandb.Api()
     sweep = api.sweep(
@@ -23,11 +32,11 @@ def main(sweep_id: str):
     best_run = sweep.best_run()
 
     with utils.init_wandb_run(
-            name="best_experiment",
-            job_type="hpo",
-            group="train",
-            run_id=best_run.id,
-            resume="must",
+        name="best_experiment",
+        job_type="hpo",
+        group="train",
+        run_id=best_run.id,
+        resume="must",
     ) as run:
         run.use_artifact("config:latest")
 
@@ -47,11 +56,7 @@ def main(sweep_id: str):
         artifact = wandb.Artifact(
             name=f"best_config",
             type="model",
-            metadata={
-                "results": {
-                    "validation": dict(run.summary["validation"])
-                }
-            },
+            metadata={"results": {"validation": dict(run.summary["validation"])}},
         )
         artifact.add_file(str(config_path))
         run.log_artifact(artifact)
@@ -62,4 +67,4 @@ def main(sweep_id: str):
 
 
 if __name__ == "__main__":
-    main(sweep_id="0shsp80r")
+    fire.Fire(main)

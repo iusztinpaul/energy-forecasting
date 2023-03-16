@@ -7,7 +7,9 @@ from settings import CREDENTIALS
 
 def to_feature_store(data: pd.DataFrame, validation_expectation_suite) -> FeatureGroup:
     # Connect to feature store.
-    project = hopsworks.login(api_key_value=CREDENTIALS["FS_API_KEY"], project="energy_consumption")
+    project = hopsworks.login(
+        api_key_value=CREDENTIALS["FS_API_KEY"], project="energy_consumption"
+    )
     feature_store = project.get_feature_store()
 
     # Create feature group.
@@ -67,9 +69,9 @@ def to_feature_store(data: pd.DataFrame, validation_expectation_suite) -> Featur
     energy_feature_group.statistics_config = {
         "enabled": True,
         "histograms": True,
-        "correlations": True
+        "correlations": True,
     }
     energy_feature_group.update_statistics_config()
     energy_feature_group.compute_statistics()
-        
+
     return energy_feature_group

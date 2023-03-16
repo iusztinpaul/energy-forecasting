@@ -1,3 +1,4 @@
+import json
 import logging
 from pathlib import Path
 from typing import Union, Optional
@@ -7,6 +8,39 @@ import pandas as pd
 
 import settings
 import wandb
+
+
+def save_json(data: dict, file_name: str, save_dir: str = settings.OUTPUT_DIR):
+    """
+    Save a dictionary as a JSON file.
+
+    Args:
+        data: data to save.
+        file_name: Name of the JSON file.
+        save_dir: Directory to save the JSON file.
+
+    Returns: None
+    """
+
+    data_path = Path(save_dir) / file_name
+    with open(data_path, "w") as f:
+        json.dump(data, f)
+
+
+def load_json(file_name: str, save_dir: str = settings.OUTPUT_DIR) -> dict:
+    """
+    Load a JSON file.
+
+    Args:
+        file_name: Name of the JSON file.
+        save_dir: Directory of the JSON file.
+
+    Returns: Dictionary with the data.
+    """
+
+    data_path = Path(save_dir) / file_name
+    with open(data_path, "r") as f:
+        return json.load(f)
 
 
 def save_model(model, model_path: Union[str, Path]):
@@ -85,7 +119,7 @@ def init_wandb_run(
         job_type=job_type,
         id=run_id,
         reinit=reinit,
-        resume=resume
+        resume=resume,
     )
 
     return run

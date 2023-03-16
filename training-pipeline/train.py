@@ -3,6 +3,7 @@ from collections import OrderedDict
 from pathlib import Path
 from typing import OrderedDict as OrderedDictType, Optional
 
+import fire
 import hopsworks
 import matplotlib.pyplot as plt
 import numpy as np
@@ -25,12 +26,27 @@ from models import build_model, build_baseline_model
 logger = utils.get_logger(__name__)
 
 
-# TODO: Inject fh from config.
-def main(fh: int = 24):
-    y_train, y_test, X_train, X_test = load_dataset_from_feature_store()
+def main(
+    fh: int = 24,
+    feature_view_version: Optional[int] = None,
+    training_dataset_version: Optional[int] = None,
+):
+    feature_view_metadata = utils.load_json("feature_view_metadata.json")
+    if feature_view_version is None:
+        feature_view_version = feature_view_metadata["feature_view_version"]
+    if training_dataset_version is None:
+        training_dataset_version = feature_view_metadata["training_dataset_version"]
+
+    y_train, y_test, X_train, X_test = load_dataset_from_feature_store(
+        feature_view_version, training_dataset_version
+    )
 
     with utils.init_wandb_run(
-        name="best_model", job_type="train_best_model", group="train", reinit=True, add_timestamp_to_name=True
+        name="best_model",
+        job_type="train_best_model",
+        group="train",
+        reinit=True,
+        add_timestamp_to_name=True,
     ) as run:
         run.use_artifact("split_train:latest")
         run.use_artifact("split_test:latest")
@@ -49,14 +65,12 @@ def main(fh: int = 24):
         # Baseline model
         baseline_forecaster = build_baseline_model()
         baseline_forecaster = train_model(baseline_forecaster, y_train, X_train, fh=fh)
-        y_pred_baseline, metrics_baseline = evaluate(baseline_forecaster, y_test, X_test)
+        y_pred_baseline, metrics_baseline = evaluate(
+            baseline_forecaster, y_test, X_test
+        )
         for k, v in metrics_baseline.items():
-            logger.info(f"Baseline test {k.upper()}: {v}")
-        wandb.log({
-            "test": {
-                "baseline": metrics_baseline
-            }
-        })
+            logger.info(f"Baseline test {k}: {v}")
+        wandb.log({"test": {"baseline": metrics_baseline}})
 
         # Build & train best model.
         best_model = build_model(config)
@@ -66,11 +80,7 @@ def main(fh: int = 24):
         y_pred, metrics = evaluate(best_forecaster, y_test, X_test)
         for k, v in metrics.items():
             logger.info(f"Model test {k}: {v}")
-        wandb.log({
-            "test": {
-                "model": metrics
-            }
-        })
+        wandb.log({"test": {"model": metrics}})
 
         # Render best model on the test set.
         results = OrderedDict({"y_train": y_train, "y_test": y_test, "y_pred": y_pred})
@@ -78,8 +88,7 @@ def main(fh: int = 24):
 
         # Update best model with the test set.
         best_forecaster = best_forecaster.update(y_test, X=X_test)
-        # TODO: Make the forecast function independent from X_test.
-        y_forecast = forecast(best_forecaster, X_test)
+        y_forecast = forecast(best_forecaster, X_test, fh=fh)
         results = OrderedDict(
             {
                 "y_train": y_train,
@@ -93,17 +102,28 @@ def main(fh: int = 24):
         # Save best model.
         save_model_path = OUTPUT_DIR / "best_model.pkl"
         utils.save_model(best_forecaster, save_model_path)
-        metadata = {"results": {"test": metrics}}
+        metadata = {
+            "experiment": {
+                "fh": fh,
+                "feature_view_version": feature_view_version,
+                "training_dataset_version": training_dataset_version,
+            },
+            "results": {"test": metrics},
+        }
         artifact = wandb.Artifact(name="best_model", type="model", metadata=metadata)
         artifact.add_file(str(save_model_path))
         run.log_artifact(artifact)
 
         run.finish()
 
-    attach_best_model_to_feature_store()
+    model_version = attach_best_model_to_feature_store(
+        feature_view_version, training_dataset_version
+    )
+
+    utils.save_json({"model_version": model_version}, file_name="train_metadata.json")
 
 
-def train_model(model, y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int = 24):
+def train_model(model, y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int):
     fh = np.arange(fh) + 1
 
     model.fit(y_train, X=X_train, fh=fh)
@@ -117,7 +137,7 @@ def evaluate(forecaster, y_test: pd.DataFrame, X_test: pd.DataFrame):
     rmspe = mean_squared_percentage_error(y_test, y_pred, squared=False)
     mape = mean_absolute_percentage_error(y_test, y_pred, symmetric=False)
 
-    return y_pred, {"rmspe": rmspe, "mape": mape}
+    return y_pred, {"RMSPE": rmspe, "MAPE": mape}
 
 
 def render(
@@ -154,7 +174,7 @@ def render(
             wandb.log(wandb.Image(image_save_path))
 
 
-def forecast(forecaster, X_test, fh: int = 24):
+def forecast(forecaster, X_test, fh: int):
     # TODO: Make this function independent from X_test.
     X_forecast = X_test.copy()
     X_forecast.index.set_levels(
@@ -166,16 +186,20 @@ def forecast(forecaster, X_test, fh: int = 24):
     return y_forecast
 
 
-def attach_best_model_to_feature_store():
-    project = hopsworks.login(api_key_value=CREDENTIALS["FS_API_KEY"], project="energy_consumption")
+def attach_best_model_to_feature_store(
+    feature_view_version: int, training_dataset_version: int
+) -> int:
+    project = hopsworks.login(
+        api_key_value=CREDENTIALS["FS_API_KEY"], project="energy_consumption"
+    )
     fs = project.get_feature_store()
-
-    feature_views = fs.get_feature_views("energy_consumption_denmark_view")
-    feature_view = feature_views[-1]
+    feature_view = fs.get_feature_view(
+        name="energy_consumption_denmark_view", version=feature_view_version
+    )
 
     # TODO: The model is in hopsworks model registry. Do I still need all this logic?
+    # FIXME: It is not correct to leave model_version = 0. Get the real version from the artifact.
     model_version = 0
-    training_dataset_version = 2
     fs_tag = {
         "name": "best_model",
         "version": f"v{model_version}",
@@ -195,8 +219,13 @@ def attach_best_model_to_feature_store():
     }
 
     api = wandb.Api()
-    best_model_artifact = api.artifact(f"{CREDENTIALS['WANDB_ENTITY']}/{CREDENTIALS['WANDB_PROJECT']}/best_model:latest")
-    best_model_artifact.metadata = {**best_model_artifact.metadata, "feature_store": feature_store_metadata}
+    best_model_artifact = api.artifact(
+        f"{CREDENTIALS['WANDB_ENTITY']}/{CREDENTIALS['WANDB_PROJECT']}/best_model:latest"
+    )
+    best_model_artifact.metadata = {
+        **best_model_artifact.metadata,
+        "feature_store": feature_store_metadata,
+    }
     best_model_artifact.save()
 
     # TODO: Add model schema & input example as docs.
@@ -208,6 +237,8 @@ def attach_best_model_to_feature_store():
     py_model = mr.python.create_model("best_model", metrics=best_model_metrics)
     py_model.save(best_model_path)
 
+    return py_model.version
+
 
 if __name__ == "__main__":
-    main()
+    fire.Fire(main)

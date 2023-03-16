@@ -1,6 +1,8 @@
 import json
 from functools import partial
+from typing import Optional
 
+import fire
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -23,15 +25,38 @@ logger = utils.get_logger(__name__)
 
 # TODO: Inject sweep configs from YAML
 # TODO: Use random or bayesian search + early stopping
+# sweep_configs = {
+#     "method": "grid",
+#     "metric": {"name": "validation.MAPE", "goal": "minimize"},
+#     "parameters": {
+#         "forecaster__estimator__n_jobs": {"values": [-1]},
+#         "forecaster__estimator__n_estimators": {"values": [1000, 2000, 2500]},
+#         "forecaster__estimator__learning_rate": {"values": [0.1, 0.15]},
+#         "forecaster__estimator__max_depth": {"values": [-1, 5]},
+#         "forecaster__estimator__reg_lambda": {"values": [0, 0.01, 0.015]},
+#         "daily_season__manual_selection": {"values": [["day_of_week", "hour_of_day"]]},
+#         "forecaster_transformers__window_summarizer__lag_feature__lag": {
+#             "values": [list(range(1, 73))]
+#         },
+#         "forecaster_transformers__window_summarizer__lag_feature__mean": {
+#             "values": [[[1, 24], [1, 48], [1, 72]]]
+#         },
+#         "forecaster_transformers__window_summarizer__lag_feature__std": {
+#             "values": [[[1, 24], [1, 48]]]
+#         },
+#         "forecaster_transformers__window_summarizer__n_jobs": {"values": [1]},
+#     },
+# }
+
 sweep_configs = {
     "method": "grid",
     "metric": {"name": "validation.MAPE", "goal": "minimize"},
     "parameters": {
         "forecaster__estimator__n_jobs": {"values": [-1]},
-        "forecaster__estimator__n_estimators": {"values": [1000, 2000, 2500]},
-        "forecaster__estimator__learning_rate": {"values": [0.1, 0.15]},
-        "forecaster__estimator__max_depth": {"values": [-1, 5]},
-        "forecaster__estimator__reg_lambda": {"values": [0, 0.01, 0.015]},
+        "forecaster__estimator__n_estimators": {"values": [2250, 2500]},
+        "forecaster__estimator__learning_rate": {"values": [0.15]},
+        "forecaster__estimator__max_depth": {"values": [3, 5]},
+        "forecaster__estimator__reg_lambda": {"values": [0.01]},
         "daily_season__manual_selection": {"values": [["day_of_week", "hour_of_day"]]},
         "forecaster_transformers__window_summarizer__lag_feature__lag": {
             "values": [list(range(1, 73))]
@@ -47,17 +72,31 @@ sweep_configs = {
 }
 
 
-# TODO: Inject fh and validation_metric_key from config.
-def main(fh: int = 24) -> str:
-    y_train, y_test, X_train, X_test = load_dataset_from_feature_store()
+def main(
+    fh: int = 24,
+    feature_view_version: Optional[int] = None,
+    training_dataset_version: Optional[int] = None,
+) -> str:
+    feature_view_metadata = utils.load_json("feature_view_metadata.json")
+    if feature_view_version is None:
+        feature_view_version = feature_view_metadata["feature_view_version"]
+    if training_dataset_version is None:
+        training_dataset_version = feature_view_metadata["training_dataset_version"]
+
+    y_train, y_test, X_train, X_test = load_dataset_from_feature_store(
+        feature_view_version=feature_view_version,
+        training_dataset_version=training_dataset_version,
+    )
 
     sweep_id = run_hyperparameter_optimization(y_train, X_train, fh=fh)
+
+    utils.save_json({"sweep_id": sweep_id}, file_name="last_sweep_metadata.json")
 
     return sweep_id
 
 
 def run_hyperparameter_optimization(
-    y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int = 24
+    y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int
 ):
     sweep_id = wandb.sweep(sweep=sweep_configs, project=CREDENTIALS["WANDB_PROJECT"])
 
@@ -70,7 +109,7 @@ def run_hyperparameter_optimization(
     return sweep_id
 
 
-def run_sweep(y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int = 24):
+def run_sweep(y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int):
     with init_wandb_run(
         name="experiment", job_type="hpo", group="train", add_timestamp_to_name=True
     ) as run:
@@ -84,9 +123,7 @@ def run_sweep(y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int = 24):
         wandb.log(results)
 
         metadata = {
-            "experiment": {
-                "name": run.name,
-            },
+            "experiment": {"name": run.name, "fh": fh},
             "results": results,
             "config": config,
         }
@@ -101,7 +138,7 @@ def run_sweep(y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int = 24):
 
 
 def train_model_cv(
-    model, y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int = 24, k: int = 3
+    model, y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int, k: int = 3
 ):
     data_length = len(y_train.index.get_level_values(-1).unique())
     assert data_length >= fh * 10, "Not enough data to perform a 3 fold CV."
@@ -159,4 +196,4 @@ def render_cv_scheme(cv, y_train: pd.DataFrame) -> str:
 
 
 if __name__ == "__main__":
-    main()
+    fire.Fire(main)

@@ -1,8 +1,6 @@
 import lightgbm as lgb
-from category_encoders import hashing
 from sktime.forecasting.compose import make_reduction, ForecastingPipeline
 from sktime.forecasting.naive import NaiveForecaster
-from sktime.transformations.series.adapt import TabularToSeriesAdaptor
 from sktime.transformations.series.date import DateTimeFeatures
 from sktime.transformations.series.summarize import WindowSummarizer
 
@@ -39,10 +37,7 @@ def build_model(config: dict):
 
     pipe = ForecastingPipeline(
         steps=[
-            (
-                "attach_area_and_consumer_type",
-                transformers.AttachAreaConsumerType()
-            ),
+            ("attach_area_and_consumer_type", transformers.AttachAreaConsumerType()),
             # TODO: Hyperparameter tuning for HashingEncoder
             # (
             #   "encode_categorical",

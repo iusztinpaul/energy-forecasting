@@ -7,9 +7,11 @@ from settings import CREDENTIALS
 
 
 def load_dataset_from_feature_store(
-    feature_view_version: int = 4, training_dataset_version: int = 1
+    feature_view_version: int, training_dataset_version: int
 ):
-    project = hopsworks.login(api_key_value=CREDENTIALS["FS_API_KEY"], project="energy_consumption")
+    project = hopsworks.login(
+        api_key_value=CREDENTIALS["FS_API_KEY"], project="energy_consumption"
+    )
     fs = project.get_feature_store()
 
     with init_wandb_run(
@@ -19,8 +21,6 @@ def load_dataset_from_feature_store(
         feature_view = fs.get_feature_view(
             name="energy_consumption_denmark_view", version=feature_view_version
         )
-        # TODO: Get the latest training dataset.
-        # TODO: Handle hopsworks versions overall.
         data, _ = feature_view.get_training_data(
             training_dataset_version=training_dataset_version
         )
@@ -31,6 +31,8 @@ def load_dataset_from_feature_store(
         fv_metadata["link"] = feature_view._feature_view_engine._get_feature_view_url(
             feature_view
         )
+        fv_metadata["feature_view_version"] = feature_view_version
+        fv_metadata["training_dataset_version"] = training_dataset_version
 
         raw_data_at = wandb.Artifact(
             name="energy_consumption_denmark_feature_view",
@@ -53,7 +55,13 @@ def load_dataset_from_feature_store(
             split_y = locals()[f"y_{split}"]
 
             split_metadata = {
-                "timespan": [split_X.index.min(), split_X.index.max()],
+                "timespan": [
+                    split_X.index.get_level_values(-2).min(),
+                    split_X.index.get_level_values(-2).max(),
+                ],
+                "dataset_size": len(split_X),
+                "num_areas": len(split_X.index.get_level_values(0).unique()),
+                "num_consumer_types": len(split_X.index.get_level_values(1).unique()),
                 "y_features": split_y.columns.tolist(),
                 "X_features": split_X.columns.tolist(),
             }
