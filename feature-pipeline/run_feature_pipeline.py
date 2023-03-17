@@ -24,10 +24,14 @@ def main(
     data = transform(data)
     logger.info("Successfully transformed data.")
 
+    logger.info("Building validation expectation suite.")
+    validation_expectation_suite = validation.build_expectation_suite()
+    logger.info("Successfully built validation expectation suite.")
+
     logger.info(f"Validating data and loading it to the feature store.")
     load.to_feature_store(
         data,
-        validation_expectation_suite=validation.expectation_suite_energy_consumption,
+        validation_expectation_suite=validation_expectation_suite,
     )
     logger.info("Successfully validated data and loaded it to the feature store.")
 
@@ -48,7 +52,7 @@ def transform(data: pd.DataFrame):
     data = cleaning.cast_columns(data)
 
     # Standardize categorical data
-    data = cleaning.standardize_categorical_data(data)
+    data = cleaning.encode_area_column(data)
 
     return data
 

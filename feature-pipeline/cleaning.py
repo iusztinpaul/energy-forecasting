@@ -43,13 +43,13 @@ def cast_columns(df: pd.DataFrame) -> pd.DataFrame:
 
     data["datetime_utc"] = pd.to_datetime(data["datetime_utc"])
     data["area"] = data["area"].astype("string")
-    data["consumer_type"] = data["consumer_type"].astype("string")
+    data["consumer_type"] = data["consumer_type"].astype("int32")
     data["energy_consumption"] = data["energy_consumption"].astype("float64")
 
     return data
 
 
-def standardize_categorical_data(df: pd.DataFrame) -> pd.DataFrame:
+def encode_area_column(df: pd.DataFrame) -> pd.DataFrame:
     """
     Transform string categorical data to numerical categorical data.
 
@@ -66,6 +66,5 @@ def standardize_categorical_data(df: pd.DataFrame) -> pd.DataFrame:
 
     data["area"] = data["area"].map(lambda string_area: area_mappings.get(string_area))
     data["area"] = data["area"].astype("int8")
-    data["consumer_type"] = data["consumer_type"].astype("int32")
 
     return data

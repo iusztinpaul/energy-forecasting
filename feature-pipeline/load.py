@@ -1,11 +1,14 @@
 import hopsworks
 import pandas as pd
+from great_expectations.core import ExpectationSuite
 from hsfs.feature_group import FeatureGroup
 
 from settings import CREDENTIALS
 
+import great_expectations as gc
 
-def to_feature_store(data: pd.DataFrame, validation_expectation_suite) -> FeatureGroup:
+
+def to_feature_store(data: pd.DataFrame, validation_expectation_suite: ExpectationSuite) -> FeatureGroup:
     # Connect to feature store.
     project = hopsworks.login(
         api_key_value=CREDENTIALS["FS_API_KEY"], project="energy_consumption"
