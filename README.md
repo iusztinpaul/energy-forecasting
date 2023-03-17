@@ -23,7 +23,7 @@ You can read the official documentation [here](https://airflow.apache.org/docs/a
 **TODO:** This setup is used for development. Check out what I have to do for production.
 
 #### Install Python Package
-**TODO:** Move the installation to poetry. Do I need it as this code is ran directly in Airflow?
+**TODO:** Move the installation to poetry. Do I need it as this code is running directly in Airflow?
 ```shell
 pip install "apache-airflow[celery]==2.5.2" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.5.2/constraints-3.7.txt"
 ```
