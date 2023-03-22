@@ -11,7 +11,7 @@ import validation
 logger = utils.get_logger(__name__)
 
 
-def main(
+def run(
     days_delay: int = 15,
     days_export: int = 30,
     url: str = "https://api.energidataservice.dk/dataset/ConsumptionDE35Hour",
@@ -58,4 +58,4 @@ def transform(data: pd.DataFrame):
 
 
 if __name__ == "__main__":
-    fire.Fire(main)
+    fire.Fire(run)

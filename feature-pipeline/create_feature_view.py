@@ -7,7 +7,7 @@ import utils
 import settings
 
 
-def main(feature_group_version: int = 1):
+def run(feature_group_version: int = 1):
     project = hopsworks.login(
         api_key_value=settings.CREDENTIALS["FS_API_KEY"], project="energy_consumption"
     )
@@ -52,4 +52,4 @@ def main(feature_group_version: int = 1):
 
 
 if __name__ == "__main__":
-    fire.Fire(main)
+    fire.Fire(run)

@@ -18,7 +18,7 @@ This will result in overriding the wrong run and getting the wrong config.
 """
 
 
-def main(sweep_id: Optional[str] = None):
+def run(sweep_id: Optional[str] = None):
     if sweep_id is None:
         last_sweep_metadata = utils.load_json("last_sweep_metadata.json")
         sweep_id = last_sweep_metadata["sweep_id"]
@@ -67,4 +67,4 @@ def main(sweep_id: Optional[str] = None):
 
 
 if __name__ == "__main__":
-    fire.Fire(main)
+    fire.Fire(run)

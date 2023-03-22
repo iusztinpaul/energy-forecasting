@@ -13,7 +13,10 @@ import settings
 import utils
 
 
-def main(
+logger = utils.get_logger(__name__)
+
+
+def run(
     fh: int = 24,
     feature_view_version: Optional[int] = None,
     model_version: Optional[int] = None,
@@ -25,11 +28,14 @@ def main(
         model_metadata = utils.load_json("train_metadata.json")
         model_version = model_metadata["model_version"]
 
+    logger.info("Connecting to the feature store...")
     project = hopsworks.login(
         api_key_value=settings.CREDENTIALS["FS_API_KEY"], project="energy_consumption"
     )
     fs = project.get_feature_store()
+    logger.info("Successfully connected to the feature store.")
 
+    logger.info("Loading data from feature store...")
     feature_pipeline_metadata = utils.load_json("feature_pipeline_metadata.json")
     export_datetime_utc_start = datetime.strptime(
         feature_pipeline_metadata["export_datetime_utc_start"],
@@ -45,11 +51,20 @@ def main(
         start_datetime=export_datetime_utc_start,
         end_datetime=export_datetime_utc_end,
     )
+    logger.info("Successfully loaded data from feature store.")
+
+    logger.info("Loading model from model registry...")
     model = load_model_from_model_registry(project, model_version)
+    logger.info("Successfully loaded model from model registry.")
 
+    logger.info("Making predictions...")
     predictions = forecast(model, X, fh=fh)
+    logger.info("Successfully made predictions.")
 
+    logger.info("Saving predictions...")
     save(X, y, predictions)
+    logger.info("Successfully saved predictions.")
+
     read()
 
 
@@ -131,7 +146,10 @@ def forecast(model, X: pd.DataFrame, fh: int = 24):
 
 
 def save(X: pd.DataFrame, y: pd.DataFrame, predictions: pd.DataFrame):
-    storage_client = storage.Client()
+    storage_client = storage.Client.from_service_account_json(
+        json_credentials_path=settings.CREDENTIALS["GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON_PATH"],
+        project=settings.CREDENTIALS["GOOGLE_CLOUD_PROJECT"]
+    )
 
     bucket_name = "hourly-batch-predictions"
     bucket = storage_client.bucket(bucket_name=bucket_name)
@@ -152,7 +170,10 @@ def save(X: pd.DataFrame, y: pd.DataFrame, predictions: pd.DataFrame):
 
 def read():
     # TODO: Delete this function.
-    storage_client = storage.Client()
+    storage_client = storage.Client.from_service_account_json(
+        json_credentials_path=settings.CREDENTIALS["GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON_PATH"],
+        project=settings.CREDENTIALS["GOOGLE_CLOUD_PROJECT"]
+    )
 
     bucket_name = "hourly-batch-predictions"
     bucket = storage_client.bucket(bucket_name=bucket_name)
@@ -177,4 +198,4 @@ def read():
 
 
 if __name__ == "__main__":
-    main()
+    run()

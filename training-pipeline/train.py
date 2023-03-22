@@ -26,7 +26,7 @@ from models import build_model, build_baseline_model
 logger = utils.get_logger(__name__)
 
 
-def main(
+def run(
     fh: int = 24,
     feature_view_version: Optional[int] = None,
     training_dataset_version: Optional[int] = None,
@@ -241,4 +241,4 @@ def attach_best_model_to_feature_store(
 
 
 if __name__ == "__main__":
-    fire.Fire(main)
+    fire.Fire(run)

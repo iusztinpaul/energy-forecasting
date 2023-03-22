@@ -28,21 +28,23 @@ You can read the official documentation [here](https://airflow.apache.org/docs/a
 pip install "apache-airflow[celery]==2.5.2" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.5.2/constraints-3.7.txt"
 ```
 
-#### Prepare structure
-```shell
-cd airflow
-mkdir -p ./dags ./logs ./plugins
-echo -e "AIRFLOW_UID=$(id -u)" > .env
-```
-
-#### Initialize Database
-```shell
-docker compose up airflow-init
-```
-
 #### Run
 ```shell
-docker compose up
+# Move to the airflow directory.
+cd airflow
+
+# Download the docker-compose.yaml file
+curl -LfO 'https://airflow.apache.org/docs/apache-airflow/stable/docker-compose.yaml'
+
+# Make expected directories and set an expected environment variable
+mkdir -p ./dags ./logs ./plugins
+echo -e "AIRFLOW_UID=$(id -u)" > .env
+
+# Initialize the database
+docker-compose up airflow-init
+
+# Start up all services
+docker-compose up
 ```
 
 #### Clean Up

@@ -5,8 +5,6 @@ from hsfs.feature_group import FeatureGroup
 
 from settings import CREDENTIALS
 
-import great_expectations as gc
-
 
 def to_feature_store(data: pd.DataFrame, validation_expectation_suite: ExpectationSuite) -> FeatureGroup:
     # Connect to feature store.
@@ -24,7 +22,6 @@ def to_feature_store(data: pd.DataFrame, validation_expectation_suite: Expectati
         event_time="datetime_utc",
         online_enabled=False,
     )
-    # TODO: Is it ok to add the expectation suite here?
     # Save validation expectation suite.
     energy_feature_group.save_expectation_suite(
         expectation_suite=validation_expectation_suite,

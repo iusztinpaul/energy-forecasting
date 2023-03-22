@@ -72,7 +72,7 @@ sweep_configs = {
 }
 
 
-def main(
+def run(
     fh: int = 24,
     feature_view_version: Optional[int] = None,
     training_dataset_version: Optional[int] = None,
@@ -196,4 +196,4 @@ def render_cv_scheme(cv, y_train: pd.DataFrame) -> str:
 
 
 if __name__ == "__main__":
-    fire.Fire(main)
+    fire.Fire(run)
