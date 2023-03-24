@@ -1,12 +1,8 @@
 import fire
 import pandas as pd
 
-import cleaning
-import extract
-import load
-import utils
-import validation
-
+from feature_pipeline.etl import cleaning, load, extract, validation
+from feature_pipeline import utils
 
 logger = utils.get_logger(__name__)
 

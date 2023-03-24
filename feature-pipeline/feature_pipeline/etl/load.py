@@ -3,7 +3,7 @@ import pandas as pd
 from great_expectations.core import ExpectationSuite
 from hsfs.feature_group import FeatureGroup
 
-from settings import CREDENTIALS
+from feature_pipeline.settings import CREDENTIALS
 
 
 def to_feature_store(data: pd.DataFrame, validation_expectation_suite: ExpectationSuite) -> FeatureGroup:

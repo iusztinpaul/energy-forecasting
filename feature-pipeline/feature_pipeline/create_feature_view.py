@@ -3,8 +3,8 @@ import datetime
 import fire
 import hopsworks
 
-import utils
-import settings
+from feature_pipeline import utils
+from feature_pipeline import settings
 
 
 def run(feature_group_version: int = 1):
@@ -41,7 +41,7 @@ def run(feature_group_version: int = 1):
         data_format="csv",
         start_time=export_start,
         end_time=export_end,
-        write_options={"wait_for_job": False},
+        write_options={"wait_for_job": True},
         coalesce=True,
     )
 

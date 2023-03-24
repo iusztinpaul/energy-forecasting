@@ -2,7 +2,7 @@ import json
 import logging
 from pathlib import Path
 
-import settings
+from feature_pipeline import settings
 
 
 def get_logger(name: str) -> logging.Logger:

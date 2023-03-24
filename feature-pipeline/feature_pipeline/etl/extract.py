@@ -7,7 +7,7 @@ import requests
 
 from yarl import URL
 
-import utils
+from feature_pipeline import utils
 
 
 logger = utils.get_logger(__name__)
