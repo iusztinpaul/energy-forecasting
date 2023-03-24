@@ -1,23 +1,22 @@
-import json
 from functools import partial
 from typing import Optional
 
 import fire
 import numpy as np
 import pandas as pd
+import wandb
+
 from matplotlib import pyplot as plt
 from sktime.forecasting.model_evaluation import evaluate as cv_evaluate
 from sktime.forecasting.model_selection import ExpandingWindowSplitter
 from sktime.performance_metrics.forecasting import MeanAbsolutePercentageError
 from sktime.utils.plotting import plot_windows
 
-import utils
-import wandb
-
-from data import load_dataset_from_feature_store
-from models import build_model
-from utils import init_wandb_run
-from settings import CREDENTIALS, OUTPUT_DIR
+from training_pipeline import utils
+from training_pipeline.data import load_dataset_from_feature_store
+from training_pipeline.models import build_model
+from training_pipeline.utils import init_wandb_run
+from training_pipeline.settings import CREDENTIALS, OUTPUT_DIR
 
 
 logger = utils.get_logger(__name__)
@@ -53,9 +52,9 @@ sweep_configs = {
     "metric": {"name": "validation.MAPE", "goal": "minimize"},
     "parameters": {
         "forecaster__estimator__n_jobs": {"values": [-1]},
-        "forecaster__estimator__n_estimators": {"values": [2250, 2500]},
+        "forecaster__estimator__n_estimators": {"values": [2500]},
         "forecaster__estimator__learning_rate": {"values": [0.15]},
-        "forecaster__estimator__max_depth": {"values": [3, 5]},
+        "forecaster__estimator__max_depth": {"values": [5]},
         "forecaster__estimator__reg_lambda": {"values": [0.01]},
         "daily_season__manual_selection": {"values": [["day_of_week", "hour_of_day"]]},
         "forecaster_transformers__window_summarizer__lag_feature__lag": {

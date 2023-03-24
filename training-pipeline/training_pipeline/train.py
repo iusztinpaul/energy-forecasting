@@ -16,11 +16,10 @@ from sktime.performance_metrics.forecasting import (
 from sktime.utils.plotting import plot_series
 
 
-import utils
-
-from settings import CREDENTIALS, OUTPUT_DIR
-from data import load_dataset_from_feature_store
-from models import build_model, build_baseline_model
+from training_pipeline import utils
+from training_pipeline.settings import CREDENTIALS, OUTPUT_DIR
+from training_pipeline.data import load_dataset_from_feature_store
+from training_pipeline.models import build_model, build_baseline_model
 
 
 logger = utils.get_logger(__name__)

@@ -1,10 +1,11 @@
 import lightgbm as lgb
+
 from sktime.forecasting.compose import make_reduction, ForecastingPipeline
 from sktime.forecasting.naive import NaiveForecaster
 from sktime.transformations.series.date import DateTimeFeatures
 from sktime.transformations.series.summarize import WindowSummarizer
 
-import transformers
+from training_pipeline import transformers
 
 
 def build_model(config: dict):

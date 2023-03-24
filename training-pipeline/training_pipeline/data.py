@@ -1,9 +1,9 @@
 import hopsworks
 import pandas as pd
-
 import wandb
-from utils import init_wandb_run
-from settings import CREDENTIALS
+
+from training_pipeline.utils import init_wandb_run
+from training_pipeline.settings import CREDENTIALS
 
 
 def load_dataset_from_feature_store(

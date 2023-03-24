@@ -1,13 +1,14 @@
-import json
 import logging
+import json
+import joblib
+import pandas as pd
+import wandb
+
 from pathlib import Path
 from typing import Union, Optional
 
-import joblib
-import pandas as pd
 
-import settings
-import wandb
+from training_pipeline import settings
 
 
 def save_json(data: dict, file_name: str, save_dir: str = settings.OUTPUT_DIR):

@@ -1,12 +1,11 @@
 import json
-from typing import Optional
-
 import fire
-
 import wandb
 
-import utils
-from settings import CREDENTIALS, OUTPUT_DIR
+from typing import Optional
+
+from training_pipeline import utils
+from training_pipeline.settings import CREDENTIALS, OUTPUT_DIR
 
 logger = utils.get_logger(__name__)
 
