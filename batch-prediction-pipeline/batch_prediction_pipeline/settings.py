@@ -3,12 +3,10 @@ import warnings
 from pathlib import Path
 from typing import Union
 
-import matplotlib
 from dotenv import load_dotenv
 
 
 warnings.filterwarnings(action="ignore", category=FutureWarning, module="sktime")
-matplotlib.use("Agg")
 
 
 def load_env_vars(root_dir: Union[str, Path]) -> dict:
@@ -31,7 +29,9 @@ def load_env_vars(root_dir: Union[str, Path]) -> dict:
     return dict(os.environ)
 
 
-CREDENTIALS = load_env_vars(root_dir="..")
-# TODO: Change output dir with a tmp dir that is deleted at the end of the training script + moved into a global location.
-OUTPUT_DIR = Path("output")
+# TODO: Find how to properly inject the root dit.
+ROOT_DIR = Path(".")
+# ROOT_DIR = Path("/opt/airflow/dags")
+CREDENTIALS = load_env_vars(root_dir=ROOT_DIR)
+OUTPUT_DIR = ROOT_DIR / "output"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

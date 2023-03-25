@@ -9,8 +9,8 @@ import pandas as pd
 from google.cloud import storage
 from hsfs.feature_store import FeatureStore
 
-import settings
-import utils
+from batch_prediction_pipeline import settings
+from batch_prediction_pipeline import utils
 
 
 logger = utils.get_logger(__name__)

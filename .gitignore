@@ -145,3 +145,6 @@ artifacts/
 
 # Models
 *.pkl
+
+# Sensitive
+credentials/
