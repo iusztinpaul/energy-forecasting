@@ -13,7 +13,7 @@ from airflow.decorators import dag, task
 def feature_pipeline():
     @task.virtualenv(
         task_id="run_feature_pipeline",
-        requirements=["/opt/airflow/dags/wheels/feature_pipeline-0.1.0-py3-none-any.whl"],
+        requirements=["--trusted-host 172.17.0.1", "--extra-index-url http://172.17.0.1", "feature_pipeline"],
         python_version="3.9",
         multiple_outputs=True,
         system_site_packages=False
@@ -25,7 +25,7 @@ def feature_pipeline():
 
     @task.virtualenv(
         task_id="create_feature_view",
-        requirements=["/opt/airflow/dags/wheels/feature_pipeline-0.1.0-py3-none-any.whl"],
+        requirements=["--trusted-host 172.17.0.1", "--extra-index-url http://172.17.0.1", "feature_pipeline"],
         python_version="3.9",
         multiple_outputs=False,
         system_site_packages=False
@@ -37,7 +37,7 @@ def feature_pipeline():
 
     @task.virtualenv(
         task_id="hyperparameter_tuning",
-        requirements=["/opt/airflow/dags/wheels/training_pipeline-0.1.0-py3-none-any.whl"],
+        requirements=["--trusted-host 172.17.0.1", "--extra-index-url http://172.17.0.1", "training_pipeline"],
         python_version="3.9",
         system_site_packages=False
     )
@@ -48,7 +48,7 @@ def feature_pipeline():
 
     @task.virtualenv(
         task_id="upload_best_model",
-        requirements=["/opt/airflow/dags/wheels/training_pipeline-0.1.0-py3-none-any.whl"],
+        requirements=["--trusted-host 172.17.0.1", "--extra-index-url http://172.17.0.1", "training_pipeline"],
         python_version="3.9",
         system_site_packages=False
     )
@@ -59,7 +59,7 @@ def feature_pipeline():
 
     @task.virtualenv(
         task_id="train",
-        requirements=["/opt/airflow/dags/wheels/training_pipeline-0.1.0-py3-none-any.whl"],
+        requirements=["--trusted-host 172.17.0.1", "--extra-index-url http://172.17.0.1", "training_pipeline"],
         python_version="3.9",
         system_site_packages=False
     )
@@ -70,10 +70,7 @@ def feature_pipeline():
 
     @task.virtualenv(
         task_id="batch_predict",
-        requirements=[
-            "/opt/airflow/dags/wheels/batch_prediction_pipeline-0.1.0-py3-none-any.whl",
-            "/opt/airflow/dags/wheels/training_pipeline-0.1.0-py3-none-any.whl"
-        ],
+        requirements=["--trusted-host 172.17.0.1", "--extra-index-url http://172.17.0.1", "batch_prediction_pipeline"],
         python_version="3.9",
         system_site_packages=False
     )
@@ -82,8 +79,7 @@ def feature_pipeline():
 
         _predict.run()
 
-    # run_feature_pipeline() >> create_feature_view() >> hyperparameter_tuning() >> upload_best_model() >> train() >> batch_predict()
-    batch_predict()
+    run_feature_pipeline() >> create_feature_view() >> hyperparameter_tuning() >> upload_best_model() >> train() >> batch_predict()
 
 
 feature_pipeline()

@@ -6,7 +6,11 @@ from hsfs.feature_group import FeatureGroup
 from feature_pipeline.settings import CREDENTIALS
 
 
-def to_feature_store(data: pd.DataFrame, validation_expectation_suite: ExpectationSuite) -> FeatureGroup:
+def to_feature_store(
+        data: pd.DataFrame,
+        validation_expectation_suite: ExpectationSuite,
+        feature_group_version: int,
+) -> FeatureGroup:
     # Connect to feature store.
     project = hopsworks.login(
         api_key_value=CREDENTIALS["FS_API_KEY"], project="energy_consumption"
@@ -16,7 +20,7 @@ def to_feature_store(data: pd.DataFrame, validation_expectation_suite: Expectati
     # Create feature group.
     energy_feature_group = feature_store.get_or_create_feature_group(
         name="energy_consumption_denmark",
-        version=1,
+        version=feature_group_version,
         description="Denmark hourly energy consumption data. Data is uploaded with an 15 days delay.",
         primary_key=["area", "consumer_type"],
         event_time="datetime_utc",

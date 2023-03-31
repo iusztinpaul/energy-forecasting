@@ -100,7 +100,6 @@ def load_model_from_model_registry(project, model_version: int):
     model_dir = model_registry_reference.download()
     model_path = Path(model_dir) / "best_model.pkl"
 
-    # TODO: See how to automatically save & load the transformers.py file using the Hopsworks Model Registry.
     model = load_model(model_path)
 
     return model

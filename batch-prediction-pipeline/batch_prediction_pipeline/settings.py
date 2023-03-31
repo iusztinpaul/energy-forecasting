@@ -30,8 +30,8 @@ def load_env_vars(root_dir: Union[str, Path]) -> dict:
 
 
 # TODO: Find how to properly inject the root dit.
-ROOT_DIR = Path(".")
-# ROOT_DIR = Path("/opt/airflow/dags")
+# ROOT_DIR = Path(".")
+ROOT_DIR = Path("/opt/airflow/dags")
 CREDENTIALS = load_env_vars(root_dir=ROOT_DIR)
 OUTPUT_DIR = ROOT_DIR / "output"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

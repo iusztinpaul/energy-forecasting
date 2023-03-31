@@ -28,6 +28,7 @@ def run(
     load.to_feature_store(
         data,
         validation_expectation_suite=validation_expectation_suite,
+        feature_group_version=2
     )
     logger.info("Successfully validated data and loaded it to the feature store.")
 

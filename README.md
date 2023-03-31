@@ -51,3 +51,41 @@ docker-compose up --build
 ```shell
 docker compose down --volumes --rmi all
 ```
+
+
+
+#### Private PyPi Server
+
+##### Publish Modules
+Set experimental installer to false:
+```shell
+poetry config experimental.new-installer false
+```
+Create credentials:
+```shell
+sudo apt install apache2-utils
+pip install passlib
+
+mkdir ~/.htpasswd
+htpasswd -sc ~/.htpasswd/htpasswd.txt energy-forecasting
+```
+Set credentials:
+```shell
+poetry config repositories.test http://localhost
+poetry config http-basic.test energy-forecasting <password>
+```
+Check credentials:
+```shell
+ cat ~/.config/pypoetry/auth.toml
+```
+Build and publish:
+```shell
+cd <module>
+poetry build
+poetry publish -r test
+```
+
+##### Run Server
+```shell
+docker run -p 80:8080 -v ~/.htpasswd:/data/.htpasswd pypiserver/pypiserver:latest run -P .htpasswd/htpasswd.txt --overwrite
+```

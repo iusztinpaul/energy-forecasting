@@ -294,5 +294,17 @@ services:
       airflow-init:
         condition: service_completed_successfully
 
+  my-private-pypi:
+    image: pypiserver/pypiserver:latest
+    restart: always
+    ports:
+      - "80:8080"
+    volumes:
+      - ~/.htpasswd:/data/.htpasswd
+    command:
+      - -P
+      - .htpasswd/htpasswd.txt
+      - --overwrite
+
 volumes:
   postgres-db-volume:

@@ -18,6 +18,9 @@ lightgbm = "^3.3.5"
 sktime = "^0.16.1"
 google-cloud-storage = "^2.7.0"
 fire = "^0.5.0"
+# training_pipeline = { file = "wheels/training_pipeline-0.1.0-py3-none-any.whl" }
+training-pipeline = "^0.1.0"
+
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
@@ -25,3 +28,7 @@ black = "^23.1.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[[tool.poetry.source]]
+name = "test"  # This name will be used in the configuration to retreive the proper credentials
+url = "http://localhost"  # URL used to download your packages from
