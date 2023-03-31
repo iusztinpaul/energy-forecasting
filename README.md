@@ -54,9 +54,9 @@ docker compose down --volumes --rmi all
 
 
 
-#### Private PyPi Server
+# Private PyPi Server
 
-##### Publish Modules
+### Publish Modules
 Set experimental installer to false:
 ```shell
 poetry config experimental.new-installer false
@@ -85,7 +85,7 @@ poetry build
 poetry publish -r test
 ```
 
-##### Run Server
+### Run Server
 ```shell
 docker run -p 80:8080 -v ~/.htpasswd:/data/.htpasswd pypiserver/pypiserver:latest run -P .htpasswd/htpasswd.txt --overwrite
 ```
