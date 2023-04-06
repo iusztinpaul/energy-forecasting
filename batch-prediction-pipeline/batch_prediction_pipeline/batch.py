@@ -16,7 +16,7 @@ from batch_prediction_pipeline import utils
 logger = utils.get_logger(__name__)
 
 
-def run(
+def predict(
     fh: int = 24,
     feature_view_version: Optional[int] = None,
     model_version: Optional[int] = None,
@@ -197,4 +197,4 @@ def read():
 
 
 if __name__ == "__main__":
-    run()
+    predict()

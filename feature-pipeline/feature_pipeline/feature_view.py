@@ -5,13 +5,35 @@ import hopsworks
 
 from feature_pipeline import utils
 from feature_pipeline import settings
+import hsfs
 
 
-def run(feature_group_version: int = 1) -> dict:
+logger = utils.get_logger(__name__)
+
+
+def create(feature_group_version: int = 1) -> dict:
     project = hopsworks.login(
         api_key_value=settings.SETTINGS["FS_API_KEY"], project="energy_consumption"
     )
     fs = project.get_feature_store()
+
+    # Delete old feature views as the free tier only allows 100 feature views.
+    try:
+        feature_views = fs.get_feature_views(name="energy_consumption_denmark_view")
+    except hsfs.client.exceptions.RestAPIError:
+        logger.info("No feature views found for energy_consumption_denmark_view.")
+
+        feature_views = []
+    
+    for feature_view in feature_views:
+        try:
+            feature_view.delete()
+        except hsfs.client.exceptions.RestAPIError:
+            logger.info(f"Failed to delete feature view {feature_view.name} with version {feature_view.version}.")
+
+            # Don't fail the program if the deletion steps fails.
+            continue
+
     energy_consumption_fg = fs.get_feature_group(
         "energy_consumption_denmark", version=feature_group_version
     )
@@ -55,4 +77,4 @@ def run(feature_group_version: int = 1) -> dict:
 
 
 if __name__ == "__main__":
-    fire.Fire(run)
+    fire.Fire(create)

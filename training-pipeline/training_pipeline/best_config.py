@@ -17,7 +17,7 @@ This will result in overriding the wrong run and getting the wrong config.
 """
 
 
-def run(sweep_id: Optional[str] = None):
+def upload(sweep_id: Optional[str] = None):
     if sweep_id is None:
         last_sweep_metadata = utils.load_json("last_sweep_metadata.json")
         sweep_id = last_sweep_metadata["sweep_id"]
@@ -64,4 +64,4 @@ def run(sweep_id: Optional[str] = None):
 
 
 if __name__ == "__main__":
-    fire.Fire(run)
+    fire.Fire(upload)

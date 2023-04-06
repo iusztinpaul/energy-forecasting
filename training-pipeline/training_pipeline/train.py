@@ -1,5 +1,6 @@
 import json
 from collections import OrderedDict
+import os
 from pathlib import Path
 from typing import OrderedDict as OrderedDictType, Optional
 
@@ -25,7 +26,7 @@ from training_pipeline.models import build_model, build_baseline_model
 logger = utils.get_logger(__name__)
 
 
-def run(
+def from_best_config(
     fh: int = 24,
     feature_view_version: Optional[int] = None,
     training_dataset_version: Optional[int] = None,
@@ -143,7 +144,7 @@ def evaluate(forecaster, y_test: pd.DataFrame, X_test: pd.DataFrame):
 
 
 def render(
-    timeseries: OrderedDictType[str, pd.DataFrame], prefix: Optional[str] = None
+    timeseries: OrderedDictType[str, pd.DataFrame], prefix: Optional[str] = None, delete_from_disk: bool = True
 ):
     grouped_timeseries = OrderedDict()
     for split, df in timeseries.items():
@@ -174,6 +175,9 @@ def render(
             wandb.log({prefix: wandb.Image(image_save_path)})
         else:
             wandb.log(wandb.Image(image_save_path))
+
+        if delete_from_disk:
+            os.remove(image_save_path)
 
 
 def forecast(forecaster, X_test, fh: int):
@@ -243,4 +247,4 @@ def attach_best_model_to_feature_store(
 
 
 if __name__ == "__main__":
-    fire.Fire(run)
+    fire.Fire(from_best_config)
