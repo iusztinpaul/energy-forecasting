@@ -25,12 +25,12 @@ def run(
         feature_view_metadata = utils.load_json("feature_view_metadata.json")
         feature_view_version = feature_view_metadata["feature_view_version"]
     if model_version is None:
-        model_metadata = utils.load_json("train_metadata.json")
-        model_version = model_metadata["model_version"]
+        train_metadata = utils.load_json("train_metadata.json")
+        model_version = train_metadata["model_version"]
 
     logger.info("Connecting to the feature store...")
     project = hopsworks.login(
-        api_key_value=settings.CREDENTIALS["FS_API_KEY"], project="energy_consumption"
+        api_key_value=settings.SETTINGS["FS_API_KEY"], project="energy_consumption"
     )
     fs = project.get_feature_store()
     logger.info("Successfully connected to the feature store.")
@@ -146,8 +146,8 @@ def forecast(model, X: pd.DataFrame, fh: int = 24):
 
 def save(X: pd.DataFrame, y: pd.DataFrame, predictions: pd.DataFrame):
     storage_client = storage.Client.from_service_account_json(
-        json_credentials_path=settings.CREDENTIALS["GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON_PATH"],
-        project=settings.CREDENTIALS["GOOGLE_CLOUD_PROJECT"]
+        json_credentials_path=settings.SETTINGS["GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON_PATH"],
+        project=settings.SETTINGS["GOOGLE_CLOUD_PROJECT"]
     )
 
     bucket_name = "hourly-batch-predictions"
@@ -170,8 +170,8 @@ def save(X: pd.DataFrame, y: pd.DataFrame, predictions: pd.DataFrame):
 def read():
     # TODO: Delete this function.
     storage_client = storage.Client.from_service_account_json(
-        json_credentials_path=settings.CREDENTIALS["GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON_PATH"],
-        project=settings.CREDENTIALS["GOOGLE_CLOUD_PROJECT"]
+        json_credentials_path=settings.SETTINGS["GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON_PATH"],
+        project=settings.SETTINGS["GOOGLE_CLOUD_PROJECT"]
     )
 
     bucket_name = "hourly-batch-predictions"

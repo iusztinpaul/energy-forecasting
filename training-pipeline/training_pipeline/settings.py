@@ -11,6 +11,7 @@ warnings.filterwarnings(action="ignore", category=FutureWarning, module="sktime"
 matplotlib.use("Agg")
 
 
+
 def load_env_vars(root_dir: Union[str, Path]) -> dict:
     """
     Load environment variables from .env.default and .env files.
@@ -31,12 +32,22 @@ def load_env_vars(root_dir: Union[str, Path]) -> dict:
     return dict(os.environ)
 
 
-# TODO: Find how to properly inject the root dit.
-try:
-    # ROOT_DIR = Path("..")
-    ROOT_DIR = Path("/opt/airflow/dags")
-    CREDENTIALS = load_env_vars(root_dir=ROOT_DIR)
-    OUTPUT_DIR = ROOT_DIR / "output"
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-except PermissionError:
-    print("Could not create output directory.")
+def get_root_dir(default_value: str = ".") -> Path:
+    """
+    Get the root directory of the project.
+
+    Args:
+        default_value: Default value to use if the environment variable is not set.
+
+    Returns:
+        Path to the root directory of the project.
+    """
+
+    return Path(os.getenv("ML_PIPELINE_ROOT_DIR", default_value))
+
+
+ML_PIPELINE_ROOT_DIR = get_root_dir()
+OUTPUT_DIR = ML_PIPELINE_ROOT_DIR / "output"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+SETTINGS = load_env_vars(root_dir=ML_PIPELINE_ROOT_DIR)

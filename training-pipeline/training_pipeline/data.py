@@ -3,14 +3,14 @@ import pandas as pd
 import wandb
 
 from training_pipeline.utils import init_wandb_run
-from training_pipeline.settings import CREDENTIALS
+from training_pipeline.settings import SETTINGS
 
 
 def load_dataset_from_feature_store(
     feature_view_version: int, training_dataset_version: int
 ):
     project = hopsworks.login(
-        api_key_value=CREDENTIALS["FS_API_KEY"], project="energy_consumption"
+        api_key_value=SETTINGS["FS_API_KEY"], project="energy_consumption"
     )
     fs = project.get_feature_store()
 

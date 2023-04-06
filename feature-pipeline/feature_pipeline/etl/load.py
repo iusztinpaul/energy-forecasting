@@ -3,7 +3,7 @@ import pandas as pd
 from great_expectations.core import ExpectationSuite
 from hsfs.feature_group import FeatureGroup
 
-from feature_pipeline.settings import CREDENTIALS
+from feature_pipeline.settings import SETTINGS
 
 
 def to_feature_store(
@@ -13,7 +13,7 @@ def to_feature_store(
 ) -> FeatureGroup:
     # Connect to feature store.
     project = hopsworks.login(
-        api_key_value=CREDENTIALS["FS_API_KEY"], project="energy_consumption"
+        api_key_value=SETTINGS["FS_API_KEY"], project="energy_consumption"
     )
     feature_store = project.get_feature_store()
 

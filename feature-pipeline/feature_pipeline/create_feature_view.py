@@ -7,9 +7,9 @@ from feature_pipeline import utils
 from feature_pipeline import settings
 
 
-def run(feature_group_version: int = 1):
+def run(feature_group_version: int = 1) -> dict:
     project = hopsworks.login(
-        api_key_value=settings.CREDENTIALS["FS_API_KEY"], project="energy_consumption"
+        api_key_value=settings.SETTINGS["FS_API_KEY"], project="energy_consumption"
     )
     fs = project.get_feature_store()
     energy_consumption_fg = fs.get_feature_group(
@@ -45,10 +45,13 @@ def run(feature_group_version: int = 1):
         coalesce=True,
     )
 
+    metadata = {"feature_view_version": feature_view.version, "training_dataset_version": 1}
     utils.save_json(
-        {"feature_view_version": feature_view.version, "training_dataset_version": 1},
+        metadata,
         file_name="feature_view_metadata.json",
     )
+
+    return metadata
 
 
 if __name__ == "__main__":

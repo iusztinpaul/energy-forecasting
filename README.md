@@ -39,12 +39,14 @@ curl -LfO 'https://airflow.apache.org/docs/apache-airflow/stable/docker-compose.
 # Make expected directories and set an expected environment variable
 mkdir -p ./dags ./logs ./plugins
 echo -e "AIRFLOW_UID=$(id -u)" > .env
+echo "AIRFLOW_VAR_ROOT_DIR=/opt/airflow/dags" >> .env
 
 # Initialize the database
-docker-compose up airflow-init
+docker compose up airflow-init
 
 # Start up all services
-docker-compose up --build
+# Note: You should setup the PyPi server credentials before running the docker containers.
+docker compose --env-file .env up --build 
 ```
 
 #### Clean Up
@@ -71,8 +73,8 @@ htpasswd -sc ~/.htpasswd/htpasswd.txt energy-forecasting
 ```
 Set credentials:
 ```shell
-poetry config repositories.test http://localhost
-poetry config http-basic.test energy-forecasting <password>
+poetry config repositories.my-pypi http://localhost
+poetry config http-basic.my-pypi energy-forecasting <password>
 ```
 Check credentials:
 ```shell
@@ -82,10 +84,11 @@ Build and publish:
 ```shell
 cd <module>
 poetry build
-poetry publish -r test
+poetry publish -r my-pypi
 ```
 
 ### Run Server
+Note that the image is hooked to the airflow docker compose command.
 ```shell
 docker run -p 80:8080 -v ~/.htpasswd:/data/.htpasswd pypiserver/pypiserver:latest run -P .htpasswd/htpasswd.txt --overwrite
 ```

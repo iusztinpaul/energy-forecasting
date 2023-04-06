@@ -16,7 +16,7 @@ from training_pipeline import utils
 from training_pipeline.data import load_dataset_from_feature_store
 from training_pipeline.models import build_model
 from training_pipeline.utils import init_wandb_run
-from training_pipeline.settings import CREDENTIALS, OUTPUT_DIR
+from training_pipeline.settings import SETTINGS, OUTPUT_DIR
 
 
 logger = utils.get_logger(__name__)
@@ -89,18 +89,19 @@ def run(
 
     sweep_id = run_hyperparameter_optimization(y_train, X_train, fh=fh)
 
-    utils.save_json({"sweep_id": sweep_id}, file_name="last_sweep_metadata.json")
+    metadata = {"sweep_id": sweep_id}
+    utils.save_json(metadata, file_name="last_sweep_metadata.json")
 
-    return sweep_id
+    return metadata
 
 
 def run_hyperparameter_optimization(
     y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int
 ):
-    sweep_id = wandb.sweep(sweep=sweep_configs, project=CREDENTIALS["WANDB_PROJECT"])
+    sweep_id = wandb.sweep(sweep=sweep_configs, project=SETTINGS["WANDB_PROJECT"])
 
     wandb.agent(
-        project=CREDENTIALS["WANDB_PROJECT"],
+        project=SETTINGS["WANDB_PROJECT"],
         sweep_id=sweep_id,
         function=partial(run_sweep, y_train=y_train, X_train=X_train, fh=fh),
     )

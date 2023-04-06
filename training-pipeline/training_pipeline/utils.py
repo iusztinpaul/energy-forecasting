@@ -106,8 +106,8 @@ def init_wandb_run(
     run_id: Optional[str] = None,
     resume: Optional[str] = None,
     reinit: bool = False,
-    project: str = settings.CREDENTIALS["WANDB_PROJECT"],
-    entity: str = settings.CREDENTIALS["WANDB_ENTITY"],
+    project: str = settings.SETTINGS["WANDB_PROJECT"],
+    entity: str = settings.SETTINGS["WANDB_ENTITY"],
 ):
     if add_timestamp_to_name:
         name = f"{name}_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}"

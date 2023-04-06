@@ -17,7 +17,7 @@ from sktime.utils.plotting import plot_series
 
 
 from training_pipeline import utils
-from training_pipeline.settings import CREDENTIALS, OUTPUT_DIR
+from training_pipeline.settings import SETTINGS, OUTPUT_DIR
 from training_pipeline.data import load_dataset_from_feature_store
 from training_pipeline.models import build_model, build_baseline_model
 
@@ -29,12 +29,16 @@ def run(
     fh: int = 24,
     feature_view_version: Optional[int] = None,
     training_dataset_version: Optional[int] = None,
+    best_model_artifact: Optional[dict] = None
 ):
     feature_view_metadata = utils.load_json("feature_view_metadata.json")
     if feature_view_version is None:
         feature_view_version = feature_view_metadata["feature_view_version"]
     if training_dataset_version is None:
         training_dataset_version = feature_view_metadata["training_dataset_version"]
+    if best_model_artifact is None:
+        best_model_metadata = utils.load_json("best_model_metadata.json")
+        best_model_artifact = best_model_metadata["artifact"]
 
     y_train, y_test, X_train, X_test = load_dataset_from_feature_store(
         feature_view_version, training_dataset_version
@@ -51,8 +55,8 @@ def run(
         run.use_artifact("split_test:latest")
         # Load the best config from sweep.
         best_config_artifact = run.use_artifact(
-            "best_config:latest",
-            type="model",
+            f"{best_model_artifact['name']}:latest",
+            type=best_model_artifact["type"],
         )
         download_dir = best_config_artifact.download()
         config_path = Path(download_dir) / "best_config.json"
@@ -119,7 +123,10 @@ def run(
         feature_view_version, training_dataset_version
     )
 
-    utils.save_json({"model_version": model_version}, file_name="train_metadata.json")
+    metadata = {"model_version": model_version}
+    utils.save_json(metadata, file_name="train_metadata.json")
+
+    return metadata
 
 
 def train_model(model, y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int):
@@ -189,7 +196,7 @@ def attach_best_model_to_feature_store(
     feature_view_version: int, training_dataset_version: int
 ) -> int:
     project = hopsworks.login(
-        api_key_value=CREDENTIALS["FS_API_KEY"], project="energy_consumption"
+        api_key_value=SETTINGS["FS_API_KEY"], project="energy_consumption"
     )
     fs = project.get_feature_store()
     feature_view = fs.get_feature_view(
@@ -203,8 +210,8 @@ def attach_best_model_to_feature_store(
         "name": "best_model",
         "version": f"v{model_version}",
         "type": "model",
-        "url": f"https://wandb.ai/{CREDENTIALS['WANDB_ENTITY']}/{CREDENTIALS['WANDB_PROJECT']}/artifacts/model/best_model/v{model_version}/overview",
-        "artifact_name": f"{CREDENTIALS['WANDB_ENTITY']}/{CREDENTIALS['WANDB_PROJECT']}/best_model:latest",
+        "url": f"https://wandb.ai/{SETTINGS['WANDB_ENTITY']}/{SETTINGS['WANDB_PROJECT']}/artifacts/model/best_model/v{model_version}/overview",
+        "artifact_name": f"{SETTINGS['WANDB_ENTITY']}/{SETTINGS['WANDB_PROJECT']}/best_model:latest",
     }
     feature_view.add_tag(name="wandb", value=fs_tag)
     feature_view.add_training_dataset_tag(
@@ -219,7 +226,7 @@ def attach_best_model_to_feature_store(
 
     api = wandb.Api()
     best_model_artifact = api.artifact(
-        f"{CREDENTIALS['WANDB_ENTITY']}/{CREDENTIALS['WANDB_PROJECT']}/best_model:latest"
+        f"{SETTINGS['WANDB_ENTITY']}/{SETTINGS['WANDB_PROJECT']}/best_model:latest"
     )
     best_model_artifact.metadata = {
         **best_model_artifact.metadata,

@@ -5,7 +5,7 @@ import wandb
 from typing import Optional
 
 from training_pipeline import utils
-from training_pipeline.settings import CREDENTIALS, OUTPUT_DIR
+from training_pipeline.settings import SETTINGS, OUTPUT_DIR
 
 logger = utils.get_logger(__name__)
 
@@ -26,10 +26,16 @@ def run(sweep_id: Optional[str] = None):
 
     api = wandb.Api()
     sweep = api.sweep(
-        f"{CREDENTIALS['WANDB_ENTITY']}/{CREDENTIALS['WANDB_PROJECT']}/{sweep_id}"
+        f"{SETTINGS['WANDB_ENTITY']}/{SETTINGS['WANDB_PROJECT']}/{sweep_id}"
     )
     best_run = sweep.best_run()
 
+    best_model_metadata = {
+        "artifact": {
+            "name": "best_config",
+            "type": "model"
+        }
+    }
     with utils.init_wandb_run(
         name="best_experiment",
         job_type="hpo",
@@ -53,8 +59,8 @@ def run(sweep_id: Optional[str] = None):
             json.dump(best_config, f, indent=4)
 
         artifact = wandb.Artifact(
-            name=f"best_config",
-            type="model",
+            name=best_model_metadata["artifact"]["name"],
+            type=best_model_metadata["artifact"]["type"],
             metadata={"results": {"validation": dict(run.summary["validation"])}},
         )
         artifact.add_file(str(config_path))
@@ -62,7 +68,9 @@ def run(sweep_id: Optional[str] = None):
 
         run.finish()
 
-    return best_config
+    utils.save_json(best_model_metadata, file_name="best_model_metadata.json")
+
+    return best_model_metadata
 
 
 if __name__ == "__main__":
