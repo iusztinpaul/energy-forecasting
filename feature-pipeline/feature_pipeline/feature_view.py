@@ -24,12 +24,14 @@ def create(feature_group_version: int = 1) -> dict:
         logger.info("No feature views found for energy_consumption_denmark_view.")
 
         feature_views = []
-    
+
     for feature_view in feature_views:
         try:
             feature_view.delete()
         except hsfs.client.exceptions.RestAPIError:
-            logger.info(f"Failed to delete feature view {feature_view.name} with version {feature_view.version}.")
+            logger.info(
+                f"Failed to delete feature view {feature_view.name} with version {feature_view.version}."
+            )
 
             # Don't fail the program if the deletion steps fails.
             continue
@@ -67,7 +69,10 @@ def create(feature_group_version: int = 1) -> dict:
         coalesce=True,
     )
 
-    metadata = {"feature_view_version": feature_view.version, "training_dataset_version": 1}
+    metadata = {
+        "feature_view_version": feature_view.version,
+        "training_dataset_version": 1,
+    }
     utils.save_json(
         metadata,
         file_name="feature_view_metadata.json",

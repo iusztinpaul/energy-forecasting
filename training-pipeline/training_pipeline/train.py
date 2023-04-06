@@ -144,7 +144,9 @@ def evaluate(forecaster, y_test: pd.DataFrame, X_test: pd.DataFrame):
 
 
 def render(
-    timeseries: OrderedDictType[str, pd.DataFrame], prefix: Optional[str] = None, delete_from_disk: bool = True
+    timeseries: OrderedDictType[str, pd.DataFrame],
+    prefix: Optional[str] = None,
+    delete_from_disk: bool = True,
 ):
     grouped_timeseries = OrderedDict()
     for split, df in timeseries.items():

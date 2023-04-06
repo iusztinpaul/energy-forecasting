@@ -7,9 +7,9 @@ from feature_pipeline.settings import SETTINGS
 
 
 def to_feature_store(
-        data: pd.DataFrame,
-        validation_expectation_suite: ExpectationSuite,
-        feature_group_version: int,
+    data: pd.DataFrame,
+    validation_expectation_suite: ExpectationSuite,
+    feature_group_version: int,
 ) -> FeatureGroup:
     # Connect to feature store.
     project = hopsworks.login(

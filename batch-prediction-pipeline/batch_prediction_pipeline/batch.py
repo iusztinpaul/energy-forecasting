@@ -146,8 +146,10 @@ def forecast(model, X: pd.DataFrame, fh: int = 24):
 
 def save(X: pd.DataFrame, y: pd.DataFrame, predictions: pd.DataFrame):
     storage_client = storage.Client.from_service_account_json(
-        json_credentials_path=settings.SETTINGS["GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON_PATH"],
-        project=settings.SETTINGS["GOOGLE_CLOUD_PROJECT"]
+        json_credentials_path=settings.SETTINGS[
+            "GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON_PATH"
+        ],
+        project=settings.SETTINGS["GOOGLE_CLOUD_PROJECT"],
     )
 
     bucket_name = "hourly-batch-predictions"
@@ -170,8 +172,10 @@ def save(X: pd.DataFrame, y: pd.DataFrame, predictions: pd.DataFrame):
 def read():
     # TODO: Delete this function.
     storage_client = storage.Client.from_service_account_json(
-        json_credentials_path=settings.SETTINGS["GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON_PATH"],
-        project=settings.SETTINGS["GOOGLE_CLOUD_PROJECT"]
+        json_credentials_path=settings.SETTINGS[
+            "GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON_PATH"
+        ],
+        project=settings.SETTINGS["GOOGLE_CLOUD_PROJECT"],
     )
 
     bucket_name = "hourly-batch-predictions"

@@ -11,7 +11,7 @@ def run(
     days_delay: int = 15,
     days_export: int = 30,
     url: str = "https://api.energidataservice.dk/dataset/ConsumptionDE35Hour",
-    feature_group_version: int = 2
+    feature_group_version: int = 2,
 ) -> dict:
     logger.info(f"Extracting data from API.")
     data, metadata = extract.from_api(days_delay, days_export, url)
@@ -29,7 +29,7 @@ def run(
     load.to_feature_store(
         data,
         validation_expectation_suite=validation_expectation_suite,
-        feature_group_version=feature_group_version
+        feature_group_version=feature_group_version,
     )
     metadata["feature_group_version"] = feature_group_version
     logger.info("Successfully validated data and loaded it to the feature store.")

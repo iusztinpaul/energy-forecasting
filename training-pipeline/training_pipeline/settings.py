@@ -11,7 +11,6 @@ warnings.filterwarnings(action="ignore", category=FutureWarning, module="sktime"
 matplotlib.use("Agg")
 
 
-
 def load_env_vars(root_dir: Union[str, Path]) -> dict:
     """
     Load environment variables from .env.default and .env files.
