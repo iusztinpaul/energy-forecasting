@@ -29,16 +29,12 @@ def run(
     fh: int = 24,
     feature_view_version: Optional[int] = None,
     training_dataset_version: Optional[int] = None,
-    best_model_artifact: Optional[dict] = None
 ):
     feature_view_metadata = utils.load_json("feature_view_metadata.json")
     if feature_view_version is None:
         feature_view_version = feature_view_metadata["feature_view_version"]
     if training_dataset_version is None:
         training_dataset_version = feature_view_metadata["training_dataset_version"]
-    if best_model_artifact is None:
-        best_model_metadata = utils.load_json("best_model_metadata.json")
-        best_model_artifact = best_model_metadata["artifact"]
 
     y_train, y_test, X_train, X_test = load_dataset_from_feature_store(
         feature_view_version, training_dataset_version
@@ -55,8 +51,8 @@ def run(
         run.use_artifact("split_test:latest")
         # Load the best config from sweep.
         best_config_artifact = run.use_artifact(
-            f"{best_model_artifact['name']}:latest",
-            type=best_model_artifact["type"],
+            "best_config:latest",
+            type="model",
         )
         download_dir = best_config_artifact.download()
         config_path = Path(download_dir) / "best_config.json"

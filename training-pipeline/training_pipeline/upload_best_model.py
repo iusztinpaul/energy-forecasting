@@ -30,12 +30,6 @@ def run(sweep_id: Optional[str] = None):
     )
     best_run = sweep.best_run()
 
-    best_model_metadata = {
-        "artifact": {
-            "name": "best_config",
-            "type": "model"
-        }
-    }
     with utils.init_wandb_run(
         name="best_experiment",
         job_type="hpo",
@@ -59,18 +53,14 @@ def run(sweep_id: Optional[str] = None):
             json.dump(best_config, f, indent=4)
 
         artifact = wandb.Artifact(
-            name=best_model_metadata["artifact"]["name"],
-            type=best_model_metadata["artifact"]["type"],
+            name="best_config",
+            type="model",
             metadata={"results": {"validation": dict(run.summary["validation"])}},
         )
         artifact.add_file(str(config_path))
         run.log_artifact(artifact)
 
         run.finish()
-
-    utils.save_json(best_model_metadata, file_name="best_model_metadata.json")
-
-    return best_model_metadata
 
 
 if __name__ == "__main__":

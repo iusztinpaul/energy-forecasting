@@ -25,12 +25,9 @@ def to_feature_store(
         primary_key=["area", "consumer_type"],
         event_time="datetime_utc",
         online_enabled=False,
-    )
-    # Save validation expectation suite.
-    energy_feature_group.save_expectation_suite(
         expectation_suite=validation_expectation_suite,
-        validation_ingestion_policy="STRICT",
     )
+    # Upload data.
     energy_feature_group.insert(data)
 
     # Add feature descriptions.
