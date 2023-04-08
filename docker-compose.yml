@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  frontend:
+    build:
+        dockerfile: frontend\Dockerfile
+    ports:
+      - 8501:8501
+    depends_on:
+      - api
+
+  api:
+    build:
+        dockerfile: api\Dockerfile
+    env_file:
+      - api\.env    
+    ports:
+      - 8001:8001
