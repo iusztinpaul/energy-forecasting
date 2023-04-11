@@ -9,9 +9,9 @@ on:
 jobs:
   deploy:
     env:
-      GCLOUD_PROJECT: YOUR_PROJECT_ID
-      INSTANCE_NAME: YOUR_INSTANCE_NAME
-      ZONE: YOUR_ZONE
+      GCLOUD_PROJECT: 'silver-device-379512'
+      INSTANCE_NAME: 'instance-2'
+      ZONE: 'us-central1-a'
   
     # Add 'id-token' with the intended permissions for workload identity federation
     permissions:
