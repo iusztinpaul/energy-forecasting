@@ -6,8 +6,8 @@ import pandas as pd
 from dotenv import load_dotenv
 from fastapi import APIRouter
 
-from app import schemas 
-from app.config import settings
+import schemas 
+from config import settings
 
 load_dotenv()
 
@@ -54,32 +54,30 @@ def area_values() -> List:
     
     return results
 
-@api_router.get("/predictions", response_model=schemas.PredictionResults, status_code=200)
-def get_predictions() -> Any:
+@api_router.post("/predictions", response_model=schemas.PredictionResults, status_code=200)
+def get_predictions(input_data: schemas.EnergyConsumptionData) -> Any:
     """
     Get predictions from GCP
     """
+    area = input_data.area
+    consumer_type = input_data.consumer_type
+
     y_train = pd.read_parquet(f"{GCP_FILE_PATH}/y.parquet", filesystem=fs)
     preds = pd.read_parquet(f"{GCP_FILE_PATH}/predictions.parquet", filesystem=fs)
-    
-    datetime_utc = y_train.index.get_level_values("datetime_utc").to_list()
-    area = y_train.index.get_level_values("area").to_list()
-    consumer_type = y_train.index.get_level_values("consumer_type").to_list()
-    energy_consumption = y_train["energy_consumption"].to_list()
 
-    preds_datetime_utc = preds.index.get_level_values("datetime_utc").to_list() 
-    preds_area = preds.index.get_level_values("area").to_list()
-    preds_consumer_type = preds.index.get_level_values("consumer_type").to_list()
-    preds_energy_consumption = preds["energy_consumption"].to_list()
+    train_df = y_train.xs((area, consumer_type), level=["area", "consumer_type"])
+    preds_df = preds.xs((area, consumer_type), level=["area", "consumer_type"])
+    
+    datetime_utc = train_df.index.get_level_values("datetime_utc").to_list()
+    energy_consumption = train_df["energy_consumption"].to_list()
+
+    preds_datetime_utc = preds_df.index.get_level_values("datetime_utc").to_list() 
+    preds_energy_consumption = preds_df["energy_consumption"].to_list()
 
     results = {
         "datetime_utc": datetime_utc, 
-        "area": area,
-        "consumer_type": consumer_type,
         "energy_consumption": energy_consumption,
         "preds_datetime_utc": preds_datetime_utc,
-        "preds_area": preds_area,
-        "preds_consumer_type": preds_consumer_type,
         "preds_energy_consumption": preds_energy_consumption
         }
 

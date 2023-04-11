@@ -4,8 +4,8 @@ import uvicorn
 from fastapi import APIRouter, FastAPI, Request
 from fastapi.responses import HTMLResponse
 
-from app.api import api_router
-from app.config import settings, setup_app_logging
+from api import api_router
+from config import settings, setup_app_logging
 
 # setup logging as early as possible
 setup_app_logging(config=settings)
