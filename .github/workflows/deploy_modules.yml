@@ -18,18 +18,17 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-    - uses: 'actions/checkout@v3'
+      - uses: 'actions/checkout@v3'
 
-    - id: 'auth'
-      uses: 'google-github-actions/auth@v0'
-      with:
-        workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
-        service_account: 'my-service-account@my-project.iam.gserviceaccount.com'
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{ secrets.gcp_credentials }}'
 
-    - id: 'compute-ssh'
-      uses: 'google-github-actions/ssh-compute@v0'
-      with:
-        instance_name: 'example-instance'
-        zone: 'us-central1-a'
-        ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
-        command: 'echo Hello world'
+      - id: 'compute-ssh'
+        uses: 'google-github-actions/ssh-compute@v0'
+        with:
+          instance_name: 'example-instance'
+          zone: 'us-central1-a'
+          ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
+          command: 'echo Hello world'
