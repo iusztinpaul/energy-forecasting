@@ -33,57 +33,50 @@ consumer_type = st.selectbox(
     )
 )
 
+input_data = {
+    "area": area,
+    "consumer_type": consumer_type
+}
 
 # Check both area and consumer type have values listed
-if area and consumer_type: 
+if st.button("Get Predictions"): 
 
-    response = requests.get(f"http://host.docker.internal:8001/api/v1/get_predictions/")
+    response = requests.post(
+        "http://host.docker.internal:8001/api/v1/get_predictions/", 
+        json=input_data, 
+        verify=False
+        )
+    
     json_response = response.json()
 
     datetime_utc = json_response.get("datetime_utc")
-    area_ = json_response.get("area")
-    consumer_type_ = json_response.get("consumer_type")
     energy_consumption = json_response.get("energy_consumption")
-
     pred_datetime_utc = json_response.get("preds_datetime_utc")
-    pred_area_ = json_response.get("preds_area")
-    pred_consumer_type_ = json_response.get("preds_consumer_type")
     pred_energy_consumption = json_response.get("preds_energy_consumption")
 
     train_df = pd.DataFrame(list(
         zip(
-        datetime_utc, area_, consumer_type_, energy_consumption
+            datetime_utc, energy_consumption
         )
         ),
-        columns=["datetime_utc", "area", "consumer_type", "energy_consumption"]
+        columns=["datetime_utc", "energy_consumption"]
         )
     
     preds_df = pd.DataFrame(list(
         zip(
-        pred_datetime_utc, pred_area_, pred_consumer_type_, pred_energy_consumption
+            pred_datetime_utc, pred_energy_consumption
         )
         ),
-        columns=["datetime_utc", "area", "consumer_type", "energy_consumption"]
+        columns=["datetime_utc", "energy_consumption"]
         )
 
-    # Get specific columns 
-    train_area_and_consumer_df = train_df.loc[
-        (train_df["area"] == area) & (train_df["consumer_type"] == consumer_type) 
-    ].copy() 
+    train_df["datetime_utc"] = pd.to_datetime(train_df["datetime_utc"], unit="h")
+    train_df.set_index("datetime_utc", inplace=True)
 
-    pred_area_and_consumer_df = preds_df.loc[
-        (preds_df["area"] == area) & (preds_df["consumer_type"] == consumer_type) 
-    ].copy() 
-
-
-    train_area_and_consumer_df["datetime_utc"] = pd.to_datetime(train_area_and_consumer_df["datetime_utc"], unit="h")
-    train_area_and_consumer_df.set_index("datetime_utc", inplace=True)
-
-    pred_area_and_consumer_df["datetime_utc"] = pd.to_datetime(pred_area_and_consumer_df["datetime_utc"], unit="h")
-    pred_area_and_consumer_df.set_index("datetime_utc", inplace=True)
-
+    preds_df["datetime_utc"] = pd.to_datetime(preds_df["datetime_utc"], unit="h")
+    preds_df.set_index("datetime_utc", inplace=True)
 
     fig, ax = plt.subplots()
-    ax.plot(train_area_and_consumer_df.index, train_area_and_consumer_df["energy_consumption"], color="blue", label="current")
-    ax.plot(pred_area_and_consumer_df.index, pred_area_and_consumer_df["energy_consumption"], color="red", label="prediction")
+    ax.plot(train_df.index, train_df["energy_consumption"], color="blue", label="current")
+    ax.plot(preds_df.index, preds_df["energy_consumption"], color="red", label="prediction")
     st.pyplot(fig) 
