@@ -27,11 +27,14 @@ jobs:
         with:
           credentials_json: '${{ secrets.gcp_credentials }}'
 
-      - id: 'compute-ssh'
-        uses: 'google-github-actions/ssh-compute@v0'
-        with:
-          project: '${{ env.CLOUDSDK_CORE_PROJECT }}'
-          instance_name: '${{ env.INSTANCE_NAME }}'
-          zone: '${{ env.ZONE }}'
-          ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
-          command: 'echo Hello world'
+#       - id: 'compute-ssh'
+#         uses: 'google-github-actions/ssh-compute@v0'
+#         with:
+#           project: '${{ env.CLOUDSDK_CORE_PROJECT }}'
+#           instance_name: '${{ env.INSTANCE_NAME }}'
+#           zone: '${{ env.ZONE }}'
+#           ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
+#           command: 'echo Hello world'
+          
+      - name: Run simple command
+        run: echo `pwd`
