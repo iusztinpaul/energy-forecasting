@@ -1,0 +1,40 @@
+name: Deploy to Cloud Run from Source
+
+on:
+  push:
+    branches: [ "main" ]
+
+
+
+jobs:
+  deploy:
+    env:
+      CLOUDSDK_CORE_PROJECT: 'silver-device-379512'
+      INSTANCE_NAME: 'instance-2'
+      ZONE: 'us-central1-a'
+  
+    # Add 'id-token' with the intended permissions for workload identity federation
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: 'actions/checkout@v3'
+
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{ secrets.gcp_credentials }}'
+
+#       - id: 'compute-ssh'
+#         uses: 'google-github-actions/ssh-compute@v0'
+#         with:
+#           project: '${{ env.CLOUDSDK_CORE_PROJECT }}'
+#           instance_name: '${{ env.INSTANCE_NAME }}'
+#           zone: '${{ env.ZONE }}'
+#           ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
+#           command: 'echo Hello world'
+          
+      - name: Run simple command
+        run: echo `pwd`
