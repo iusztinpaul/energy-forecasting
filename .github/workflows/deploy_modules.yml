@@ -4,13 +4,15 @@ on:
   push:
     branches: [ "main" ]
 
-env:
-  PROJECT_ID: YOUR_PROJECT_ID # TODO: update Google Cloud project id
-  SERVICE: YOUR_SERVICE_NAME # TODO: update Cloud Run service name
-  REGION: YOUR_SERVICE_REGION # TODO: update Cloud Run service region
+
 
 jobs:
   deploy:
+    env:
+      GCLOUD_PROJECT: YOUR_PROJECT_ID
+      INSTANCE_NAME: YOUR_INSTANCE_NAME
+      ZONE: YOUR_ZONE
+  
     # Add 'id-token' with the intended permissions for workload identity federation
     permissions:
       contents: 'read'
@@ -28,7 +30,7 @@ jobs:
       - id: 'compute-ssh'
         uses: 'google-github-actions/ssh-compute@v0'
         with:
-          instance_name: 'example-instance'
-          zone: 'us-central1-a'
+          instance_name: '${{ env.INSTANCE_NAME }}'
+          zone: '${{ env.ZONE }}'
           ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
           command: 'echo Hello world'
