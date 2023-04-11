@@ -1,0 +1,35 @@
+name: Deploy to Cloud Run from Source
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  PROJECT_ID: YOUR_PROJECT_ID # TODO: update Google Cloud project id
+  SERVICE: YOUR_SERVICE_NAME # TODO: update Cloud Run service name
+  REGION: YOUR_SERVICE_REGION # TODO: update Cloud Run service region
+
+jobs:
+  deploy:
+    # Add 'id-token' with the intended permissions for workload identity federation
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: 'actions/checkout@v3'
+
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v0'
+      with:
+        workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+        service_account: 'my-service-account@my-project.iam.gserviceaccount.com'
+
+    - id: 'compute-ssh'
+      uses: 'google-github-actions/ssh-compute@v0'
+      with:
+        instance_name: 'example-instance'
+        zone: 'us-central1-a'
+        ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
+        command: 'echo Hello world'
