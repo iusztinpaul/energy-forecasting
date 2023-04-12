@@ -33,4 +33,7 @@ jobs:
           instance_name: '${{ env.INSTANCE_NAME }}'
           zone: '${{ env.ZONE }}'
           ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
-          command: 'echo $USER && cd /home/pauliusztin/energy-forecasting && sh deploy.sh'
+          command: >
+            pip install poetry && 
+            cd /home/pauliusztin/energy-forecasting && 
+            sh deploy.sh
