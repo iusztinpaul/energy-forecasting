@@ -30,10 +30,10 @@ jobs:
         uses: 'google-github-actions/ssh-compute@v0'
         with:
           project_id: '${{ env.CLOUDSDK_CORE_PROJECT }}'
+          user: 'pauliusztin'
           instance_name: '${{ env.INSTANCE_NAME }}'
           zone: '${{ env.ZONE }}'
           ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
-          command: >
-            pip install poetry && 
+          command: > 
             cd /home/pauliusztin/energy-forecasting && 
             sh deploy.sh
