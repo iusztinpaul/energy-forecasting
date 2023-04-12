@@ -54,13 +54,11 @@ def area_values() -> List:
     
     return results
 
-@api_router.post("/predictions", response_model=schemas.PredictionResults, status_code=200)
-def get_predictions(input_data: schemas.EnergyConsumptionData) -> Any:
+@api_router.get("/predictions/{area}/{consumer_type}", response_model=schemas.PredictionResults, status_code=200)
+async def get_predictions(area: int, consumer_type: int) -> Any:
     """
     Get predictions from GCP
     """
-    area = input_data.area
-    consumer_type = input_data.consumer_type
 
     y_train = pd.read_parquet(f"{GCP_FILE_PATH}/y.parquet", filesystem=fs)
     preds = pd.read_parquet(f"{GCP_FILE_PATH}/predictions.parquet", filesystem=fs)

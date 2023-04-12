@@ -7,15 +7,3 @@ class PredictionResults(BaseModel):
     energy_consumption: List[Any]
     preds_datetime_utc: List[Any]
     preds_energy_consumption: List[Any]
-
-class EnergyConsumptionData(BaseModel): 
-    area: int
-    consumer_type: int
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "area":1, 
-                "consumer_type": 121
-            }
-        }
