@@ -10,6 +10,7 @@ jobs:
   deploy:
     env:
       CLOUDSDK_CORE_PROJECT: 'silver-device-379512'
+      USER: 'pauliusztin'
       INSTANCE_NAME: 'ml-pipeline'
       ZONE: 'europe-west3-c'
   
@@ -25,15 +26,15 @@ jobs:
       - id: 'auth'
         uses: 'google-github-actions/auth@v0'
         with:
-          credentials_json: '${{ secrets.gcp_credentials }}'
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
       - id: 'compute-ssh'
         uses: 'google-github-actions/ssh-compute@v0'
         with:
           project_id: '${{ env.CLOUDSDK_CORE_PROJECT }}'
-          user: 'pauliusztin'
+          user: '${{ env.USER }}'
           instance_name: '${{ env.INSTANCE_NAME }}'
           zone: '${{ env.ZONE }}'
           ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
           command: > 
-            cd /home/pauliusztin/energy-forecasting && 
+            cd ~/energy-forecasting && 
             sh deploy.sh
