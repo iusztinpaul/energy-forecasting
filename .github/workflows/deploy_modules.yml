@@ -27,13 +27,13 @@ jobs:
         with:
           credentials_json: '${{ secrets.gcp_credentials }}'
 
-      - id: 'compute-ssh'
-        uses: 'google-github-actions/ssh-compute@v0'
-        with:
-          project_id: '${{ env.CLOUDSDK_CORE_PROJECT }}'
-          instance_name: '${{ env.INSTANCE_NAME }}'
-          zone: '${{ env.ZONE }}'
-          ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
-          command: 'echo Hello world'
+#       - id: 'compute-ssh'
+#         uses: 'google-github-actions/ssh-compute@v0'
+#         with:
+#           project_id: '${{ env.CLOUDSDK_CORE_PROJECT }}'
+#           instance_name: '${{ env.INSTANCE_NAME }}'
+#           zone: '${{ env.ZONE }}'
+#           ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
+#           command: 'echo Hello world'
       - name: 'run'
         run: 'gcloud compute ssh instance-2 --zone us-central1-a --quiet --tunnel-through-iap --project silver-device-379512 --command "echo Hello world"'
