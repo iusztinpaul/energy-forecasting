@@ -35,3 +35,5 @@ jobs:
           zone: '${{ env.ZONE }}'
           ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
           command: 'echo Hello world'
+      - name: 'run'
+        run: 'gcloud compute ssh instance-2 --zone us-central1-a --quiet --tunnel-through-iap --project silver-device-379512 --command "echo Hello world"'
