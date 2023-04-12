@@ -5,10 +5,10 @@ on:
     branches: [ "main" ]
     
 env:
-  CLOUDSDK_CORE_PROJECT: '${{ env.CLOUDSDK_CORE_PROJECT | silver-device-379512 }}'
-  USER: '${{ env.USER | pauliusztin }}'
-  INSTANCE_NAME: '${{ env.INSTANCE_NAME | ml-pipeline }}'
-  ZONE: '${{ env.ZONE | europe-west3-c }}'
+  CLOUDSDK_CORE_PROJECT: '${{ vars.CLOUDSDK_CORE_PROJECT | silver-device-379512 }}'
+  USER: '${{ vars.USER | pauliusztin }}'
+  INSTANCE_NAME: '${{ vars.INSTANCE_NAME | ml-pipeline }}'
+  ZONE: '${{ vars.ZONE | europe-west3-c }}'
 
 jobs:
   deploy:
