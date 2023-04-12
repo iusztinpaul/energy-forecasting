@@ -10,8 +10,8 @@ jobs:
   deploy:
     env:
       CLOUDSDK_CORE_PROJECT: 'silver-device-379512'
-      INSTANCE_NAME: 'instance-2'
-      ZONE: 'us-central1-a'
+      INSTANCE_NAME: 'ml-pipeline'
+      ZONE: 'europe-west3-c'
   
     # Add 'id-token' with the intended permissions for workload identity federation
     permissions:
