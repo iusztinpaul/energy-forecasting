@@ -1,4 +1,4 @@
-name: Deploy to Cloud Run from Source
+name: Deploy ml-pipeline modules to private pypi registry
 
 on:
   push:
