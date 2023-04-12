@@ -1,4 +1,4 @@
-name: Deploy ml-pipeline modules to private pypi registry
+name: Deploy ml-pipeline modules to private PyPI registry.
 
 on:
   push:
