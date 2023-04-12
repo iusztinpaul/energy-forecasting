@@ -53,6 +53,8 @@ def predict(
     )
     logger.info("Successfully loaded data from feature store.")
 
+    # TODO: Compute metrics on new data.
+
     logger.info("Loading model from model registry...")
     model = load_model_from_model_registry(project, model_version)
     logger.info("Successfully loaded model from model registry.")
