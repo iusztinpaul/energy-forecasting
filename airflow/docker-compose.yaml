@@ -305,6 +305,7 @@ services:
     volumes:
       - ~/.htpasswd:/data/.htpasswd
     command:
+      - run
       - -P
       - .htpasswd/htpasswd.txt
       - --overwrite

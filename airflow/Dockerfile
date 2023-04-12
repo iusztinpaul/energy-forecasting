@@ -3,6 +3,7 @@ FROM apache/airflow:2.5.2
 ARG CURRENT_USER=$USER
 
 USER root
+# TODO: Clean installed packages
 RUN apt-get -y update && apt-get -y upgrade
 RUN apt-get install -y python3.9-distutils
 RUN apt-get install -y python3-dev python3.9-dev \

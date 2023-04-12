@@ -65,6 +65,7 @@ def from_best_config(
         # Baseline model
         baseline_forecaster = build_baseline_model()
         baseline_forecaster = train_model(baseline_forecaster, y_train, X_train, fh=fh)
+        # TODO: Also evaluate the models on slices.
         y_pred_baseline, metrics_baseline = evaluate(
             baseline_forecaster, y_test, X_test
         )
@@ -76,7 +77,8 @@ def from_best_config(
         best_model = build_model(config)
         best_forecaster = train_model(best_model, y_train, X_train, fh=fh)
 
-        # # Evaluate best model
+        # Evaluate best model
+        # TODO: Also evaluate the models on slices.
         y_pred, metrics = evaluate(best_forecaster, y_test, X_test)
         for k, v in metrics.items():
             logger.info(f"Model test {k}: {v}")
