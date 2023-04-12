@@ -9,7 +9,7 @@ on:
 jobs:
   deploy:
     env:
-      CLOUDSDK_CORE_PROJECT: 'silver-device-379512'
+#       CLOUDSDK_CORE_PROJECT: 'silver-device-379512'
       INSTANCE_NAME: 'instance-2'
       ZONE: 'us-central1-a'
   
@@ -30,7 +30,7 @@ jobs:
       - id: 'compute-ssh'
         uses: 'google-github-actions/ssh-compute@v0'
         with:
-          project_id: '${{ env.CLOUDSDK_CORE_PROJECT }}'
+#           project_id: '${{ env.CLOUDSDK_CORE_PROJECT }}'
           instance_name: '${{ env.INSTANCE_NAME }}'
           zone: '${{ env.ZONE }}'
           ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
