@@ -30,7 +30,7 @@ jobs:
       - id: 'compute-ssh'
         uses: 'google-github-actions/ssh-compute@v0'
         with:
-          project: '${{ env.CLOUDSDK_CORE_PROJECT }}'
+          project_id: '${{ env.CLOUDSDK_CORE_PROJECT }}'
           instance_name: '${{ env.INSTANCE_NAME }}'
           zone: '${{ env.ZONE }}'
           ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
