@@ -3,22 +3,15 @@ name: Deploy to Cloud Run from Source
 on:
   push:
     branches: [ "main" ]
-
-
+    
+env:
+  CLOUDSDK_CORE_PROJECT: '${{ env.CLOUDSDK_CORE_PROJECT | silver-device-379512 }}'
+  USER: '${{ env.USER | pauliusztin }}'
+  INSTANCE_NAME: '${{ env.INSTANCE_NAME | ml-pipeline }}'
+  ZONE: '${{ env.ZONE | europe-west3-c }}'
 
 jobs:
   deploy:
-    env:
-      CLOUDSDK_CORE_PROJECT: 'silver-device-379512'
-      USER: 'pauliusztin'
-      INSTANCE_NAME: 'ml-pipeline'
-      ZONE: 'europe-west3-c'
-  
-    # Add 'id-token' with the intended permissions for workload identity federation
-    permissions:
-      contents: 'read'
-      id-token: 'write'
-
     runs-on: ubuntu-latest
     steps:
       - uses: 'actions/checkout@v3'
