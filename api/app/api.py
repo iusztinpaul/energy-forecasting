@@ -6,8 +6,8 @@ import pandas as pd
 from dotenv import load_dotenv
 from fastapi import APIRouter
 
-import schemas 
-from config import settings
+from app import schemas 
+from app.config import settings
 
 load_dotenv()
 
