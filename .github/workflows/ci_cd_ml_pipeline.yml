@@ -2,6 +2,9 @@ name: CD/CD for the ml-pipeline that builds all the pipeline modules and pushes 
 
 on:
   push:
+    paths-ignore:
+      - 'app-api/'
+      - 'app-frontend/'
     branches: [ "main" ]
     
 env:
