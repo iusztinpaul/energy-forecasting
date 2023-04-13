@@ -2,6 +2,11 @@ name: CI/CD for the web app (API + frontend)
 
 on:
   push:
+    paths-ignore:
+      - 'batch-prediction-pipeline/'
+      - 'feature-pipeline/'
+      - 'training-pipeline'
+      - 'energy-forecasting/.github/workflows/ci_cd_ml_pipeline.yml'
     branches: [ "main" ]
     
 env:
