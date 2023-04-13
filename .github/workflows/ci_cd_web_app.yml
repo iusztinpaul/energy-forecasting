@@ -6,7 +6,8 @@ on:
       - 'batch-prediction-pipeline/'
       - 'feature-pipeline/'
       - 'training-pipeline'
-      - 'energy-forecasting/.github/workflows/ci_cd_ml_pipeline.yml'
+      - '**/*.yml'
+      - '**/*.md'
     branches: [ "main" ]
     
 env:
