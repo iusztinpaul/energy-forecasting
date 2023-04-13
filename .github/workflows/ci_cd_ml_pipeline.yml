@@ -5,6 +5,7 @@ on:
     paths-ignore:
       - 'app-api/'
       - 'app-frontend/'
+      - 'energy-forecasting/.github/workflows/ci_cd_web_app.yml'
     branches: [ "main" ]
     
 env:
