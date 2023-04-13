@@ -2,8 +2,7 @@ import requests
 
 import pandas as pd
 import streamlit as st
-import matplotlib.pyplot as plt
-
+import plotly.express as px
 
 API_URL = "http://172.17.0.1:8001/api/v1"
 
@@ -42,7 +41,7 @@ input_data = {
 }
 
 # Check both area and consumer type have values listed
-if st.button("Get Predictions"): 
+if area and consumer_type: 
 
     response = requests.get(
         f"{API_URL}/predictions/{area}/{consumer_type}", 
@@ -73,12 +72,12 @@ if st.button("Get Predictions"):
         )
 
     train_df["datetime_utc"] = pd.to_datetime(train_df["datetime_utc"], unit="h")
-    train_df.set_index("datetime_utc", inplace=True)
-
     preds_df["datetime_utc"] = pd.to_datetime(preds_df["datetime_utc"], unit="h")
-    preds_df.set_index("datetime_utc", inplace=True)
 
-    fig, ax = plt.subplots()
-    ax.plot(train_df.index, train_df["energy_consumption"], color="blue", label="current")
-    ax.plot(preds_df.index, preds_df["energy_consumption"], color="red", label="prediction")
-    st.pyplot(fig) 
+    fig = px.line(train_df, 
+                  x="datetime_utc",
+                  y="energy_consumption", 
+                  Title="Energy Consumption per DE35 Industry Code per Hour")
+    fig.add_scatter(x=preds_df["datetime_utc"], y=preds_df["energy_consumption"])
+    
+    st.plotly_chart(fig, use_container_width=True) 
