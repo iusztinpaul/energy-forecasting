@@ -5,6 +5,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 
 
+# TODO: Load this from a config file
 API_URL = "http://172.17.0.1:8001/api/v1"
 
 st.title("Energy Consumption")
@@ -14,7 +15,7 @@ area_response = requests.get(f"{API_URL}/area_values/")
 json_area_response = area_response.json()
 
 area = st.selectbox(
-    label= "TEST CHANGE - Denmark is divided in two price areas, or bidding zones,\
+    label= "Denmark is divided in two price areas, or bidding zones,\
         divided by the Great Belt. DK1 (shown as 1) is west of the Great Belt \
             and DK2 (shown as 2) is east of the Great Belt.",
     options=(
