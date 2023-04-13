@@ -7,7 +7,7 @@ on:
 env:
   CLOUDSDK_CORE_PROJECT: '${{ vars.CLOUDSDK_CORE_PROJECT }}'
   USER: '${{ vars.USER }}'
-  INSTANCE_NAME: '${{ vars.INSTANCE_NAME }}'
+  INSTANCE_NAME: '${{ vars.ML_PIPELINE_INSTANCE_NAME }}'
   ZONE: '${{ vars.ZONE }}'
 
 jobs:
