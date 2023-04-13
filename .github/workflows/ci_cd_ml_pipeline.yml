@@ -11,7 +11,7 @@ env:
   ZONE: '${{ vars.ZONE }}'
 
 jobs:
-  deploy:
+  ci_cd:
     runs-on: ubuntu-latest
     steps:
       - uses: 'actions/checkout@v3'
