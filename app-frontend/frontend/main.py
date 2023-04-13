@@ -4,6 +4,7 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 
+# TODO: Load this from a config file
 API_URL = "http://172.17.0.1:8001/api/v1"
 
 st.title("Energy Consumption")

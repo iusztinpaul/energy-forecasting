@@ -1,10 +1,11 @@
-name: CD/CD for the ml-pipeline that builds all the pipeline modules and pushes them to the private PyPI registry. From where Airflow will install the latest versions and use them in the next run.
+name: CI/CD for the web app (API + frontend)
 
 on:
   push:
     paths-ignore:
-      - 'app-api/'
-      - 'app-frontend/'
+      - 'batch-prediction-pipeline/'
+      - 'feature-pipeline/'
+      - 'training-pipeline'
       - '**/*.yml'
       - '**/*.md'
     branches: [ "main" ]
@@ -12,7 +13,7 @@ on:
 env:
   CLOUDSDK_CORE_PROJECT: '${{ vars.CLOUDSDK_CORE_PROJECT }}'
   USER: '${{ vars.USER }}'
-  INSTANCE_NAME: '${{ vars.ML_PIPELINE_INSTANCE_NAME }}'
+  INSTANCE_NAME: '${{ vars.APP_INSTANCE_NAME }}'
   ZONE: '${{ vars.ZONE }}'
 
 jobs:
@@ -36,4 +37,4 @@ jobs:
           command: >
             cd ~/energy-forecasting && 
             git pull && 
-            sh deploy.sh
+            docker compose up --build -d
