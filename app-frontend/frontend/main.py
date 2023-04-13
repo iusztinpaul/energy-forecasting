@@ -78,7 +78,7 @@ if area and consumer_type:
     fig = px.line(train_df, 
                   x="datetime_utc",
                   y="energy_consumption", 
-                  Title="Energy Consumption per DE35 Industry Code per Hour")
+                  title="Energy Consumption per DE35 Industry Code per Hour")
     fig.add_scatter(x=preds_df["datetime_utc"], y=preds_df["energy_consumption"])
     
     st.plotly_chart(fig, use_container_width=True) 
