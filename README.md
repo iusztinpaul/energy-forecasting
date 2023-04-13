@@ -213,11 +213,15 @@ Copy the GCP credentials with which you can read from the GCP buckets:
 mkdir -p credentials/gcp/energy_consumption
 cp your/location/file.json credentials/gcp/energy_consumption/
 ```
-Run from root dir:
+Create `.env` file:
+```shell
+cp app-api/.env.default app-api .env
+# Change values in .env if necessary
+```
+Build & run:
 ```shell
 docker compose up --build
 ```
-
 Run local dev from root dir:
 ```shell
 docker compose -f docker-compose.yml -f docker-compose.local.yml up --build 
