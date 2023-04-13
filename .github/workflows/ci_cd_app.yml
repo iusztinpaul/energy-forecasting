@@ -1,0 +1,34 @@
+name: CI/CD for the web app (API + frontend)
+
+on:
+  push:
+    branches: [ "main" ]
+    
+env:
+  CLOUDSDK_CORE_PROJECT: '${{ vars.CLOUDSDK_CORE_PROJECT }}'
+  USER: '${{ vars.USER }}'
+  INSTANCE_NAME: '${{ vars.APP_INSTANCE_NAME }}'
+  ZONE: '${{ vars.ZONE }}'
+
+jobs:
+  ci_cd:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: 'actions/checkout@v3'
+
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+      - id: 'compute-ssh'
+        uses: 'google-github-actions/ssh-compute@v0'
+        with:
+          project_id: '${{ env.CLOUDSDK_CORE_PROJECT }}'
+          user: '${{ env.USER }}'
+          instance_name: '${{ env.INSTANCE_NAME }}'
+          zone: '${{ env.ZONE }}'
+          ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
+          command: >
+            cd ~/energy-forecasting && 
+            git pull && 
+            docker compose up --build -d
