@@ -178,7 +178,7 @@ IAM principals - service accounts:
 * admin-vm
 
 Firewall rules:
-* IAP for TCP tunneling
+* IAP for TCP tunneling [docs](https://cloud.google.com/iap/docs/using-tcp-forwarding)
 * Expose port 8080
 
 [Open 8080 Port](https://stackoverflow.com/questions/21065922/how-to-open-a-specific-port-such-as-9090-in-google-compute-engine)
