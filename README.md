@@ -234,6 +234,7 @@ docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
 
 #### GCP Resources
 
+# TODO: Change the instance to use persisted disk.
 - VM: e2-micro - 2 vCPU - 1 GB memory - 10 GB standard persisted disk
 - firewall: expose ports 8501, 8001
 - firewall: IAP for TCP tunneling
