@@ -1,5 +1,7 @@
 # energy-forecasting
 
+[LIVE DEMO](http://35.207.134.188:8501/)
+
 # Data
 We used the daily energy consumption from Denmark data which you can access [here](https://www.energidataservice.dk/tso-electricity/ConsumptionDE35Hour).
 
@@ -215,7 +217,7 @@ cp your/location/file.json credentials/gcp/energy_consumption/
 ```
 Create `.env` file:
 ```shell
-cp app-api/.env.default app-api .env
+cp app-api/.env.default app-api/.env
 # Change values in .env if necessary
 ```
 Build & run:
@@ -226,3 +228,66 @@ Run local dev from root dir:
 ```shell
 docker compose -f docker-compose.yml -f docker-compose.local.yml up --build 
 ```
+
+
+### Deploy APP on GCP
+
+#### GCP Resources
+
+- VM: e2-micro - 2 vCPU - 1 GB memory - 10 GB standard persisted disk
+- firewall: expose ports 8501, 8001
+- firewall: IAP for TCP tunneling
+- create static external IP address - [docs](https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address#console)
+- service roles for: reading buckets & SSH access
+
+#### Commands
+
+Connect to VM:
+```shell
+gcloud compute ssh app --zone europe-west3-c --quiet --tunnel-through-iap --project silver-device-379512
+```
+Install requirements:
+```shell
+sudo apt-get update && sudo apt-get upgrade
+sudo apt-get install git
+```
+Install docker:
+```shell
+sudo apt update
+sudo apt install --yes apt-transport-https ca-certificates curl gnupg2 software-properties-common
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
+sudo apt update
+sudo apt install --yes docker-ce
+
+# docker sudo access:
+sudo usermod -aG docker $USER
+logout
+```
+SSH again:
+```shell
+gcloud compute ssh app --zone europe-west3-c --quiet --tunnel-through-iap --project silver-device-379512
+```
+Clone repo:
+```shell
+git clone https://github.com/iusztinpaul/energy-forecasting.git
+cd energy-forecasting
+```
+Create credentials folder:
+```shell
+mkdir -p credentials/gcp/energy_consumption
+```
+Copy GCP credentials JSON file:
+```shell
+gcloud compute scp --recurse --zone europe-west3-c --quiet --tunnel-through-iap --project silver-device-379512 ~/Documents/credentials/gcp/energy_consumption/read-buckets.json app:~/energy-forecasting/credentials/gcp/energy_consumption/
+```
+Create `.env` file:
+```shell
+cp app-api/.env.default app-api/.env
+```
+Build & run:
+```shell
+docker compose up --build -d
+```
+
+# TODO: Create ci_cd.sh files for both ml-pipeline and app

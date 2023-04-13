@@ -14,7 +14,7 @@ area_response = requests.get(f"{API_URL}/area_values/")
 json_area_response = area_response.json()
 
 area = st.selectbox(
-    label= "Denmark is divided in two price areas, or bidding zones,\
+    label= "TEST CHANGE - Denmark is divided in two price areas, or bidding zones,\
         divided by the Great Belt. DK1 (shown as 1) is west of the Great Belt \
             and DK2 (shown as 2) is east of the Great Belt.",
     options=(

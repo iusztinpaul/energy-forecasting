@@ -1,2 +1,4 @@
 streamlit>=1.20.0, <1.21.0
 matplotlib
+
+# TODO: Move to poetry
