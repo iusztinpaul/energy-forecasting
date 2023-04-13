@@ -6,4 +6,3 @@ loguru>=0.6.0, <0.7.0
 pyarrow>=11.0.0, <11.1.0
 gcsfs==2023.3.0
 python-dotenv==0.21.1
-

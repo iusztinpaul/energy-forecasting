@@ -1,19 +1,16 @@
-import os
 import gcsfs
 from typing import Any, List
 
 import pandas as pd
-from dotenv import load_dotenv
 from fastapi import APIRouter
 
-from app import schemas 
-from app.config import settings
+from api import schemas 
+from api.config import get_settings
 
-load_dotenv()
-
-GOOGLE_SERVICE_ACCOUNT = os.getenv("GOOGLE_SERVICE_ACCOUNT")
-GCP_FILE_PATH = os.getenv("GCP_FILE_PATH")
-fs = gcsfs.GCSFileSystem()
+fs = gcsfs.GCSFileSystem(
+    project=get_settings().GCP_PROJECT,
+    token=get_settings().GCP_SERVICE_ACCOUNT_JSON_PATH
+    )
 
 api_router = APIRouter()
 
@@ -23,7 +20,7 @@ def health() -> dict:
     Root Get
     """
     health = schemas.Health(
-        name=settings.PROJECT_NAME, api_version="1.0.0"
+        name=get_settings().PROJECT_NAME, api_version="1.0.0"
     )
 
     return health.dict()
@@ -31,7 +28,7 @@ def health() -> dict:
 @api_router.get("/consumer_type_values", response_model=schemas.UniqueConsumerType, status_code=200)
 def consumer_type_values() -> List:
     
-    X = pd.read_parquet(f"{GCP_FILE_PATH}/X.parquet", filesystem=fs)
+    X = pd.read_parquet(f"{get_settings().GCP_BUCKET}/X.parquet", filesystem=fs)
 
     unique_consumer_type = list(X.index.unique(level="consumer_type"))
 
@@ -44,7 +41,7 @@ def consumer_type_values() -> List:
 @api_router.get("/area_values", response_model=schemas.UniqueArea, status_code=200)
 def area_values() -> List:
     
-    X = pd.read_parquet(f"{GCP_FILE_PATH}/X.parquet", filesystem=fs)
+    X = pd.read_parquet(f"{get_settings().GCP_BUCKET}/X.parquet", filesystem=fs)
 
     unique_area = list(X.index.unique(level="area"))
 
@@ -60,8 +57,8 @@ async def get_predictions(area: int, consumer_type: int) -> Any:
     Get predictions from GCP
     """
 
-    y_train = pd.read_parquet(f"{GCP_FILE_PATH}/y.parquet", filesystem=fs)
-    preds = pd.read_parquet(f"{GCP_FILE_PATH}/predictions.parquet", filesystem=fs)
+    y_train = pd.read_parquet(f"{get_settings().GCP_BUCKET}/y.parquet", filesystem=fs)
+    preds = pd.read_parquet(f"{get_settings().GCP_BUCKET}/predictions.parquet", filesystem=fs)
 
     train_df = y_train.xs((area, consumer_type), level=["area", "consumer_type"])
     preds_df = preds.xs((area, consumer_type), level=["area", "consumer_type"])

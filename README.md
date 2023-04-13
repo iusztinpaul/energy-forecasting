@@ -204,3 +204,21 @@ jq -c . admin-vm.json
 set private key:
 ```
 ```
+
+
+
+# Run APP
+Copy the GCP credentials with which you can read from the GCP buckets:
+```shell
+mkdir -p credentials/gcp/energy_consumption
+cp your/location/file.json credentials/gcp/energy_consumption/
+```
+Run from root dir:
+```shell
+docker compose up --build
+```
+
+Run local dev from root dir:
+```shell
+docker compose -f docker-compose.yml -f docker-compose.local.yml up --build 
+```

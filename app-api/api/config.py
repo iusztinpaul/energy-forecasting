@@ -1,7 +1,8 @@
+from functools import lru_cache
 import logging
 import sys
 from types import FrameType
-from typing import List, cast
+from typing import List, Optional, cast
 
 from loguru import logger
 from pydantic import AnyHttpUrl, BaseSettings
@@ -28,8 +29,17 @@ class Settings(BaseSettings):
 
     PROJECT_NAME: str = "Energy Consumption API"
 
+    # Google Cloud Platform
+    GCP_PROJECT: Optional[str] = None
+    GCP_BUCKET: Optional[str] = None
+    GCP_SERVICE_ACCOUNT_JSON_PATH: Optional[str] = None
+
+
     class Config:
-        case_sensitive = True
+        env_file = ".env"
+        env_prefix = "APP_API_"
+        case_sensitive = False
+        env_file_encoding = "utf-8"
 
 
 # See: https://loguru.readthedocs.io/en/stable/overview.html#entirely-compatible-with-standard-logging  # noqa
@@ -67,4 +77,6 @@ def setup_app_logging(config: Settings) -> None:
     )
 
 
-settings = Settings()
+@lru_cache()
+def get_settings():
+    return Settings()

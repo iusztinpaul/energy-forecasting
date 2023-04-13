@@ -1,9 +1,9 @@
-version: '3'
+version: '3.9'
 
 services:
   frontend:
     build:
-        dockerfile: frontend/Dockerfile
+        dockerfile: app-frontend/Dockerfile
     ports:
       - 8501:8501
     depends_on:
@@ -11,8 +11,10 @@ services:
 
   api:
     build:
-        dockerfile: api/Dockerfile
+        dockerfile: app-api/Dockerfile
+    volumes:
+      - ./credentials:/app/src/credentials
     env_file:
-      - api/.env    
+      - app-api/.env    
     ports:
       - 8001:8001

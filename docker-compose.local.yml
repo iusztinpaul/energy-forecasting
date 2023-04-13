@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  frontend:
+    volumes:
+      # Adds current directory as volume.
+    - ./app-frontend:/app/src/
+
+  api:
+    volumes:
+      # Adds current directory as volume.
+    - ./app-api:/app/src/
+    environment:
+      # Enables autoreload.
+      APP_API_RELOAD: "True"

@@ -4,10 +4,13 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 
+
+API_URL = "http://172.17.0.1:8001/api/v1"
+
 st.title("Energy Consumption")
 
 # Input area
-area_response = requests.get(f"http://localhost:8001/api/v1/area_values/")
+area_response = requests.get(f"{API_URL}/area_values/")
 json_area_response = area_response.json()
 
 area = st.selectbox(
@@ -20,7 +23,7 @@ area = st.selectbox(
 )
 
 # Input consumer_type
-consumer_type_response = requests.get(f"http://localhost:8001/api/v1/consumer_type_values/")
+consumer_type_response = requests.get(f"{API_URL}/consumer_type_values/")
 json_consumer_type_response = consumer_type_response.json()
 
 consumer_type = st.selectbox(
@@ -41,9 +44,8 @@ input_data = {
 # Check both area and consumer type have values listed
 if st.button("Get Predictions"): 
 
-    response = requests.post(
-        "http://host.docker.internal:8001/api/v1/get_predictions/", 
-        json=input_data, 
+    response = requests.get(
+        f"{API_URL}/predictions/{area}/{consumer_type}", 
         verify=False
         )
     

@@ -4,14 +4,17 @@ import uvicorn
 from fastapi import APIRouter, FastAPI, Request
 from fastapi.responses import HTMLResponse
 
-from app.api import api_router
-from app.config import settings, setup_app_logging
+from api.views import api_router
+from api.config import get_settings, setup_app_logging
 
 # setup logging as early as possible
-setup_app_logging(config=settings)
+setup_app_logging(config=get_settings())
 
 app = FastAPI(
-    title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json"
+    title=get_settings().PROJECT_NAME,
+    docs_url=f"{get_settings().API_V1_STR}/docs",
+    redoc_url=f"{get_settings().API_V1_STR}/redoc",
+    openapi_url=f"{get_settings().API_V1_STR}/openapi.json"
 )
 
 root_router = APIRouter()
@@ -33,7 +36,7 @@ def index(request: Request) -> Any:
 
     return HTMLResponse(content=body)
 
-app.include_router(api_router, prefix=settings.API_V1_STR)
+app.include_router(api_router, prefix=get_settings().API_V1_STR)
 app.include_router(root_router)
 
 if __name__ == "__main__":
