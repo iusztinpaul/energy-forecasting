@@ -7,8 +7,8 @@ import joblib
 import pandas as pd
 
 from google.cloud import storage
-from hsfs.feature_store import FeatureStore
 
+from batch_prediction_pipeline import data
 from batch_prediction_pipeline import settings
 from batch_prediction_pipeline import utils
 
@@ -36,6 +36,7 @@ def predict(
     logger.info("Successfully connected to the feature store.")
 
     logger.info("Loading data from feature store...")
+    # TODO: Parameterize start and end datetime
     feature_pipeline_metadata = utils.load_json("feature_pipeline_metadata.json")
     export_datetime_utc_start = datetime.strptime(
         feature_pipeline_metadata["export_datetime_utc_start"],
@@ -45,15 +46,13 @@ def predict(
         feature_pipeline_metadata["export_datetime_utc_end"],
         feature_pipeline_metadata["datetime_format"],
     )
-    X, y = load_data_from_feature_store(
+    X, y = data.load_data_from_feature_store(
         fs,
         feature_view_version,
         start_datetime=export_datetime_utc_start,
         end_datetime=export_datetime_utc_end,
     )
     logger.info("Successfully loaded data from feature store.")
-
-    # TODO: Compute metrics on new data.
 
     logger.info("Loading model from model registry...")
     model = load_model_from_model_registry(project, model_version)
@@ -68,32 +67,6 @@ def predict(
     logger.info("Successfully saved predictions.")
 
     read()
-
-
-def load_data_from_feature_store(
-    fs: FeatureStore,
-    feature_view_version: int,
-    start_datetime: datetime,
-    end_datetime: datetime,
-    target: str = "energy_consumption",
-):
-    feature_view = fs.get_feature_view(
-        name="energy_consumption_denmark_view", version=feature_view_version
-    )
-
-    data = feature_view.get_batch_data(start_time=start_datetime, end_time=end_datetime)
-
-    # TODO: Can I move the index preparation to the model pipeline?
-    # Set the index as is required by sktime.
-    data["datetime_utc"] = pd.PeriodIndex(data["datetime_utc"], freq="H")
-    data = data.set_index(["area", "consumer_type", "datetime_utc"]).sort_index()
-
-    # Prepare exogenous variables.
-    X = data.drop(columns=[target])
-    # Prepare the time series to be forecasted.
-    y = data[[target]]
-
-    return X, y
 
 
 def load_model_from_model_registry(project, model_version: int):
@@ -147,28 +120,16 @@ def forecast(model, X: pd.DataFrame, fh: int = 24):
 
 
 def save(X: pd.DataFrame, y: pd.DataFrame, predictions: pd.DataFrame):
-    storage_client = storage.Client.from_service_account_json(
-        json_credentials_path=settings.SETTINGS[
-            "GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON_PATH"
-        ],
-        project=settings.SETTINGS["GOOGLE_CLOUD_PROJECT"],
-    )
+    bucket = utils.get_bucket()
 
-    bucket_name = "hourly-batch-predictions"
-    bucket = storage_client.bucket(bucket_name=bucket_name)
-
-    # TODO: Standardize to blob process.
-    X_blob = bucket.blob(blob_name="X.parquet")
-    with X_blob.open("wb") as f:
-        X.to_parquet(f)
-
-    y_blob = bucket.blob(blob_name="y.parquet")
-    with y_blob.open("wb") as f:
-        y.to_parquet(f)
-
-    predictions_blob = bucket.blob(blob_name="predictions.parquet")
-    with predictions_blob.open("wb") as f:
-        predictions.to_parquet(f)
+    for df, blob_name in zip([X, y, predictions], ["X.parquet", "y.parquet", "predictions.parquet"]):
+        logger.info(f"Saving {blob_name} to bucket...")
+        utils.write_blob_to(
+            bucket=bucket,
+            blob_name=blob_name,
+            data=df,
+        )
+        logger.info(f"Successfully saved {blob_name} to bucket.")
 
 
 def read():
