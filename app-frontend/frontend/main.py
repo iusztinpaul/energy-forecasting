@@ -2,7 +2,7 @@ import requests
 
 import pandas as pd
 import streamlit as st
-import plotly.express as px
+import plotly.graph_objects as go
 
 # TODO: Load this from a config file
 API_URL = "http://172.17.0.1:8001/api/v1"
@@ -75,10 +75,52 @@ if area and consumer_type:
     train_df["datetime_utc"] = pd.to_datetime(train_df["datetime_utc"], unit="h")
     preds_df["datetime_utc"] = pd.to_datetime(preds_df["datetime_utc"], unit="h")
 
-    fig = px.line(train_df, 
-                  x="datetime_utc",
-                  y="energy_consumption", 
-                  title="Energy Consumption per DE35 Industry Code per Hour")
-    fig.add_scatter(x=preds_df["datetime_utc"], y=preds_df["energy_consumption"])
+    fig = go.Figure(
+        data = [
+            go.Scatter(
+                x= train_df["datetime_utc"],
+                y= train_df["energy_consumption"],
+                line= dict(
+                    color="blue"
+                ),
+                name= "Observations",
+                hovertemplate="<br>".join(
+                    [
+                      "Datetime: %{x}",
+                      "Energy Consumption: %{y} kWh"
+                    ]
+                )
+            )
+        ]
+    )
+
+    fig.update_layout(
+        title = dict(
+            text="Energy Consumption per DE35 Industry Code per Hour",
+            font = dict(
+                family = "Arial",
+                size = 16
+                )
+        ),
+        showlegend = True
+    )
     
-    st.plotly_chart(fig, use_container_width=True) 
+    fig.update_xaxes(title_text="Datetime UTC")
+    fig.update_yaxes(title_text="Total Consumption")
+
+    fig.add_scatter(
+        x=preds_df["datetime_utc"], 
+        y=preds_df["energy_consumption"],
+        name= "Predictions",
+        line=dict(
+            color="red"
+        ),
+        hovertemplate="<br>".join(
+                    [
+                      "Datetime: %{x}",
+                      "Total Consumption: %{y} kWh"
+                    ]
+                )
+    )
+
+    st.plotly_chart(fig)
