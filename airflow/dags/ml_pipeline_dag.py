@@ -126,9 +126,9 @@ def feature_pipeline():
             feature_view_version=feature_view_metadata["feature_view_version"],
             training_dataset_version=feature_view_metadata["training_dataset_version"],
         )
-    
+
     @task.virtualenv(
-        task_id="monitor_compute",
+        task_id="compute_monitoring",
         requirements=[
             "--trusted-host 172.17.0.1",
             "--extra-index-url http://172.17.0.1",
@@ -137,7 +137,7 @@ def feature_pipeline():
         python_version="3.9",
         system_site_packages=False,
     )
-    def monitoring_compute(feature_view_metadata: dict):
+    def compute_monitoring(feature_view_metadata: dict):
         from batch_prediction_pipeline import monitoring
 
         monitoring.compute(
@@ -212,7 +212,7 @@ def feature_pipeline():
     train_metadata = train_from_best_config(feature_view_metadata)
 
     # Batch prediction pipeline
-    monitoring_compute_step = monitoring_compute(feature_view_metadata)
+    compute_monitoring_step = compute_monitoring(feature_view_metadata)
     batch_predict_step = batch_predict(feature_view_metadata, train_metadata)
 
     # Define DAG structure.
@@ -230,7 +230,7 @@ def feature_pipeline():
             >> branch_skip_hyperparameter_tuning_operator,
         ]
         >> train_metadata
-        >> monitoring_compute_step
+        >> compute_monitoring_step
         >> batch_predict_step
     )
 

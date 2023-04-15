@@ -57,12 +57,14 @@ def load_json(file_name: str, save_dir: str = settings.OUTPUT_DIR) -> dict:
     data_path = Path(save_dir) / file_name
     with open(data_path, "r") as f:
         return json.load(f)
-    
+
 
 def get_bucket(
-        bucket_name: str = settings.SETTINGS["GOOGLE_CLOUD_BUCKET_NAME"],
-        bucket_project: str = settings.SETTINGS["GOOGLE_CLOUD_PROJECT"],
-        json_credentials_path: str = settings.SETTINGS["GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON_PATH"],
+    bucket_name: str = settings.SETTINGS["GOOGLE_CLOUD_BUCKET_NAME"],
+    bucket_project: str = settings.SETTINGS["GOOGLE_CLOUD_PROJECT"],
+    json_credentials_path: str = settings.SETTINGS[
+        "GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON_PATH"
+    ],
 ) -> storage.Bucket:
     """Get a Google Cloud Storage bucket.
 

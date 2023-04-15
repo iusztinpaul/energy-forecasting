@@ -6,8 +6,6 @@ import hopsworks
 import joblib
 import pandas as pd
 
-from google.cloud import storage
-
 from batch_prediction_pipeline import data
 from batch_prediction_pipeline import settings
 from batch_prediction_pipeline import utils
@@ -66,8 +64,6 @@ def predict(
     save(X, y, predictions)
     logger.info("Successfully saved predictions.")
 
-    read()
-
 
 def load_model_from_model_registry(project, model_version: int):
     mr = project.get_model_registry()
@@ -122,7 +118,9 @@ def forecast(model, X: pd.DataFrame, fh: int = 24):
 def save(X: pd.DataFrame, y: pd.DataFrame, predictions: pd.DataFrame):
     bucket = utils.get_bucket()
 
-    for df, blob_name in zip([X, y, predictions], ["X.parquet", "y.parquet", "predictions.parquet"]):
+    for df, blob_name in zip(
+        [X, y, predictions], ["X.parquet", "y.parquet", "predictions.parquet"]
+    ):
         logger.info(f"Saving {blob_name} to bucket...")
         utils.write_blob_to(
             bucket=bucket,
@@ -131,36 +129,61 @@ def save(X: pd.DataFrame, y: pd.DataFrame, predictions: pd.DataFrame):
         )
         logger.info(f"Successfully saved {blob_name} to bucket.")
 
+    logger.info("Merging predictions with cached predictions...")
+    merge(predictions)
+    logger.info("Successfully merged predictions with cached predictions...")
 
-def read():
-    # TODO: Delete this function.
-    storage_client = storage.Client.from_service_account_json(
-        json_credentials_path=settings.SETTINGS[
-            "GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON_PATH"
-        ],
-        project=settings.SETTINGS["GOOGLE_CLOUD_PROJECT"],
+
+def merge(predictions: pd.DataFrame, keep_n_days: int = 30):
+    bucket = utils.get_bucket()
+
+    cached_predictions = utils.read_blob_from(
+        bucket=bucket, blob_name=f"predictions_{keep_n_days}_days.parquet"
+    )
+    has_cached_predictions = cached_predictions is not None
+    if has_cached_predictions is True:
+        # Merge predictions with cached predictions.
+        cached_predictions.index = cached_predictions.index.set_levels(
+            pd.to_datetime(cached_predictions.index.levels[2], unit="h").to_period("H"),
+            level=2,
+        )
+
+        merged_predictions = predictions.merge(
+            cached_predictions,
+            left_index=True,
+            right_index=True,
+            how="outer",
+            suffixes=("_new", "_cached"),
+        )
+        new_predictions = merged_predictions.filter(regex=".*?_new")
+        cached_predictions = merged_predictions.filter(regex=".*?_cached")
+        predictions = new_predictions.fillna(cached_predictions)
+        predictions.columns = predictions.columns.str.replace("_new", "")
+
+    # Make sure that the predictions are sorted and continous.
+    predictions = predictions.sort_index()
+    predictions = (
+        predictions
+        .unstack(level=[0, 1])
+        .resample("1H")
+        .asfreq()
+        .stack(level=[2, 1])
+        .swaplevel(2, 0)
+    )
+    # Keep only the last n_days of observations + 1 day of predictions.
+    count_unique_area_types = len(predictions.index.get_level_values(level=0).unique())
+    count_unique_consumer_types = len(
+        predictions.index.get_level_values(level=1).unique()
+    )
+    predictions = predictions.tail(
+        n=(keep_n_days + 1) * 24 * count_unique_area_types * count_unique_consumer_types
     )
 
-    bucket_name = "hourly-batch-predictions"
-    bucket = storage_client.bucket(bucket_name=bucket_name)
-
-    X_blob = bucket.blob(blob_name="X.parquet")
-    with X_blob.open("rb") as f:
-        X = pd.read_parquet(f)
-        print("X:")
-        print(X.head())
-
-    y_blob = bucket.blob(blob_name="y.parquet")
-    with y_blob.open("rb") as f:
-        y = pd.read_parquet(f)
-        print("y:")
-        print(y.head())
-
-    predictions_blob = bucket.blob(blob_name="predictions.parquet")
-    with predictions_blob.open("rb") as f:
-        predictions = pd.read_parquet(f)
-        print("predictions:")
-        print(predictions.head())
+    utils.write_blob_to(
+        bucket=bucket,
+        blob_name=f"predictions_{keep_n_days}_days.parquet",
+        data=predictions,
+    )
 
 
 if __name__ == "__main__":

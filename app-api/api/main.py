@@ -14,10 +14,11 @@ app = FastAPI(
     title=get_settings().PROJECT_NAME,
     docs_url=f"{get_settings().API_V1_STR}/docs",
     redoc_url=f"{get_settings().API_V1_STR}/redoc",
-    openapi_url=f"{get_settings().API_V1_STR}/openapi.json"
+    openapi_url=f"{get_settings().API_V1_STR}/openapi.json",
 )
 
 root_router = APIRouter()
+
 
 @root_router.get("/")
 def index(request: Request) -> Any:
@@ -35,6 +36,7 @@ def index(request: Request) -> Any:
     )
 
     return HTMLResponse(content=body)
+
 
 app.include_router(api_router, prefix=get_settings().API_V1_STR)
 app.include_router(root_router)

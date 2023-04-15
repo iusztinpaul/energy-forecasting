@@ -1,8 +1,9 @@
 from typing import List, Any
 
-from pydantic import BaseModel 
+from pydantic import BaseModel
 
-class PredictionResults(BaseModel): 
+
+class PredictionResults(BaseModel):
     datetime_utc: List[Any]
     energy_consumption: List[Any]
     preds_datetime_utc: List[Any]

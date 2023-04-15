@@ -34,7 +34,6 @@ class Settings(BaseSettings):
     GCP_BUCKET: Optional[str] = None
     GCP_SERVICE_ACCOUNT_JSON_PATH: Optional[str] = None
 
-
     class Config:
         env_file = ".env"
         env_prefix = "APP_API_"
