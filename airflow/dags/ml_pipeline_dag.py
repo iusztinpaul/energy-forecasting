@@ -32,6 +32,29 @@ def feature_pipeline():
         url: str,
         feature_group_version: int,
     ):
+        """
+        Run the feature pipeline.
+
+        Parameters
+        ----------
+        days_delay : int
+            Number of days that the data is delayed with respect to the current date.
+
+        days_export : int
+            Number of days to export data for.
+
+        url : str
+            URL to the raw data.
+
+        feature_group_version : int
+            Version of the feature store feature group to use.
+
+        Returns
+        -------
+        result : int
+            Result of the pipeline run.
+        """
+
         from feature_pipeline import utils, pipeline
 
         logger = utils.get_logger(__name__)
@@ -60,11 +83,17 @@ def feature_pipeline():
         system_site_packages=False,
     )
     def create_feature_view(feature_pipeline_metadata: dict):
+        """
+        This function creates a feature view based on the feature pipeline computations. The feature view
+        is created using the feature group version from the feature pipeline metadata.
+        """
+
         from feature_pipeline import feature_view
 
         return feature_view.create(
             feature_group_version=feature_pipeline_metadata["feature_group_version"]
         )
+
 
     @task.virtualenv(
         task_id="run_hyperparameter_tuning",
@@ -78,6 +107,12 @@ def feature_pipeline():
         system_site_packages=False,
     )
     def run_hyperparameter_tuning(feature_view_metadata: dict):
+        """
+        This function runs hyperparameter tuning for the training pipeline.
+        The feature store feature view version and training dataset version are passed 
+        based on the results from the create_feature_view task.
+        """
+        
         from training_pipeline import hyperparameter_tuning
 
         return hyperparameter_tuning.run(
@@ -97,6 +132,11 @@ def feature_pipeline():
         system_site_packages=False,
     )
     def upload_best_config(last_sweep_metadata: dict):
+        """
+        Upload the best config to W&B ML platform found in the hyperparameter tuning step
+        based on the given sweep id.
+        """
+
         from training_pipeline import best_config
 
         best_config.upload(sweep_id=last_sweep_metadata["sweep_id"])
@@ -114,6 +154,15 @@ def feature_pipeline():
         trigger_rule=TriggerRule.ALL_DONE,
     )
     def train_from_best_config(feature_view_metadata: dict):
+        """Trains model from the best config found in hyperparameter tuning. 
+
+        Args:
+            feature_view_metadata (dict): Contains feature store feature view and training dataset version.
+
+        Returns:
+            metadata from the training run
+        """
+
         from training_pipeline import utils, train
 
         has_best_config = utils.check_if_artifact_exists("best_config")
@@ -127,6 +176,7 @@ def feature_pipeline():
             training_dataset_version=feature_view_metadata["training_dataset_version"],
         )
 
+
     @task.virtualenv(
         task_id="compute_monitoring",
         requirements=[
@@ -138,6 +188,12 @@ def feature_pipeline():
         system_site_packages=False,
     )
     def compute_monitoring(feature_view_metadata: dict):
+        """Compute monitoring metrics for newly obbserved data.
+
+        Args:
+            feature_view_metadata: metadata containing the version of the feature store feature view version.
+        """
+
         from batch_prediction_pipeline import monitoring
 
         monitoring.compute(
@@ -155,6 +211,16 @@ def feature_pipeline():
         system_site_packages=False,
     )
     def batch_predict(feature_view_metadata: dict, train_metadata: dict, feature_pipeline_metadata: dict, fh: int = 24):
+        """
+        This is the function that runs the batch prediction pipeline
+
+        Args:
+            feature_view_metadata (dict):  the metadata from the create feature view task
+            train_metadata (dict): the metadata from the training pipeline task
+            feature_pipeline_metadata (dict): the metadata from the feature pipeline task
+            fh (int, optional): forecast horizon. Defaults to 24.
+        """
+
         from datetime import datetime
         from batch_prediction_pipeline import batch
 
@@ -175,13 +241,16 @@ def feature_pipeline():
             end_datetime=end_datetime,
         )
 
+
     @task.branch(task_id="if_run_hyperparameter_tuning_branching")
     def if_run_hyperparameter_tuning_branching(run_hyperparameter_tuning: bool) -> bool:
+        """Task used to branch between hyperparameter tuning and skipping it."""
         if run_hyperparameter_tuning is True:
             return ["branch_run_hyperparameter_tuning"]
         else:
             return ["branch_skip_hyperparameter_tuning"]
 
+    # Define empty operators used for branching between hyperparameter tuning and skipping it.
     branch_run_hyperparameter_tuning_operator = EmptyOperator(
         task_id="branch_run_hyperparameter_tuning"
     )
