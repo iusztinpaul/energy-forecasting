@@ -3,7 +3,7 @@ import pandas as pd
 
 def rename_columns(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Clean feature columns
+    Rename columns to match our schema.
     """
 
     data = df.copy()
@@ -27,16 +27,7 @@ def rename_columns(df: pd.DataFrame) -> pd.DataFrame:
 
 def cast_columns(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Template code for a transformer block.
-
-    Add more parameters to this function if this block has multiple parent blocks.
-    There should be one parameter for each output variable from each parent block.
-
-    Args:
-        df (DataFrame): Data frame from parent block.
-
-    Returns:
-        DataFrame: Transformed data frame
+    Cast columns to the correct data type.
     """
 
     data = df.copy()
@@ -51,19 +42,13 @@ def cast_columns(df: pd.DataFrame) -> pd.DataFrame:
 
 def encode_area_column(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Transform string categorical data to numerical categorical data.
-
-    Args:
-        df (DataFrame): Data frame from parent block.
-
-    Returns:
-        DataFrame: Transformed data frame
+    Encode the area column to integers.
     """
 
     data = df.copy()
 
     area_mappings = {"DK": 0, "DK1": 1, "DK2": 2}
-
+    
     data["area"] = data["area"].map(lambda string_area: area_mappings.get(string_area))
     data["area"] = data["area"].astype("int8")
 

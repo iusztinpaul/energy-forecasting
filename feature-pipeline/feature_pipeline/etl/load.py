@@ -5,12 +5,18 @@ from hsfs.feature_group import FeatureGroup
 
 from feature_pipeline.settings import SETTINGS
 
-
+   
 def to_feature_store(
     data: pd.DataFrame,
     validation_expectation_suite: ExpectationSuite,
     feature_group_version: int,
 ) -> FeatureGroup:
+    """
+    This function takes in a pandas DataFrame and a validation expectation suite,
+    performs validation on the data using the suite, and then saves the data to a
+    feature store in the feature store.
+    """
+
     # Connect to feature store.
     project = hopsworks.login(
         api_key_value=SETTINGS["FS_API_KEY"], project="energy_consumption"
@@ -28,7 +34,15 @@ def to_feature_store(
         expectation_suite=validation_expectation_suite,
     )
     # Upload data.
-    energy_feature_group.insert(data)
+    energy_feature_group.insert(
+        features=data,
+        # Drop all data in the feature group before inserting new data. This does not affect metadata
+        # NOTE: This is only for demo purposes. We want to drop the data to keep the freemium version of Hopsworks.
+        overwrite=True,
+        write_options={
+            "wait_for_job": True,
+        }
+        )
 
     # Add feature descriptions.
     feature_descriptions = [

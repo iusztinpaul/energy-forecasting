@@ -13,7 +13,9 @@ from batch_prediction_pipeline import utils
 logger = utils.get_logger(__name__)
 
 
-def compute(feature_view_version: Optional[int] = None, compute_on_n_days: int = 30) -> None:
+def compute(
+    feature_view_version: Optional[int] = None, compute_on_n_days: int = 30
+) -> None:
     """Computes the metrics on the latest n_days of predictions.
 
     Args:
@@ -92,8 +94,16 @@ def compute(feature_view_version: Optional[int] = None, compute_on_n_days: int =
     logger.info("Successfully computed metrics...")
 
     logger.info("Saving new metrics...")
-    utils.write_blob_to(bucket=bucket, blob_name=f"metrics_{compute_on_n_days}_days.parquet", data=metrics)
-    utils.write_blob_to(bucket=bucket, blob_name=f"y_{compute_on_n_days}_days.parquet", data=latest_observations[["energy_consumption"]])
+    utils.write_blob_to(
+        bucket=bucket,
+        blob_name=f"metrics_{compute_on_n_days}_days.parquet",
+        data=metrics,
+    )
+    utils.write_blob_to(
+        bucket=bucket,
+        blob_name=f"y_{compute_on_n_days}_days.parquet",
+        data=latest_observations[["energy_consumption"]],
+    )
     logger.info("Successfully saved new metrics.")
 
 

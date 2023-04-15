@@ -13,6 +13,19 @@ def run(
     url: str = "https://api.energidataservice.dk/dataset/ConsumptionDE35Hour",
     feature_group_version: int = 1,
 ) -> dict:
+    """
+    Extract data from the API.
+
+    Args:
+        days_delay: Data has a delay of N days. Thus, we have to shift our window with N days.
+        days_export: The number of days to export.
+        url: The URL of the API.
+        feature_group_version: The version of the feature store feature group to save the data to.
+
+    Returns:
+          A dictionary containing metadata of the pipeline.
+    """
+
     logger.info(f"Extracting data from API.")
     data, metadata = extract.from_api(days_delay, days_export, url)
     logger.info("Successfully extracted data from API.")
@@ -34,8 +47,6 @@ def run(
     metadata["feature_group_version"] = feature_group_version
     logger.info("Successfully validated data and loaded it to the feature store.")
 
-    # TODO: Clean the old data from thea feature store to keep the freemium version of Hopsworks.
-
     logger.info(f"Wrapping up the pipeline.")
     utils.save_json(metadata, file_name="feature_pipeline_metadata.json")
     logger.info("Done!")
@@ -44,13 +55,12 @@ def run(
 
 
 def transform(data: pd.DataFrame):
-    # Clean columns
+    """
+    Wrapper containing all the transformations from the ETL pipeline.
+    """
+
     data = cleaning.rename_columns(data)
-
-    # Cast columns
     data = cleaning.cast_columns(data)
-
-    # Standardize categorical data
     data = cleaning.encode_area_column(data)
 
     return data

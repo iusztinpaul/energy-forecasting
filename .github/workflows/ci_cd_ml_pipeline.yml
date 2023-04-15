@@ -36,4 +36,4 @@ jobs:
           command: >
             cd ~/energy-forecasting && 
             git pull && 
-            sh deploy.sh
+            sh deploy/ml-pipeline.sh

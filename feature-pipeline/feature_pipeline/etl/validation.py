@@ -2,6 +2,10 @@ from great_expectations.core import ExpectationSuite, ExpectationConfiguration
 
 
 def build_expectation_suite() -> ExpectationSuite:
+    """
+    Builder used to retrieve an instance of the validation expectation suite.
+    """
+
     expectation_suite_energy_consumption = ExpectationSuite(
         expectation_suite_name="energy_consumption_suite"
     )

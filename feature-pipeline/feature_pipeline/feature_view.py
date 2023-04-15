@@ -1,4 +1,5 @@
-import datetime
+from datetime import datetime
+from typing import Optional
 
 import fire
 import hopsworks
@@ -11,13 +12,54 @@ import hsfs
 logger = utils.get_logger(__name__)
 
 
-def create(feature_group_version: int = 1) -> dict:
+def create(
+    feature_group_version: Optional[int] = None,
+    start_datetime: Optional[datetime] = None,
+    end_datetime: Optional[datetime] = None,
+) -> dict:
+    """Create a new feature view version and training dataset 
+    based on the given feature group version and start and end datetimes.
+
+    Args:
+        feature_group_version (Optional[int]): The version of the
+            feature group. If None is provided, it will try to load it 
+            from the cached feature_pipeline_metadata.json file.
+        start_datetime (Optional[datetime]): The start
+            datetime of the training dataset that will be created. 
+            If None is provided, it will try to load it 
+            from the cached feature_pipeline_metadata.json file.
+        end_datetime (Optional[datetime]): The end
+            datetime of the training dataset that will be created.
+              If None is provided, it will try to load it 
+            from the cached feature_pipeline_metadata.json file.
+
+    Returns:
+        dict: The feature group version.
+
+    """
+
+    if feature_group_version is None:
+        feature_pipeline_metadata = utils.load_json("feature_pipeline_metadata.json")
+        feature_group_version = feature_pipeline_metadata["feature_group_version"]
+
+    if start_datetime is None or end_datetime is None:
+        feature_pipeline_metadata = utils.load_json("feature_pipeline_metadata.json")
+        start_datetime = datetime.strptime(
+            feature_pipeline_metadata["export_datetime_utc_start"],
+            feature_pipeline_metadata["datetime_format"],
+        )
+        end_datetime = datetime.strptime(
+            feature_pipeline_metadata["export_datetime_utc_end"],
+            feature_pipeline_metadata["datetime_format"],
+        )
+
     project = hopsworks.login(
         api_key_value=settings.SETTINGS["FS_API_KEY"], project="energy_consumption"
     )
     fs = project.get_feature_store()
 
     # Delete old feature views as the free tier only allows 100 feature views.
+    # NOTE: Normally you would not want to delete feature views. We do it here just to stay in the free tier.
     try:
         feature_views = fs.get_feature_views(name="energy_consumption_denmark_view")
     except hsfs.client.exceptions.RestAPIError:
@@ -36,20 +78,10 @@ def create(feature_group_version: int = 1) -> dict:
             # Don't fail the program if the deletion steps fails.
             continue
 
+    # Create feature view in the given feature group version.
     energy_consumption_fg = fs.get_feature_group(
         "energy_consumption_denmark", version=feature_group_version
     )
-
-    # Create feature view.
-    # TODO: Can I put the [start, end] interval also in the create_feature_view() method?
-    metadata = utils.load_json(file_name="feature_pipeline_metadata.json")
-    export_start = datetime.datetime.strptime(
-        metadata["export_datetime_utc_start"], metadata["datetime_format"]
-    )
-    export_end = datetime.datetime.strptime(
-        metadata["export_datetime_utc_end"], metadata["datetime_format"]
-    )
-
     ds_query = energy_consumption_fg.select_all()
     feature_view = fs.create_feature_view(
         name="energy_consumption_denmark_view",
@@ -59,7 +91,13 @@ def create(feature_group_version: int = 1) -> dict:
     )
 
     # Create training dataset.
-    # TODO: Try to make the splits within Hopsworks. But the last time I tried it, it thrown an error.
+    metadata = utils.load_json(file_name="feature_pipeline_metadata.json")
+    export_start = datetime.strptime(
+        metadata["export_datetime_utc_start"], metadata["datetime_format"]
+    )
+    export_end = datetime.strptime(
+        metadata["export_datetime_utc_end"], metadata["datetime_format"]
+    )
     feature_view.create_training_data(
         description="Energy consumption training dataset",
         data_format="csv",
@@ -69,6 +107,7 @@ def create(feature_group_version: int = 1) -> dict:
         coalesce=True,
     )
 
+    # Save metadata.
     metadata = {
         "feature_view_version": feature_view.version,
         "training_dataset_version": 1,

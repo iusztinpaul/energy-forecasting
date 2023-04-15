@@ -25,7 +25,7 @@ def load_data_from_feature_store(
     Returns:
         Tuple of exogenous variables and the time series to be forecasted.
     """
-       
+
     feature_view = fs.get_feature_view(
         name="energy_consumption_denmark_view", version=feature_view_version
     )

@@ -94,7 +94,6 @@ def feature_pipeline():
             feature_group_version=feature_pipeline_metadata["feature_group_version"]
         )
 
-
     @task.virtualenv(
         task_id="run_hyperparameter_tuning",
         requirements=[
@@ -109,10 +108,10 @@ def feature_pipeline():
     def run_hyperparameter_tuning(feature_view_metadata: dict):
         """
         This function runs hyperparameter tuning for the training pipeline.
-        The feature store feature view version and training dataset version are passed 
+        The feature store feature view version and training dataset version are passed
         based on the results from the create_feature_view task.
         """
-        
+
         from training_pipeline import hyperparameter_tuning
 
         return hyperparameter_tuning.run(
@@ -154,7 +153,7 @@ def feature_pipeline():
         trigger_rule=TriggerRule.ALL_DONE,
     )
     def train_from_best_config(feature_view_metadata: dict):
-        """Trains model from the best config found in hyperparameter tuning. 
+        """Trains model from the best config found in hyperparameter tuning.
 
         Args:
             feature_view_metadata (dict): Contains feature store feature view and training dataset version.
@@ -175,7 +174,6 @@ def feature_pipeline():
             feature_view_version=feature_view_metadata["feature_view_version"],
             training_dataset_version=feature_view_metadata["training_dataset_version"],
         )
-
 
     @task.virtualenv(
         task_id="compute_monitoring",
@@ -210,7 +208,12 @@ def feature_pipeline():
         python_version="3.9",
         system_site_packages=False,
     )
-    def batch_predict(feature_view_metadata: dict, train_metadata: dict, feature_pipeline_metadata: dict, fh: int = 24):
+    def batch_predict(
+        feature_view_metadata: dict,
+        train_metadata: dict,
+        feature_pipeline_metadata: dict,
+        fh: int = 24,
+    ):
         """
         This is the function that runs the batch prediction pipeline
 
@@ -240,7 +243,6 @@ def feature_pipeline():
             start_datetime=start_datetime,
             end_datetime=end_datetime,
         )
-
 
     @task.branch(task_id="if_run_hyperparameter_tuning_branching")
     def if_run_hyperparameter_tuning_branching(run_hyperparameter_tuning: bool) -> bool:
@@ -294,7 +296,9 @@ def feature_pipeline():
 
     # Batch prediction pipeline
     compute_monitoring_step = compute_monitoring(feature_view_metadata)
-    batch_predict_step = batch_predict(feature_view_metadata, train_metadata, feature_pipeline_metadata)
+    batch_predict_step = batch_predict(
+        feature_view_metadata, train_metadata, feature_pipeline_metadata
+    )
 
     # Define DAG structure.
     (

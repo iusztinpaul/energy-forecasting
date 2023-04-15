@@ -157,7 +157,7 @@ poetry publish -r my-pypi
 Run the following to build and publish all the modules:
 ```shell
 cd <root_dir>
-sh deploy.sh
+sh deploy/ml-pipeline.sh
 ```
 
 ### Run Server
@@ -222,11 +222,11 @@ cp app-api/.env.default app-api/.env
 ```
 Build & run:
 ```shell
-docker compose up --build
+docker compose -f deploy/app-docker-compose.yml --project-directory . up --build
 ```
 Run local dev from root dir:
 ```shell
-docker compose -f docker-compose.yml -f docker-compose.local.yml up --build 
+docker compose -f deploy/app-docker-compose.yml -f deploy/app-docker-compose.local.ym --project-directory . up --build
 ```
 
 
@@ -288,7 +288,5 @@ cp app-api/.env.default app-api/.env
 ```
 Build & run:
 ```shell
-docker compose up --build -d
+docker compose -f deploy/app-docker-compose.yml --project-directory . up --build
 ```
-
-# TODO: Create ci_cd.sh files for both ml-pipeline and app

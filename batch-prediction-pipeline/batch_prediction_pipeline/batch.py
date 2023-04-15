@@ -29,7 +29,7 @@ def predict(
         start_datetime (Optional[datetime], optional): start datetime used for extracting features for predictions. If None is provided, it will try to load it from the cached feature_pipeline_metadata.json file.
         end_datetime (Optional[datetime], optional): end datetime used for extracting features for predictions. If None is provided, it will try to load it from the cached feature_pipeline_metadata.json file.
     """
-    
+
     if feature_view_version is None:
         feature_view_metadata = utils.load_json("feature_view_metadata.json")
         feature_view_version = feature_view_metadata["feature_view_version"]
@@ -194,8 +194,7 @@ def save_for_monitoring(predictions: pd.DataFrame, keep_n_days: int = 30):
     # Make sure that the predictions are sorted and continous.
     predictions = predictions.sort_index()
     predictions = (
-        predictions
-        .unstack(level=[0, 1])
+        predictions.unstack(level=[0, 1])
         .resample("1H")
         .asfreq()
         .stack(level=[2, 1])
