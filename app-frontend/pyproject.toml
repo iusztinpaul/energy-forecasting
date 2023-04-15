@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "app-frontend"
+version = "0.1.0"
+description = ""
+authors = ["iusztinpaul <p.e.iusztin@gmail.com>"]
+readme = "README.md"
+packages = [{include = "app_frontend"}]
+
+[tool.poetry.dependencies]
+python = ">3.9.7,<3.10"
+streamlit = ">=1.20.0,<1.21.0"
+plotly = ">=5.14.1,<5.15.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
