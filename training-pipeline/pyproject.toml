@@ -12,7 +12,6 @@ packages = [{include = "training_pipeline"}]
 [tool.poetry.dependencies]
 python = "~3.9"
 pyarrow = "^11.0.0"
-category-encoders = "^2.6.0"
 wandb = "^0.14.0"
 matplotlib = "^3.7.1"
 hopsworks = "^3.0.5"

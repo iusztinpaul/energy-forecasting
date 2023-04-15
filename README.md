@@ -63,11 +63,6 @@ cat ~/.config/pypoetry/auth.toml
 ```
 
 
-**TODO:** Move the installation to poetry. Do I need it as this code is running directly in Airflow?
-```shell
-pip install "apache-airflow[celery]==2.5.2" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.5.2/constraints-3.7.txt"
-```
-
 ## Airflow & Private PyPi Server
 
 ## Install Docker
@@ -91,8 +86,6 @@ logout
 
 ### Setup
 You can read the official documentation [here](https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html) or follow the steps bellow for a fast start.
-
-**TODO:** This setup is used for development. Check out what I have to do for production.
 
 #### Run
 
@@ -234,8 +227,8 @@ docker compose -f deploy/app-docker-compose.yml -f deploy/app-docker-compose.loc
 
 #### GCP Resources
 
-# TODO: Change the instance to use persisted disk.
-- VM: e2-micro - 2 vCPU - 1 GB memory - 10 GB standard persisted disk
+# TODO: Change the instance to use persisted disk with 15 GB 
+- VM: e2-micro - 2 vCPU - 1 GB memory - 15 GB standard persisted disk
 - firewall: expose ports 8501, 8001
 - firewall: IAP for TCP tunneling
 - create static external IP address - [docs](https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address#console)

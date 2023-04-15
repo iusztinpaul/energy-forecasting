@@ -13,6 +13,7 @@ from sktime.performance_metrics.forecasting import MeanAbsolutePercentageError
 from sktime.utils.plotting import plot_windows
 
 from training_pipeline import utils
+from training_pipeline.configs import gridsearch as gridsearch_configs
 from training_pipeline.data import load_dataset_from_feature_store
 from training_pipeline.models import build_model
 from training_pipeline.utils import init_wandb_run
@@ -20,55 +21,6 @@ from training_pipeline.settings import SETTINGS, OUTPUT_DIR
 
 
 logger = utils.get_logger(__name__)
-
-
-# TODO: Inject sweep configs from YAML
-# TODO: Use random or bayesian search + early stopping
-# sweep_configs = {
-#     "method": "grid",
-#     "metric": {"name": "validation.MAPE", "goal": "minimize"},
-#     "parameters": {
-#         "forecaster__estimator__n_jobs": {"values": [-1]},
-#         "forecaster__estimator__n_estimators": {"values": [1000, 2000, 2500]},
-#         "forecaster__estimator__learning_rate": {"values": [0.1, 0.15]},
-#         "forecaster__estimator__max_depth": {"values": [-1, 5]},
-#         "forecaster__estimator__reg_lambda": {"values": [0, 0.01, 0.015]},
-#         "daily_season__manual_selection": {"values": [["day_of_week", "hour_of_day"]]},
-#         "forecaster_transformers__window_summarizer__lag_feature__lag": {
-#             "values": [list(range(1, 73))]
-#         },
-#         "forecaster_transformers__window_summarizer__lag_feature__mean": {
-#             "values": [[[1, 24], [1, 48], [1, 72]]]
-#         },
-#         "forecaster_transformers__window_summarizer__lag_feature__std": {
-#             "values": [[[1, 24], [1, 48]]]
-#         },
-#         "forecaster_transformers__window_summarizer__n_jobs": {"values": [1]},
-#     },
-# }
-
-sweep_configs = {
-    "method": "grid",
-    "metric": {"name": "validation.MAPE", "goal": "minimize"},
-    "parameters": {
-        "forecaster__estimator__n_jobs": {"values": [-1]},
-        "forecaster__estimator__n_estimators": {"values": [2500]},
-        "forecaster__estimator__learning_rate": {"values": [0.15]},
-        "forecaster__estimator__max_depth": {"values": [5]},
-        "forecaster__estimator__reg_lambda": {"values": [0.01]},
-        "daily_season__manual_selection": {"values": [["day_of_week", "hour_of_day"]]},
-        "forecaster_transformers__window_summarizer__lag_feature__lag": {
-            "values": [list(range(1, 73))]
-        },
-        "forecaster_transformers__window_summarizer__lag_feature__mean": {
-            "values": [[[1, 24], [1, 48], [1, 72]]]
-        },
-        "forecaster_transformers__window_summarizer__lag_feature__std": {
-            "values": [[[1, 24], [1, 48]]]
-        },
-        "forecaster_transformers__window_summarizer__n_jobs": {"values": [1]},
-    },
-}
 
 
 def run(
@@ -98,7 +50,7 @@ def run(
 def run_hyperparameter_optimization(
     y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int
 ):
-    sweep_id = wandb.sweep(sweep=sweep_configs, project=SETTINGS["WANDB_PROJECT"])
+    sweep_id = wandb.sweep(sweep=gridsearch_configs.sweep_configs, project=SETTINGS["WANDB_PROJECT"])
 
     wandb.agent(
         project=SETTINGS["WANDB_PROJECT"],

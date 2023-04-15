@@ -1,4 +1,4 @@
-[[package]]
+gridsearch[[package]]
 name = "altair"
 version = "4.2.2"
 description = "Altair: A declarative statistical visualization library for Python."

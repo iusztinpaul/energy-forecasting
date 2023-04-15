@@ -87,6 +87,7 @@ def prepare_data(data: pd.DataFrame, target: str = "energy_consumption", fh: int
     # Prepare the time series to be forecasted.
     y = data[[target]]
 
+    # TODO: Add issue to sktime that their train_test_split does not work with multiindex/hierarchical data. Try it again before opening an issue.
     y_train, y_test, X_train, X_test = create_train_test_split(y, X, fh=fh)
 
     return y_train, y_test, X_train, X_test

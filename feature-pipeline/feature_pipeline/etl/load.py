@@ -36,9 +36,7 @@ def to_feature_store(
     # Upload data.
     energy_feature_group.insert(
         features=data,
-        # Drop all data in the feature group before inserting new data. This does not affect metadata
-        # NOTE: This is only for demo purposes. We want to drop the data to keep the freemium version of Hopsworks.
-        overwrite=True,
+        overwrite=False,
         write_options={
             "wait_for_job": True,
         }
