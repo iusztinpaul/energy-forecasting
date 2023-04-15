@@ -1,7 +1,8 @@
 import json
 import logging
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
+import joblib
 
 import pandas as pd
 
@@ -24,6 +25,19 @@ def get_logger(name: str) -> logging.Logger:
     logger = logging.getLogger(name)
 
     return logger
+
+
+def load_model(model_path: Union[str, Path]):
+    """
+    Template for loading a model.
+
+    Args:
+        model_path: Path to the model.
+
+    Returns: Loaded model.
+    """
+
+    return joblib.load(model_path)
 
 
 def save_json(data: dict, file_name: str, save_dir: str = settings.OUTPUT_DIR):

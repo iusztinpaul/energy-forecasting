@@ -13,7 +13,14 @@ from batch_prediction_pipeline import utils
 logger = utils.get_logger(__name__)
 
 
-def compute(feature_view_version: Optional[int] = None, compute_on_n_days: int = 30):
+def compute(feature_view_version: Optional[int] = None, compute_on_n_days: int = 30) -> None:
+    """Computes the metrics on the latest n_days of predictions.
+
+    Args:
+        feature_view_version: The version of the feature view to load data from the feature store. If None is provided, it will try to load it from the cached feature_view_metadata.json file.
+        compute_on_n_days: The number of days of predictions to compute the metrics on.
+    """
+
     if feature_view_version is None:
         feature_view_metadata = utils.load_json("feature_view_metadata.json")
         feature_view_version = feature_view_metadata["feature_view_version"]

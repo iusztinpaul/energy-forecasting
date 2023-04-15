@@ -43,6 +43,7 @@ def get_root_dir(default_value: str = ".") -> Path:
     return Path(os.getenv("ML_PIPELINE_ROOT_DIR", default_value))
 
 
+# The settings will be loaded and the outputs will be saved relative to the 'ML_PIPELINE_ROOT_DIR' directory. 
 ML_PIPELINE_ROOT_DIR = get_root_dir()
 OUTPUT_DIR = ML_PIPELINE_ROOT_DIR / "output"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)

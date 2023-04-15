@@ -1,9 +1,8 @@
 from datetime import datetime
 from pathlib import Path
-from typing import Union, Optional
+from typing import Optional
 
 import hopsworks
-import joblib
 import pandas as pd
 
 from batch_prediction_pipeline import data
@@ -18,13 +17,35 @@ def predict(
     fh: int = 24,
     feature_view_version: Optional[int] = None,
     model_version: Optional[int] = None,
-):
+    start_datetime: Optional[datetime] = None,
+    end_datetime: Optional[datetime] = None,
+) -> None:
+    """Main function used to do batch predictions.
+
+    Args:
+        fh (int, optional): forecast horizon. Defaults to 24.
+        feature_view_version (Optional[int], optional): feature store feature view version. If None is provided, it will try to load it from the cached feature_view_metadata.json file.
+        model_version (Optional[int], optional): model version to load from the model registry. If None is provided, it will try to load it from the cached train_metadata.json file.
+        start_datetime (Optional[datetime], optional): start datetime used for extracting features for predictions. If None is provided, it will try to load it from the cached feature_pipeline_metadata.json file.
+        end_datetime (Optional[datetime], optional): end datetime used for extracting features for predictions. If None is provided, it will try to load it from the cached feature_pipeline_metadata.json file.
+    """
+    
     if feature_view_version is None:
         feature_view_metadata = utils.load_json("feature_view_metadata.json")
         feature_view_version = feature_view_metadata["feature_view_version"]
     if model_version is None:
         train_metadata = utils.load_json("train_metadata.json")
         model_version = train_metadata["model_version"]
+    if start_datetime is None or end_datetime is None:
+        feature_pipeline_metadata = utils.load_json("feature_pipeline_metadata.json")
+        start_datetime = datetime.strptime(
+            feature_pipeline_metadata["export_datetime_utc_start"],
+            feature_pipeline_metadata["datetime_format"],
+        )
+        end_datetime = datetime.strptime(
+            feature_pipeline_metadata["export_datetime_utc_end"],
+            feature_pipeline_metadata["datetime_format"],
+        )
 
     logger.info("Connecting to the feature store...")
     project = hopsworks.login(
@@ -34,21 +55,11 @@ def predict(
     logger.info("Successfully connected to the feature store.")
 
     logger.info("Loading data from feature store...")
-    # TODO: Parameterize start and end datetime
-    feature_pipeline_metadata = utils.load_json("feature_pipeline_metadata.json")
-    export_datetime_utc_start = datetime.strptime(
-        feature_pipeline_metadata["export_datetime_utc_start"],
-        feature_pipeline_metadata["datetime_format"],
-    )
-    export_datetime_utc_end = datetime.strptime(
-        feature_pipeline_metadata["export_datetime_utc_end"],
-        feature_pipeline_metadata["datetime_format"],
-    )
     X, y = data.load_data_from_feature_store(
         fs,
         feature_view_version,
-        start_datetime=export_datetime_utc_start,
-        end_datetime=export_datetime_utc_end,
+        start_datetime=start_datetime,
+        end_datetime=end_datetime,
     )
     logger.info("Successfully loaded data from feature store.")
 
@@ -66,31 +77,34 @@ def predict(
 
 
 def load_model_from_model_registry(project, model_version: int):
+    """
+    This function loads a model from the Model Registry.
+    The model is downloaded, saved locally, and loaded into memory.
+    """
+
     mr = project.get_model_registry()
     model_registry_reference = mr.get_model(name="best_model", version=model_version)
     model_dir = model_registry_reference.download()
     model_path = Path(model_dir) / "best_model.pkl"
 
-    model = load_model(model_path)
+    model = utils.load_model(model_path)
 
     return model
 
 
-def load_model(model_path: Union[str, Path]):
+def forecast(model, X: pd.DataFrame, fh: int = 24):
     """
-    Template for loading a model.
+    Get a forecast of the total load for the given areas and consumer types.
 
     Args:
-        model_path: Path to the model.
+        model (sklearn.base.BaseEstimator): Fitted model that implements the predict method.
+        X (pd.DataFrame): Exogenous data with area, consumer_type, and datetime_utc as index.
+        fh (int): Forecast horizon.
 
-    Returns: Loaded model.
+    Returns:
+        pd.DataFrame: Forecast of total load for each area, consumer_type, and datetime_utc.
     """
 
-    return joblib.load(model_path)
-
-
-def forecast(model, X: pd.DataFrame, fh: int = 24):
-    # TODO: Make this function independent of X.
     all_areas = X.index.get_level_values(level=0).unique()
     all_consumer_types = X.index.get_level_values(level=1).unique()
     latest_datetime = X.index.get_level_values(level=2).max()
@@ -116,8 +130,12 @@ def forecast(model, X: pd.DataFrame, fh: int = 24):
 
 
 def save(X: pd.DataFrame, y: pd.DataFrame, predictions: pd.DataFrame):
+    """Save the input data, target data, and predictions to GCS."""
+
+    # Get the bucket object from the GCS client.
     bucket = utils.get_bucket()
 
+    # Save the input data and target data to the bucket.
     for df, blob_name in zip(
         [X, y, predictions], ["X.parquet", "y.parquet", "predictions.parquet"]
     ):
@@ -129,12 +147,25 @@ def save(X: pd.DataFrame, y: pd.DataFrame, predictions: pd.DataFrame):
         )
         logger.info(f"Successfully saved {blob_name} to bucket.")
 
+    # Save the predictions to the bucket for monitoring.
     logger.info("Merging predictions with cached predictions...")
-    merge(predictions)
+    save_for_monitoring(predictions)
     logger.info("Successfully merged predictions with cached predictions...")
 
 
-def merge(predictions: pd.DataFrame, keep_n_days: int = 30):
+def save_for_monitoring(predictions: pd.DataFrame, keep_n_days: int = 30):
+    """Save predictions to GCS for monitoring.
+
+    The predictions are saved as a parquet file in GCS.
+    The predictions are saved in a bucket with the following structure:
+    gs://<BUCKET_NAME>/predictions_<keep_n_days>_days.parquet
+
+    The predictions are stored in a multiindex dataframe with the following indexes:
+    - area: The area of the predictions, e.g. "DK1".
+    - consumer_type: The consumer type of the predictions, e.g. "residential".
+    - datetime_utc: The timestamp of the predictions, e.g. "2020-01-01 00:00:00" with a frequency of 1 hour.
+    """
+
     bucket = utils.get_bucket()
 
     cached_predictions = utils.read_blob_from(

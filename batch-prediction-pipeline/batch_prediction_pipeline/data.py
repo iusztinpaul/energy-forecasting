@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Tuple
 
 import pandas as pd
 
@@ -11,7 +12,20 @@ def load_data_from_feature_store(
     start_datetime: datetime,
     end_datetime: datetime,
     target: str = "energy_consumption",
-):
+) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Loads data for a given time range from the feature store.
+
+    Args:
+        fs: Feature store.
+        feature_view_version: Feature view version.
+        start_datetime: Start datetime.
+        end_datetime: End datetime.
+        target: Name of the target feature.
+
+    Returns:
+        Tuple of exogenous variables and the time series to be forecasted.
+    """
+       
     feature_view = fs.get_feature_view(
         name="energy_consumption_denmark_view", version=feature_view_version
     )

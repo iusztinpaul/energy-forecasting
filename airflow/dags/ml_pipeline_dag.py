@@ -154,13 +154,25 @@ def feature_pipeline():
         python_version="3.9",
         system_site_packages=False,
     )
-    def batch_predict(feature_view_metadata: dict, train_metadata: dict, fh: int = 24):
+    def batch_predict(feature_view_metadata: dict, train_metadata: dict, feature_pipeline_metadata: dict, fh: int = 24):
+        from datetime import datetime
         from batch_prediction_pipeline import batch
+
+        start_datetime = datetime.strptime(
+            feature_pipeline_metadata["export_datetime_utc_start"],
+            feature_pipeline_metadata["datetime_format"],
+        )
+        end_datetime = datetime.strptime(
+            feature_pipeline_metadata["export_datetime_utc_end"],
+            feature_pipeline_metadata["datetime_format"],
+        )
 
         batch.predict(
             fh=fh,
             feature_view_version=feature_view_metadata["feature_view_version"],
             model_version=train_metadata["model_version"],
+            start_datetime=start_datetime,
+            end_datetime=end_datetime,
         )
 
     @task.branch(task_id="if_run_hyperparameter_tuning_branching")
@@ -213,7 +225,7 @@ def feature_pipeline():
 
     # Batch prediction pipeline
     compute_monitoring_step = compute_monitoring(feature_view_metadata)
-    batch_predict_step = batch_predict(feature_view_metadata, train_metadata)
+    batch_predict_step = batch_predict(feature_view_metadata, train_metadata, feature_pipeline_metadata)
 
     # Define DAG structure.
     (
