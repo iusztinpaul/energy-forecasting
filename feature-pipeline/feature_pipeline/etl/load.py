@@ -5,7 +5,7 @@ from hsfs.feature_group import FeatureGroup
 
 from feature_pipeline.settings import SETTINGS
 
-   
+
 def to_feature_store(
     data: pd.DataFrame,
     validation_expectation_suite: ExpectationSuite,
@@ -39,8 +39,8 @@ def to_feature_store(
         overwrite=False,
         write_options={
             "wait_for_job": True,
-        }
-        )
+        },
+    )
 
     # Add feature descriptions.
     feature_descriptions = [

@@ -17,20 +17,20 @@ def create(
     start_datetime: Optional[datetime] = None,
     end_datetime: Optional[datetime] = None,
 ) -> dict:
-    """Create a new feature view version and training dataset 
+    """Create a new feature view version and training dataset
     based on the given feature group version and start and end datetimes.
 
     Args:
         feature_group_version (Optional[int]): The version of the
-            feature group. If None is provided, it will try to load it 
+            feature group. If None is provided, it will try to load it
             from the cached feature_pipeline_metadata.json file.
         start_datetime (Optional[datetime]): The start
-            datetime of the training dataset that will be created. 
-            If None is provided, it will try to load it 
+            datetime of the training dataset that will be created.
+            If None is provided, it will try to load it
             from the cached feature_pipeline_metadata.json file.
         end_datetime (Optional[datetime]): The end
             datetime of the training dataset that will be created.
-              If None is provided, it will try to load it 
+              If None is provided, it will try to load it
             from the cached feature_pipeline_metadata.json file.
 
     Returns:

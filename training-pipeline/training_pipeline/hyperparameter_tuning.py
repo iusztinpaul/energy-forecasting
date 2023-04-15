@@ -50,7 +50,9 @@ def run(
 def run_hyperparameter_optimization(
     y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int
 ):
-    sweep_id = wandb.sweep(sweep=gridsearch_configs.sweep_configs, project=SETTINGS["WANDB_PROJECT"])
+    sweep_id = wandb.sweep(
+        sweep=gridsearch_configs.sweep_configs, project=SETTINGS["WANDB_PROJECT"]
+    )
 
     wandb.agent(
         project=SETTINGS["WANDB_PROJECT"],

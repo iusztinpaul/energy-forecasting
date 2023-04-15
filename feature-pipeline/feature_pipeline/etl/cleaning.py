@@ -48,7 +48,7 @@ def encode_area_column(df: pd.DataFrame) -> pd.DataFrame:
     data = df.copy()
 
     area_mappings = {"DK": 0, "DK1": 1, "DK2": 2}
-    
+
     data["area"] = data["area"].map(lambda string_area: area_mappings.get(string_area))
     data["area"] = data["area"].astype("int8")
 
