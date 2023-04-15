@@ -110,7 +110,7 @@ cd airflow
 mkdir -p ./logs ./plugins
 sudo chmod 777 ./logs ./plugins
 echo -e "AIRFLOW_UID=$(id -u)" > .env
-echo "AIRFLOW_VAR_ROOT_DIR=/opt/airflow/dags" >> .env
+echo "ML_PIPELINE_ROOT_DIR=/opt/airflow/dags" >> .env
 
 
 

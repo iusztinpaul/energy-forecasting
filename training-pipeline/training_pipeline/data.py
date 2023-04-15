@@ -78,8 +78,6 @@ def load_dataset_from_feature_store(
 
 
 def prepare_data(data: pd.DataFrame, target: str = "energy_consumption", fh: int = 24):
-    # TODO: Can I move the index preparation to the model pipeline?
-
     # Set the index as is required by sktime.
     data["datetime_utc"] = pd.PeriodIndex(data["datetime_utc"], freq="H")
     data = data.set_index(["area", "consumer_type", "datetime_utc"]).sort_index()

@@ -36,5 +36,6 @@ jobs:
           ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
           command: >
             cd ~/energy-forecasting && 
+            git config pull.rebase true &&
             git pull && 
             docker compose -f deploy/app-docker-compose.yml --project-directory . up --build -d
