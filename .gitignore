@@ -149,4 +149,4 @@ artifacts/
 
 # Sensitive
 credentials/
-# .hw_api_key
+.hw_api_key
