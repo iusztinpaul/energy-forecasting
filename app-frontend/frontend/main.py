@@ -4,7 +4,7 @@ import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
 
-from frontend.settings import API_URL, TITLE
+from settings import API_URL, TITLE
 
 
 st.title(TITLE)
