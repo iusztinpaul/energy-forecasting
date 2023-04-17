@@ -10,7 +10,7 @@ from settings import API_URL, TITLE
 st.title(TITLE)
 
 # Create dropdown for area selection.
-area_response = requests.get(str(API_URL / "area_values"))
+area_response = requests.get(API_URL / "area_values")
 json_area_response = area_response.json()
 
 area = st.selectbox(
@@ -21,7 +21,7 @@ area = st.selectbox(
 )
 
 # Create drown down for consumer type selection.
-consumer_type_response = requests.get(str(API_URL / "consumer_type_values"))
+consumer_type_response = requests.get(API_URL / "consumer_type_values")
 json_consumer_type_response = consumer_type_response.json()
 
 consumer_type = st.selectbox(
@@ -38,7 +38,7 @@ input_data = {"area": area, "consumer_type": consumer_type}
 if area and consumer_type:
     # Get predictions from API.
     response = requests.get(
-        str(API_URL / "predictions" / area / consumer_type), verify=False
+        API_URL / "predictions" / f"{area}" / f"{consumer_type}", verify=False
     )
     json_response = response.json()
 
