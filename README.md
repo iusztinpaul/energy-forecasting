@@ -65,6 +65,13 @@ cat ~/.config/pypoetry/auth.toml
 
 ## Airflow & Private PyPi Server
 
+Run backfil:
+```shell
+docker exec -it <container_id_of_airflow-airflow-webserver> sh
+airflow tasks clear --start-date 2023/04/11 --end-date 2023/04/13 ml_pipeline
+airflow dags backfill --start-date 2023/04/11 --end-date 2023/04/13 ml_pipeline
+```
+
 ## Install Docker
 
 Install Docker on GCP instructions [here](https://tomroth.com.au/gcp-docker/).

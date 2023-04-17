@@ -10,7 +10,7 @@ from airflow.utils.edgemodifier import Label
 @dag(
     dag_id="ml_pipeline",
     schedule="@hourly",
-    start_date=datetime(2021, 1, 1),
+    start_date=datetime(2023, 4, 14),
     catchup=False,
     tags=["feature-engineering", "model-training", "batch-prediction"],
 )
@@ -27,44 +27,55 @@ def feature_pipeline():
         system_site_packages=True,
     )
     def run_feature_pipeline(
+        export_end_datetime: str,
         days_delay: int,
         days_export: int,
         url: str,
         feature_group_version: int,
-    ):
+    ) -> dict:
         """
         Run the feature pipeline.
 
-        Parameters
-        ----------
-        days_delay : int
-            Number of days that the data is delayed with respect to the current date.
+        Args:
+            export_end_datetime: str
+                The end datetime of the export window. If None, the current time is used.
+                Note that if the difference between the current datetime and the "export_end_datetime" is less than the "days_delay",
+                the "export_start_datetime" is shifted accordingly to ensure we extract a number of "days_export" days.
 
-        days_export : int
-            Number of days to export data for.
+            days_delay : int
+                Data has a delay of N days. Thus, we have to shift our window with N days.
 
-        url : str
-            URL to the raw data.
+            days_export : int
+                The number of days to export.
 
-        feature_group_version : int
-            Version of the feature store feature group to use.
+            url : str
+                URL to the raw data.
 
-        Returns
-        -------
-        result : int
-            Result of the pipeline run.
+            feature_group_version : int
+                Version of the feature store feature group to use.
+
+        Returns:
+            Metadata of the feature pipeline run.
         """
+
+        from datetime import datetime
 
         from feature_pipeline import utils, pipeline
 
         logger = utils.get_logger(__name__)
 
+        export_end_datetime = datetime.strptime(
+            export_end_datetime, "%Y-%m-%d %H:%M:%S.%f%z"
+        ).replace(microsecond=0, tzinfo=None)
+
+        logger.info(f"export_end_datetime = {export_end_datetime}")
         logger.info(f"days_delay = {days_delay}")
         logger.info(f"days_export = {days_export}")
         logger.info(f"url = {url}")
         logger.info(f"feature_group_version = {feature_group_version}")
 
         return pipeline.run(
+            export_end_datetime=export_end_datetime,
             days_delay=days_delay,
             days_export=days_export,
             url=url,
@@ -82,7 +93,7 @@ def feature_pipeline():
         multiple_outputs=True,
         system_site_packages=False,
     )
-    def create_feature_view(feature_pipeline_metadata: dict):
+    def create_feature_view(feature_pipeline_metadata: dict) -> dict:
         """
         This function creates a feature view based on the feature pipeline computations. The feature view
         is created using the feature group version from the feature pipeline metadata.
@@ -105,7 +116,7 @@ def feature_pipeline():
         multiple_outputs=True,
         system_site_packages=False,
     )
-    def run_hyperparameter_tuning(feature_view_metadata: dict):
+    def run_hyperparameter_tuning(feature_view_metadata: dict) -> dict:
         """
         This function runs hyperparameter tuning for the training pipeline.
         The feature store feature view version and training dataset version are passed
@@ -152,7 +163,7 @@ def feature_pipeline():
         system_site_packages=False,
         trigger_rule=TriggerRule.ALL_DONE,
     )
-    def train_from_best_config(feature_view_metadata: dict):
+    def train_from_best_config(feature_view_metadata: dict) -> dict:
         """Trains model from the best config found in hyperparameter tuning.
 
         Args:
@@ -279,6 +290,7 @@ def feature_pipeline():
 
     # Feature pipeline
     feature_pipeline_metadata = run_feature_pipeline(
+        export_end_datetime="{{ dag_run.logical_date }}",
         days_delay=days_delay,
         days_export=days_export,
         url=url,

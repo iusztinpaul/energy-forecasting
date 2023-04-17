@@ -38,7 +38,8 @@ def from_best_config(
         training_dataset_version = feature_view_metadata["training_dataset_version"]
 
     y_train, y_test, X_train, X_test = load_dataset_from_feature_store(
-        feature_view_version, training_dataset_version
+        feature_view_version=feature_view_version,
+        training_dataset_version=training_dataset_version,
     )
 
     with utils.init_wandb_run(
