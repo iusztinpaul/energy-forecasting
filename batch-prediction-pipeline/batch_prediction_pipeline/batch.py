@@ -69,11 +69,18 @@ def predict(
 
     logger.info("Making predictions...")
     predictions = forecast(model, X, fh=fh)
+    predictions_end_datetime = predictions.index.get_level_values(level="datetime_utc").max()
     logger.info("Successfully made predictions.")
 
     logger.info("Saving predictions...")
     save(X, y, predictions)
     logger.info("Successfully saved predictions.")
+
+    # Save the predictions to the bucket for monitoring.
+    logger.info("Merging predictions with cached predictions...")
+    save_for_monitoring(predictions, start_datetime, predictions_end_datetime)
+    logger.info("Successfully merged predictions with cached predictions...")
+
 
 
 def load_model_from_model_registry(project, model_version: int):
@@ -147,18 +154,13 @@ def save(X: pd.DataFrame, y: pd.DataFrame, predictions: pd.DataFrame):
         )
         logger.info(f"Successfully saved {blob_name} to bucket.")
 
-    # Save the predictions to the bucket for monitoring.
-    logger.info("Merging predictions with cached predictions...")
-    save_for_monitoring(predictions)
-    logger.info("Successfully merged predictions with cached predictions...")
 
-
-def save_for_monitoring(predictions: pd.DataFrame, keep_n_days: int = 30):
+def save_for_monitoring(predictions: pd.DataFrame, start_datetime: datetime, end_datetime: datetime):
     """Save predictions to GCS for monitoring.
 
     The predictions are saved as a parquet file in GCS.
     The predictions are saved in a bucket with the following structure:
-    gs://<BUCKET_NAME>/predictions_<keep_n_days>_days.parquet
+    gs://<BUCKET_NAME>/predictions_monitoring.parquet
 
     The predictions are stored in a multiindex dataframe with the following indexes:
     - area: The area of the predictions, e.g. "DK1".
@@ -169,7 +171,7 @@ def save_for_monitoring(predictions: pd.DataFrame, keep_n_days: int = 30):
     bucket = utils.get_bucket()
 
     cached_predictions = utils.read_blob_from(
-        bucket=bucket, blob_name=f"predictions_{keep_n_days}_days.parquet"
+        bucket=bucket, blob_name=f"predictions_monitoring.parquet"
     )
     has_cached_predictions = cached_predictions is not None
     if has_cached_predictions is True:
@@ -191,7 +193,7 @@ def save_for_monitoring(predictions: pd.DataFrame, keep_n_days: int = 30):
         predictions = new_predictions.fillna(cached_predictions)
         predictions.columns = predictions.columns.str.replace("_new", "")
 
-    # Make sure that the predictions are sorted and continous.
+    # Make sure that the predictions are sorted, continous and in the right range.
     predictions = predictions.sort_index()
     predictions = (
         predictions.unstack(level=[0, 1])
@@ -200,18 +202,14 @@ def save_for_monitoring(predictions: pd.DataFrame, keep_n_days: int = 30):
         .stack(level=[2, 1])
         .swaplevel(2, 0)
     )
-    # Keep only the last n_days of observations + 1 day of predictions.
-    count_unique_area_types = len(predictions.index.get_level_values(level=0).unique())
-    count_unique_consumer_types = len(
-        predictions.index.get_level_values(level=1).unique()
-    )
-    predictions = predictions.tail(
-        n=(keep_n_days + 1) * 24 * count_unique_area_types * count_unique_consumer_types
-    )
+    predictions = predictions.loc[
+        (predictions.index.get_level_values("datetime_utc") >= pd.Period(start_datetime, freq="H")) &
+        (predictions.index.get_level_values("datetime_utc") <= pd.Period(end_datetime, freq="H"))
+    ]
 
     utils.write_blob_to(
         bucket=bucket,
-        blob_name=f"predictions_{keep_n_days}_days.parquet",
+        blob_name=f"predictions_monitoring.parquet",
         data=predictions,
     )
 

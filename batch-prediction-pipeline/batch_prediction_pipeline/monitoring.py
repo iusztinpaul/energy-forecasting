@@ -1,6 +1,7 @@
 from typing import Optional
 
 import hopsworks
+import numpy as np
 import pandas as pd
 
 from sktime.performance_metrics.forecasting import mean_absolute_percentage_error
@@ -14,13 +15,12 @@ logger = utils.get_logger(__name__)
 
 
 def compute(
-    feature_view_version: Optional[int] = None, compute_on_n_days: int = 30
+    feature_view_version: Optional[int] = None
 ) -> None:
     """Computes the metrics on the latest n_days of predictions.
 
     Args:
         feature_view_version: The version of the feature view to load data from the feature store. If None is provided, it will try to load it from the cached feature_view_metadata.json file.
-        compute_on_n_days: The number of days of predictions to compute the metrics on.
     """
 
     if feature_view_version is None:
@@ -30,9 +30,9 @@ def compute(
     logger.info("Loading old predictions...")
     bucket = utils.get_bucket()
     predictions = utils.read_blob_from(
-        bucket=bucket, blob_name=f"predictions_{compute_on_n_days}_days.parquet"
+        bucket=bucket, blob_name=f"predictions_monitoring_days.parquet"
     )
-    if predictions is None:
+    if predictions is None or len(predictions) == 0:
         logger.info(
             "Haven't found any predictions to compute the metrics on. Exiting..."
         )
@@ -73,14 +73,24 @@ def compute(
         return
 
     logger.info("Computing metrics...")
-    predictions["energy_consumption_observations"] = latest_observations[
-        "energy_consumption"
-    ]
     predictions = predictions.rename(
         columns={"energy_consumption": "energy_consumption_predictions"}
     )
+    latest_observations = latest_observations.rename(
+        columns={"energy_consumption": "energy_consumption_observations"}
+    )
+    
+    predictions["energy_consumption_observations"] = np.nan
+    predictions.update(latest_observations)
+    
     # Compute metrics only on data points that have ground truth.
     predictions = predictions.dropna(subset=["energy_consumption_observations"])
+    if len(predictions) == 0   :
+        logger.info(
+            "Haven't found any new ground truths to compute the metrics on. Exiting..."
+        )
+
+        return
 
     mape_metrics = predictions.groupby("datetime_utc").apply(
         lambda point_in_time: mean_absolute_percentage_error(
@@ -96,12 +106,12 @@ def compute(
     logger.info("Saving new metrics...")
     utils.write_blob_to(
         bucket=bucket,
-        blob_name=f"metrics_{compute_on_n_days}_days.parquet",
+        blob_name=f"metrics_monitoring.parquet",
         data=metrics,
     )
     utils.write_blob_to(
         bucket=bucket,
-        blob_name=f"y_{compute_on_n_days}_days.parquet",
+        blob_name=f"y_monitoring.parquet",
         data=latest_observations[["energy_consumption"]],
     )
     logger.info("Successfully saved new metrics.")
