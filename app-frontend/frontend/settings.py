@@ -1,5 +1,3 @@
-
-
 from yarl import URL
 
 

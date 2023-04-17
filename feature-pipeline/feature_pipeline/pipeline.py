@@ -20,7 +20,7 @@ def run(
     Extract data from the API.
 
     Args:
-        export_end_reference_datetime: The end reference datetime of the export window. If None, the current time is used. 
+        export_end_reference_datetime: The end reference datetime of the export window. If None, the current time is used.
             Because the data is always delayed with "days_delay" days, this date is used only as a reference point.
             The real extracted window will be computed as [export_end_reference_datetime - days_delay - days_export, export_end_reference_datetime - days_delay].
         days_delay: Data has a delay of N days. Thus, we have to shift our window with N days.
@@ -33,7 +33,9 @@ def run(
     """
 
     logger.info(f"Extracting data from API.")
-    data, metadata = extract.from_api(export_end_reference_datetime, days_delay, days_export, url)
+    data, metadata = extract.from_api(
+        export_end_reference_datetime, days_delay, days_export, url
+    )
     logger.info("Successfully extracted data from API.")
 
     logger.info(f"Transforming data.")

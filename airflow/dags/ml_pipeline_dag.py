@@ -38,7 +38,7 @@ def feature_pipeline():
         Run the feature pipeline.
 
         Args:
-            export_end_reference_datetime: The end reference datetime of the export window. If None, the current time is used. 
+            export_end_reference_datetime: The end reference datetime of the export window. If None, the current time is used.
                 Because the data is always delayed with "days_delay" days, this date is used only as a reference point.
                 The real extracted window will be computed as [export_end_reference_datetime - days_delay - days_export, export_end_reference_datetime - days_delay].
 
@@ -72,7 +72,9 @@ def feature_pipeline():
             export_end_reference_datetime = datetime.strptime(
                 export_end_reference_datetime, "%Y-%m-%d %H:%M:%S%z"
             )
-        export_end_reference_datetime = export_end_reference_datetime.replace(microsecond=0, tzinfo=None)
+        export_end_reference_datetime = export_end_reference_datetime.replace(
+            microsecond=0, tzinfo=None
+        )
 
         logger.info(f"export_end_datetime = {export_end_reference_datetime}")
         logger.info(f"days_delay = {days_delay}")

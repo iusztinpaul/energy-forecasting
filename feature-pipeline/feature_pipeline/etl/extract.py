@@ -23,7 +23,7 @@ def from_api(
     Extract data from the DK energy consumption API.
 
     Args:
-        export_end_reference_datetime: The end reference datetime of the export window. If None, the current time is used. 
+        export_end_reference_datetime: The end reference datetime of the export window. If None, the current time is used.
             Because the data is always delayed with "days_delay" days, this date is used only as a reference point.
             The real extracted window will be computed as [export_end_reference_datetime - days_delay - days_export, export_end_reference_datetime - days_delay].
         days_delay: Data has a delay of N days. Thus, we have to shift our window with N days.
@@ -44,7 +44,9 @@ def from_api(
             minute=0, second=0, microsecond=0
         )
     export_end = export_end_reference_datetime - datetime.timedelta(days=days_delay)
-    export_start = export_end_reference_datetime - datetime.timedelta(days=days_delay + days_export)
+    export_start = export_end_reference_datetime - datetime.timedelta(
+        days=days_delay + days_export
+    )
 
     # Query API.
     query_params = {
@@ -52,14 +54,14 @@ def from_api(
         "sort": "HourUTC",
         "timezone": "utc",
         "start": export_start.strftime("%Y-%m-%dT%H:%M"),
-        "end": export_end.strftime("%Y-%m-%dT%H:%M")
+        "end": export_end.strftime("%Y-%m-%dT%H:%M"),
     }
     url = URL(url) % query_params
     url = str(url)
     logger.info(f"Requesting data from API with URL: {url}")
     response = requests.get(url)
     logger.info(f"Response received from API with status code: {response.status_code} ")
-    
+
     # Parse API response.
     try:
         response = response.json()
