@@ -287,6 +287,10 @@ Create `.env` file:
 ```shell
 cp app-api/.env.default app-api/.env
 ```
+Install numpy to speed up IAP TCP upload bandwidth:
+```shell
+$(gcloud info --format="value(basic.python_location)") -m pip install numpy
+```
 Build & run:
 ```shell
 docker compose -f deploy/app-docker-compose.yml --project-directory . up --build

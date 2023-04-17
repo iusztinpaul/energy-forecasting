@@ -110,6 +110,9 @@ def compute(feature_view_version: Optional[int] = None) -> None:
         blob_name=f"metrics_monitoring.parquet",
         data=metrics,
     )
+    latest_observations = latest_observations.rename(
+        columns={"energy_consumption_observations": "energy_consumption"}
+    )
     utils.write_blob_to(
         bucket=bucket,
         blob_name=f"y_monitoring.parquet",

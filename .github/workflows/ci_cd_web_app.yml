@@ -35,7 +35,6 @@ jobs:
           zone: '${{ env.ZONE }}'
           ssh_private_key: '${{ secrets.GCP_SSH_PRIVATE_KEY }}'
           command: >
-            rm -rf ~/energy-forecasting &&
-            git clone https://github.com/iusztinpaul/energy-forecasting.git &&
             cd ~/energy-forecasting && 
+            git pull && 
             docker compose -f deploy/app-docker-compose.yml --project-directory . up --build -d
