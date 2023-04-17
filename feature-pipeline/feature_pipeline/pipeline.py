@@ -10,7 +10,7 @@ logger = utils.get_logger(__name__)
 
 
 def run(
-    export_end_datetime: Optional[datetime.datetime] = None,
+    export_end_reference_datetime: Optional[datetime.datetime] = None,
     days_delay: int = 15,
     days_export: int = 30,
     url: str = "https://api.energidataservice.dk/dataset/ConsumptionDE35Hour",
@@ -20,9 +20,9 @@ def run(
     Extract data from the API.
 
     Args:
-        export_reference_end_datetime: The end datetime of the export window. If None, the current time is used.
-            Note that if the difference between the current datetime and the "export_end_datetime" is less than the "days_delay",
-            the "export_start_datetime" is shifted accordingly to ensure we extract a number of "days_export" days.
+        export_end_reference_datetime: The end reference datetime of the export window. If None, the current time is used. 
+            Because the data is always delayed with "days_delay" days, this date is used only as a reference point.
+            The real extracted window will be computed as [export_end_reference_datetime - days_delay - days_export, export_end_reference_datetime - days_delay].
         days_delay: Data has a delay of N days. Thus, we have to shift our window with N days.
         days_export: The number of days to export.
         url: The URL of the API.
@@ -33,7 +33,7 @@ def run(
     """
 
     logger.info(f"Extracting data from API.")
-    data, metadata = extract.from_api(export_end_datetime, days_delay, days_export, url)
+    data, metadata = extract.from_api(export_end_reference_datetime, days_delay, days_export, url)
     logger.info("Successfully extracted data from API.")
 
     logger.info(f"Transforming data.")

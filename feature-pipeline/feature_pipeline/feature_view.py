@@ -69,14 +69,18 @@ def create(
 
     for feature_view in feature_views:
         try:
-            feature_view.delete()
+            feature_view.delete_all_training_datasets()
         except hsfs.client.exceptions.RestAPIError:
-            logger.info(
-                f"Failed to delete feature view {feature_view.name} with version {feature_view.version}."
+            logger.error(
+                f"Failed to delete training datasets for feature view {feature_view.name} with version {feature_view.version}."
             )
 
-            # Don't fail the program if the deletion steps fails.
-            continue
+        try:
+            feature_view.delete()
+        except hsfs.client.exceptions.RestAPIError:
+            logger.error(
+                f"Failed to delete feature view {feature_view.name} with version {feature_view.version}."
+            )
 
     # Create feature view in the given feature group version.
     energy_consumption_fg = fs.get_feature_group(
@@ -100,7 +104,7 @@ def create(
         start_time=start_datetime,
         end_time=end_datetime,
         write_options={"wait_for_job": True},
-        coalesce=True,
+        coalesce=False,
     )
 
     # Save metadata.

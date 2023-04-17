@@ -28,7 +28,7 @@ def feature_pipeline():
         system_site_packages=True,
     )
     def run_feature_pipeline(
-        export_end_datetime: str,
+        export_end_reference_datetime: str,
         days_delay: int,
         days_export: int,
         url: str,
@@ -38,10 +38,9 @@ def feature_pipeline():
         Run the feature pipeline.
 
         Args:
-            export_end_datetime: str
-                The end datetime of the export window. If None, the current time is used.
-                Note that if the difference between the current datetime and the "export_end_datetime" is less than the "days_delay",
-                the "export_start_datetime" is shifted accordingly to ensure we extract a number of "days_export" days.
+            export_end_reference_datetime: The end reference datetime of the export window. If None, the current time is used. 
+                Because the data is always delayed with "days_delay" days, this date is used only as a reference point.
+                The real extracted window will be computed as [export_end_reference_datetime - days_delay - days_export, export_end_reference_datetime - days_delay].
 
             days_delay : int
                 Data has a delay of N days. Thus, we have to shift our window with N days.
@@ -66,23 +65,23 @@ def feature_pipeline():
         logger = utils.get_logger(__name__)
 
         try:
-            export_end_datetime = datetime.strptime(
-                export_end_datetime, "%Y-%m-%d %H:%M:%S.%f%z"
+            export_end_reference_datetime = datetime.strptime(
+                export_end_reference_datetime, "%Y-%m-%d %H:%M:%S.%f%z"
             )
         except ValueError:
-            export_end_datetime = datetime.strptime(
-                export_end_datetime, "%Y-%m-%d %H:%M:%S%z"
+            export_end_reference_datetime = datetime.strptime(
+                export_end_reference_datetime, "%Y-%m-%d %H:%M:%S%z"
             )
-        export_end_datetime = export_end_datetime.replace(microsecond=0, tzinfo=None)
+        export_end_reference_datetime = export_end_reference_datetime.replace(microsecond=0, tzinfo=None)
 
-        logger.info(f"export_end_datetime = {export_end_datetime}")
+        logger.info(f"export_end_datetime = {export_end_reference_datetime}")
         logger.info(f"days_delay = {days_delay}")
         logger.info(f"days_export = {days_export}")
         logger.info(f"url = {url}")
         logger.info(f"feature_group_version = {feature_group_version}")
 
         return pipeline.run(
-            export_end_datetime=export_end_datetime,
+            export_end_reference_datetime=export_end_reference_datetime,
             days_delay=days_delay,
             days_export=days_export,
             url=url,
@@ -297,7 +296,7 @@ def feature_pipeline():
 
     # Feature pipeline
     feature_pipeline_metadata = run_feature_pipeline(
-        export_end_datetime="{{ dag_run.logical_date }}",
+        export_end_reference_datetime="{{ dag_run.logical_date }}",
         days_delay=days_delay,
         days_export=days_export,
         url=url,
