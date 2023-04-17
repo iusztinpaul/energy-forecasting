@@ -34,9 +34,10 @@ def run(
     if training_dataset_version is None:
         training_dataset_version = feature_view_metadata["training_dataset_version"]
 
-    y_train, y_test, X_train, X_test = load_dataset_from_feature_store(
+    y_train, _, X_train, _ = load_dataset_from_feature_store(
         feature_view_version=feature_view_version,
         training_dataset_version=training_dataset_version,
+        fh=fh
     )
 
     sweep_id = run_hyperparameter_optimization(y_train, X_train, fh=fh)
@@ -104,7 +105,6 @@ def train_model_cv(
     )
     render_cv_scheme(cv, y_train)
 
-    # TODO: Check - Is the model trained or just evaluated in cv_evaluate() ?
     results = cv_evaluate(
         forecaster=model,
         y=y_train,

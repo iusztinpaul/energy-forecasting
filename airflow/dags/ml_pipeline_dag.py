@@ -13,6 +13,7 @@ from airflow.utils.edgemodifier import Label
     start_date=datetime(2023, 4, 14),
     catchup=False,
     tags=["feature-engineering", "model-training", "batch-prediction"],
+    max_active_runs=1,
 )
 def feature_pipeline():
     @task.virtualenv(
@@ -64,9 +65,15 @@ def feature_pipeline():
 
         logger = utils.get_logger(__name__)
 
-        export_end_datetime = datetime.strptime(
-            export_end_datetime, "%Y-%m-%d %H:%M:%S.%f%z"
-        ).replace(microsecond=0, tzinfo=None)
+        try:
+            export_end_datetime = datetime.strptime(
+                export_end_datetime, "%Y-%m-%d %H:%M:%S.%f%z"
+            )
+        except ValueError:
+            export_end_datetime = datetime.strptime(
+                export_end_datetime, "%Y-%m-%d %H:%M:%S%z"
+            )
+        export_end_datetime = export_end_datetime.replace(microsecond=0, tzinfo=None)
 
         logger.info(f"export_end_datetime = {export_end_datetime}")
         logger.info(f"days_delay = {days_delay}")

@@ -3,7 +3,6 @@ from sktime.transformations.compose import CORE_MTYPES
 
 
 class AttachAreaConsumerType(BaseTransformer):
-    # TODO: Double check these tags. I just copied them from the Id / IdentityTransformer
     _tags = {
         "capability:inverse_transform": True,  # can the transformer inverse transform?
         "univariate-only": False,  # can the transformer handle multivariate X?

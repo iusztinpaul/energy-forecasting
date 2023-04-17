@@ -68,8 +68,10 @@ cat ~/.config/pypoetry/auth.toml
 Run backfil:
 ```shell
 docker exec -it <container_id_of_airflow-airflow-webserver> sh
-airflow tasks clear --start-date 2023/04/11 --end-date 2023/04/13 ml_pipeline
-airflow dags backfill --start-date 2023/04/11 --end-date 2023/04/13 ml_pipeline
+# Rerun runs:
+airflow tasks clear --start-date "2023/04/11 00:00:00" --end-date "2023/04/13 23:59:59" ml_pipeline
+# Run from scratch:
+airflow dags backfill --start-date "2023/04/11 00:00:00" --end-date "2023/04/13 23:59:59" ml_pipeline
 ```
 
 ## Install Docker

@@ -1,8 +1,8 @@
 import json
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 import os
 from pathlib import Path
-from typing import OrderedDict as OrderedDictType, Optional
+from typing import OrderedDict as OrderedDictType, Optional, Tuple
 
 import fire
 import hopsworks
@@ -40,6 +40,7 @@ def from_best_config(
     y_train, y_test, X_train, X_test = load_dataset_from_feature_store(
         feature_view_version=feature_view_version,
         training_dataset_version=training_dataset_version,
+        fh=fh
     )
 
     with utils.init_wandb_run(
@@ -66,24 +67,27 @@ def from_best_config(
         # Baseline model
         baseline_forecaster = build_baseline_model()
         baseline_forecaster = train_model(baseline_forecaster, y_train, X_train, fh=fh)
-        # TODO: Also evaluate the models on slices.
-        y_pred_baseline, metrics_baseline = evaluate(
+        _, metrics_baseline = evaluate(
             baseline_forecaster, y_test, X_test
         )
+        slices = metrics_baseline.pop("slices")
         for k, v in metrics_baseline.items():
             logger.info(f"Baseline test {k}: {v}")
         wandb.log({"test": {"baseline": metrics_baseline}})
+        wandb.log({"test.baseline.slices": wandb.Table(dataframe=slices)})
 
         # Build & train best model.
         best_model = build_model(config)
         best_forecaster = train_model(best_model, y_train, X_train, fh=fh)
 
         # Evaluate best model
-        # TODO: Also evaluate the models on slices.
         y_pred, metrics = evaluate(best_forecaster, y_test, X_test)
+        slices = metrics.pop("slices")
         for k, v in metrics.items():
             logger.info(f"Model test {k}: {v}")
         wandb.log({"test": {"model": metrics}})
+        wandb.log({"test.model.slices": wandb.Table(dataframe=slices)})
+        
 
         # Render best model on the test set.
         results = OrderedDict({"y_train": y_train, "y_test": y_test, "y_pred": y_pred})
@@ -137,13 +141,58 @@ def train_model(model, y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int):
     return model
 
 
-def evaluate(forecaster, y_test: pd.DataFrame, X_test: pd.DataFrame):
+def evaluate(forecaster, y_test: pd.DataFrame, X_test: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+    """Evaluate the forecaster on the test set by computing the following metrics:
+        - RMSPE
+        - MAPE
+        - Slices: RMSPE, MAPE
+
+    Args:
+        forecaster: model following the sklearn API
+        y_test (pd.DataFrame): time series to forecast
+        X_test (pd.DataFrame): exogenous variables
+
+    Returns:
+        The predictions as a pd.DataFrame and a dict of metrics.
+    """
+    
     y_pred = forecaster.predict(X=X_test)
 
+    # Compute aggregated metrics.
+    results = dict()
     rmspe = mean_squared_percentage_error(y_test, y_pred, squared=False)
+    results["RMSPE"] = rmspe
     mape = mean_absolute_percentage_error(y_test, y_pred, symmetric=False)
+    results["MAPE"] = mape
 
-    return y_pred, {"RMSPE": rmspe, "MAPE": mape}
+    # Compute metrics per slice.
+    y_test_slices = y_test.groupby(["area", "consumer_type"])
+    y_pred_slices = y_pred.groupby(["area", "consumer_type"])
+    slices = pd.DataFrame(columns=["area", "consumer_type", "RMSPE", "MAPE"])
+    for y_test_slice, y_pred_slice in zip(y_test_slices, y_pred_slices):
+        (area_y_test, consumer_type_y_test), y_test_slice_data = y_test_slice
+        (area_y_pred, consumer_type_y_pred), y_pred_slice_data = y_pred_slice
+
+        assert area_y_test == area_y_pred and consumer_type_y_test == consumer_type_y_pred, "Slices are not aligned."
+
+        rmspe_slice = mean_squared_percentage_error(
+            y_test_slice_data, y_pred_slice_data, squared=False
+            )
+        mape_slice = mean_absolute_percentage_error(
+            y_test_slice_data, y_pred_slice_data, symmetric=False
+        )
+
+        slice_results = pd.DataFrame({
+            "area": [area_y_test],
+            "consumer_type": [consumer_type_y_test],
+            "RMSPE": [rmspe_slice],
+            "MAPE": [mape_slice],
+        })
+        slices = pd.concat([slices, slice_results], ignore_index=True)
+        
+    results["slices"] = slices
+
+    return y_pred, results
 
 
 def render(
