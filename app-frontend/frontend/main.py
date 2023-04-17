@@ -10,18 +10,18 @@ from settings import API_URL, TITLE
 st.title(TITLE)
 
 # Create dropdown for area selection.
-area_response = requests.get(API_URL / "area_values")
+area_response = requests.get(str(API_URL / "area_values"))
 json_area_response = area_response.json()
 
 area = st.selectbox(
     label="Denmark is divided in two price areas, or bidding zones,\
         divided by the Great Belt. DK1 (shown as 1) is west of the Great Belt \
             and DK2 (shown as 2) is east of the Great Belt.",
-    options=(json_area_response.get("values")),
+    options=json_area_response.get("values"),
 )
 
 # Create drown down for consumer type selection.
-consumer_type_response = requests.get(API_URL / "consumer_type_values")
+consumer_type_response = requests.get(str(API_URL / "consumer_type_values"))
 json_consumer_type_response = consumer_type_response.json()
 
 consumer_type = st.selectbox(
@@ -29,7 +29,7 @@ consumer_type = st.selectbox(
           and maintained by Danish Energy, a non-commercial lobby \
               organization for Danish energy companies. \
                 The code is used by Danish energy companies.",
-    options=(json_consumer_type_response.get("values")),
+    options=json_consumer_type_response.get("values"),
 )
 
 input_data = {"area": area, "consumer_type": consumer_type}
@@ -38,7 +38,7 @@ input_data = {"area": area, "consumer_type": consumer_type}
 if area and consumer_type:
     # Get predictions from API.
     response = requests.get(
-        API_URL / "predictions" / area / consumer_type, verify=False
+        str(API_URL / "predictions" / area / consumer_type), verify=False
     )
     json_response = response.json()
 
