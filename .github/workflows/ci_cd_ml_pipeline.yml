@@ -10,6 +10,7 @@ on:
     # The machine running the ML pipeline is stopped due to high costs. 
     # Uncomment the line below if you want to automatically start the CI/CD for the ML pipeline.
     # branches: [ "main" ]
+    branches: []
     
 env:
   CLOUDSDK_CORE_PROJECT: '${{ vars.CLOUDSDK_CORE_PROJECT }}'
