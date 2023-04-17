@@ -18,6 +18,12 @@ This will result in overriding the wrong run and getting the wrong config.
 
 
 def upload(sweep_id: Optional[str] = None):
+    """Upload the best config from the given sweep to the "best_experiment" wandb Artifact.
+
+    Args:
+        sweep_id (Optional[str], optional): Sweep ID to look for the best config. If None, it will look for the last sweep in the cached last_sweep_metadata.json file. Defaults to None.
+    """
+
     if sweep_id is None:
         last_sweep_metadata = utils.load_json("last_sweep_metadata.json")
         sweep_id = last_sweep_metadata["sweep_id"]

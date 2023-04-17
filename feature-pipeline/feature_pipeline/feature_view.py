@@ -91,18 +91,14 @@ def create(
     )
 
     # Create training dataset.
-    metadata = utils.load_json(file_name="feature_pipeline_metadata.json")
-    export_start = datetime.strptime(
-        metadata["export_datetime_utc_start"], metadata["datetime_format"]
-    )
-    export_end = datetime.strptime(
-        metadata["export_datetime_utc_end"], metadata["datetime_format"]
+    logger.info(
+        f"Creating training dataset between {start_datetime} and {end_datetime}."
     )
     feature_view.create_training_data(
         description="Energy consumption training dataset",
         data_format="csv",
-        start_time=export_start,
-        end_time=export_end,
+        start_time=start_datetime,
+        end_time=end_datetime,
         write_options={"wait_for_job": True},
         coalesce=True,
     )

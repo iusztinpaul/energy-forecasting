@@ -55,6 +55,7 @@ def predict(
     logger.info("Successfully connected to the feature store.")
 
     logger.info("Loading data from feature store...")
+    logger.info(f"Loading features from {start_datetime} to {end_datetime}.")
     X, y = data.load_data_from_feature_store(
         fs,
         feature_view_version,
@@ -69,7 +70,15 @@ def predict(
 
     logger.info("Making predictions...")
     predictions = forecast(model, X, fh=fh)
-    predictions_end_datetime = predictions.index.get_level_values(level="datetime_utc").max()
+    predictions_start_datetime = predictions.index.get_level_values(
+        level="datetime_utc"
+    ).min()
+    predictions_end_datetime = predictions.index.get_level_values(
+        level="datetime_utc"
+    ).max()
+    logger.info(
+        f"Forecasted energy consumption from {predictions_start_datetime} to {predictions_end_datetime}."
+    )
     logger.info("Successfully made predictions.")
 
     logger.info("Saving predictions...")
@@ -80,7 +89,6 @@ def predict(
     logger.info("Merging predictions with cached predictions...")
     save_for_monitoring(predictions, start_datetime, predictions_end_datetime)
     logger.info("Successfully merged predictions with cached predictions...")
-
 
 
 def load_model_from_model_registry(project, model_version: int):
@@ -155,7 +163,9 @@ def save(X: pd.DataFrame, y: pd.DataFrame, predictions: pd.DataFrame):
         logger.info(f"Successfully saved {blob_name} to bucket.")
 
 
-def save_for_monitoring(predictions: pd.DataFrame, start_datetime: datetime, end_datetime: datetime):
+def save_for_monitoring(
+    predictions: pd.DataFrame, start_datetime: datetime, end_datetime: datetime
+):
     """Save predictions to GCS for monitoring.
 
     The predictions are saved as a parquet file in GCS.
@@ -203,14 +213,23 @@ def save_for_monitoring(predictions: pd.DataFrame, start_datetime: datetime, end
         .swaplevel(2, 0)
     )
     predictions = predictions.loc[
-        (predictions.index.get_level_values("datetime_utc") >= pd.Period(start_datetime, freq="H")) &
-        (predictions.index.get_level_values("datetime_utc") <= pd.Period(end_datetime, freq="H"))
+        (
+            predictions.index.get_level_values("datetime_utc")
+            >= pd.Period(start_datetime, freq="H")
+        )
+        & (
+            predictions.index.get_level_values("datetime_utc")
+            <= pd.Period(end_datetime, freq="H")
+        )
     ]
 
     utils.write_blob_to(
         bucket=bucket,
         blob_name=f"predictions_monitoring.parquet",
         data=predictions,
+    )
+    logger.info(
+        f"Successfully cached predictions between {start_datetime} and {end_datetime}."
     )
 
 

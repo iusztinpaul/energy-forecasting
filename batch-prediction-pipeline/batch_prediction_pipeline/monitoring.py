@@ -14,9 +14,7 @@ from batch_prediction_pipeline import utils
 logger = utils.get_logger(__name__)
 
 
-def compute(
-    feature_view_version: Optional[int] = None
-) -> None:
+def compute(feature_view_version: Optional[int] = None) -> None:
     """Computes the metrics on the latest n_days of predictions.
 
     Args:
@@ -30,7 +28,7 @@ def compute(
     logger.info("Loading old predictions...")
     bucket = utils.get_bucket()
     predictions = utils.read_blob_from(
-        bucket=bucket, blob_name=f"predictions_monitoring_days.parquet"
+        bucket=bucket, blob_name=f"predictions_monitoring.parquet"
     )
     if predictions is None or len(predictions) == 0:
         logger.info(
@@ -57,6 +55,9 @@ def compute(
     predictions_max_datetime_utc = (
         predictions.index.get_level_values("datetime_utc").max().to_timestamp()
     )
+    logger.info(
+        f"Loading predictions from {predictions_min_datetime_utc} to {predictions_max_datetime_utc}."
+    )
     _, latest_observations = data.load_data_from_feature_store(
         fs,
         feature_view_version,
@@ -79,13 +80,13 @@ def compute(
     latest_observations = latest_observations.rename(
         columns={"energy_consumption": "energy_consumption_observations"}
     )
-    
+
     predictions["energy_consumption_observations"] = np.nan
     predictions.update(latest_observations)
-    
+
     # Compute metrics only on data points that have ground truth.
     predictions = predictions.dropna(subset=["energy_consumption_observations"])
-    if len(predictions) == 0   :
+    if len(predictions) == 0:
         logger.info(
             "Haven't found any new ground truths to compute the metrics on. Exiting..."
         )

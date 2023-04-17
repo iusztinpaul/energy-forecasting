@@ -1,5 +1,5 @@
 import json
-from collections import OrderedDict, defaultdict
+from collections import OrderedDict
 import os
 from pathlib import Path
 from typing import OrderedDict as OrderedDictType, Optional, Tuple
@@ -30,7 +30,21 @@ def from_best_config(
     fh: int = 24,
     feature_view_version: Optional[int] = None,
     training_dataset_version: Optional[int] = None,
-):
+) -> dict:
+    """Train and evaluate on the test set the best model found in the hyperparameter optimization run.
+    After training and evaluating it uploads the artifacts to wandb & hopsworks model registries.
+
+    Args:
+        fh (int, optional): Forecasting horizon. Defaults to 24.
+        feature_view_version (Optional[int], optional): feature store - feature view version.
+             If none, it will try to load the version from the cached feature_view_metadata.json file. Defaults to None.
+        training_dataset_version (Optional[int], optional): feature store - feature view - training dataset version.
+            If none, it will try to load the version from the cached feature_view_metadata.json file. Defaults to None.
+
+    Returns:
+        dict: Dictionary containing metadata about the training experiment.
+    """
+
     feature_view_metadata = utils.load_json("feature_view_metadata.json")
     if feature_view_version is None:
         feature_view_version = feature_view_metadata["feature_view_version"]
@@ -40,8 +54,20 @@ def from_best_config(
     y_train, y_test, X_train, X_test = load_dataset_from_feature_store(
         feature_view_version=feature_view_version,
         training_dataset_version=training_dataset_version,
-        fh=fh
+        fh=fh,
     )
+
+    training_start_datetime = y_train.index.get_level_values("datetime_utc").min()
+    training_end_datetime = y_train.index.get_level_values("datetime_utc").max()
+    testing_start_datetime = y_test.index.get_level_values("datetime_utc").min()
+    testing_end_datetime = y_test.index.get_level_values("datetime_utc").max()
+    logger.info(
+        f"Training model on data from {training_start_datetime} to {training_end_datetime}."
+    )
+    logger.info(
+        f"Testing model on data from {testing_start_datetime} to {testing_end_datetime}."
+    )
+    # Loading predictions from 2023-04-06 22:00:00 to 2023-04-07 21:00:00.
 
     with utils.init_wandb_run(
         name="best_model",
@@ -65,11 +91,9 @@ def from_best_config(
         run.config.update(config)
 
         # Baseline model
-        baseline_forecaster = build_baseline_model()
+        baseline_forecaster = build_baseline_model(seasonal_periodicity=fh)
         baseline_forecaster = train_model(baseline_forecaster, y_train, X_train, fh=fh)
-        _, metrics_baseline = evaluate(
-            baseline_forecaster, y_test, X_test
-        )
+        _, metrics_baseline = evaluate(baseline_forecaster, y_test, X_test)
         slices = metrics_baseline.pop("slices")
         for k, v in metrics_baseline.items():
             logger.info(f"Baseline test {k}: {v}")
@@ -87,7 +111,6 @@ def from_best_config(
             logger.info(f"Model test {k}: {v}")
         wandb.log({"test": {"model": metrics}})
         wandb.log({"test.model.slices": wandb.Table(dataframe=slices)})
-        
 
         # Render best model on the test set.
         results = OrderedDict({"y_train": y_train, "y_test": y_test, "y_pred": y_pred})
@@ -95,7 +118,11 @@ def from_best_config(
 
         # Update best model with the test set.
         best_forecaster = best_forecaster.update(y_test, X=X_test)
-        y_forecast = forecast(best_forecaster, X_test, fh=fh)
+        X_forecast = compute_forecast_exogenous_variables(X_test, fh)
+        y_forecast = forecast(best_forecaster, X_forecast)
+        logger.info(
+            f"Forecasted future values for renderin between {y_test.index.get_level_values('datetime_utc').min()} and {y_test.index.get_level_values('datetime_utc').max()}."
+        )
         results = OrderedDict(
             {
                 "y_train": y_train,
@@ -114,6 +141,10 @@ def from_best_config(
                 "fh": fh,
                 "feature_view_version": feature_view_version,
                 "training_dataset_version": training_dataset_version,
+                "training_start_datetime": training_start_datetime.to_timestamp().isoformat(),
+                "training_end_datetime": training_end_datetime.to_timestamp().isoformat(),
+                "testing_start_datetime": testing_start_datetime.to_timestamp().isoformat(),
+                "testing_end_datetime": testing_end_datetime.to_timestamp().isoformat(),
             },
             "results": {"test": metrics},
         }
@@ -122,9 +153,10 @@ def from_best_config(
         run.log_artifact(artifact)
 
         run.finish()
+        artifact.wait()
 
     model_version = attach_best_model_to_feature_store(
-        feature_view_version, training_dataset_version
+        feature_view_version, training_dataset_version, artifact
     )
 
     metadata = {"model_version": model_version}
@@ -134,14 +166,17 @@ def from_best_config(
 
 
 def train_model(model, y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int):
-    fh = np.arange(fh) + 1
+    """Train the forecaster on the given training set and forecast horizon."""
 
+    fh = np.arange(fh) + 1
     model.fit(y_train, X=X_train, fh=fh)
 
     return model
 
 
-def evaluate(forecaster, y_test: pd.DataFrame, X_test: pd.DataFrame) -> Tuple[pd.DataFrame, dict]:
+def evaluate(
+    forecaster, y_test: pd.DataFrame, X_test: pd.DataFrame
+) -> Tuple[pd.DataFrame, dict]:
     """Evaluate the forecaster on the test set by computing the following metrics:
         - RMSPE
         - MAPE
@@ -155,7 +190,7 @@ def evaluate(forecaster, y_test: pd.DataFrame, X_test: pd.DataFrame) -> Tuple[pd
     Returns:
         The predictions as a pd.DataFrame and a dict of metrics.
     """
-    
+
     y_pred = forecaster.predict(X=X_test)
 
     # Compute aggregated metrics.
@@ -173,23 +208,27 @@ def evaluate(forecaster, y_test: pd.DataFrame, X_test: pd.DataFrame) -> Tuple[pd
         (area_y_test, consumer_type_y_test), y_test_slice_data = y_test_slice
         (area_y_pred, consumer_type_y_pred), y_pred_slice_data = y_pred_slice
 
-        assert area_y_test == area_y_pred and consumer_type_y_test == consumer_type_y_pred, "Slices are not aligned."
+        assert (
+            area_y_test == area_y_pred and consumer_type_y_test == consumer_type_y_pred
+        ), "Slices are not aligned."
 
         rmspe_slice = mean_squared_percentage_error(
             y_test_slice_data, y_pred_slice_data, squared=False
-            )
+        )
         mape_slice = mean_absolute_percentage_error(
             y_test_slice_data, y_pred_slice_data, symmetric=False
         )
 
-        slice_results = pd.DataFrame({
-            "area": [area_y_test],
-            "consumer_type": [consumer_type_y_test],
-            "RMSPE": [rmspe_slice],
-            "MAPE": [mape_slice],
-        })
+        slice_results = pd.DataFrame(
+            {
+                "area": [area_y_test],
+                "consumer_type": [consumer_type_y_test],
+                "RMSPE": [rmspe_slice],
+                "MAPE": [mape_slice],
+            }
+        )
         slices = pd.concat([slices, slice_results], ignore_index=True)
-        
+
     results["slices"] = slices
 
     return y_pred, results
@@ -200,6 +239,8 @@ def render(
     prefix: Optional[str] = None,
     delete_from_disk: bool = True,
 ):
+    """Render the timeseries as a single plot per (area, consumer_type) and saves them to disk and to wandb."""
+
     grouped_timeseries = OrderedDict()
     for split, df in timeseries.items():
         df = df.reset_index(level=[0, 1])
@@ -234,21 +275,30 @@ def render(
             os.remove(image_save_path)
 
 
-def forecast(forecaster, X_test, fh: int):
-    # TODO: Make this function independent from X_test.
+def compute_forecast_exogenous_variables(X_test: pd.DataFrame, fh: int):
+    """Computes the exogenous variables for the forecast horizon."""
+
     X_forecast = X_test.copy()
     X_forecast.index.set_levels(
         X_forecast.index.levels[-1] + fh, level=-1, inplace=True
     )
 
-    y_forecast = forecaster.predict(X=X_forecast)
+    return X_forecast
 
-    return y_forecast
+
+def forecast(forecaster, X_forecast: pd.DataFrame):
+    """Forecast the energy consumption for the given exogenous variables and time horizon."""
+
+    return forecaster.predict(X=X_forecast)
 
 
 def attach_best_model_to_feature_store(
-    feature_view_version: int, training_dataset_version: int
+    feature_view_version: int,
+    training_dataset_version: int,
+    best_model_artifact: wandb.Artifact,
 ) -> int:
+    """Adds the best model artifact to the model registry."""
+
     project = hopsworks.login(
         api_key_value=SETTINGS["FS_API_KEY"], project="energy_consumption"
     )
@@ -257,38 +307,20 @@ def attach_best_model_to_feature_store(
         name="energy_consumption_denmark_view", version=feature_view_version
     )
 
-    # TODO: The model is in hopsworks model registry. Do I still need all this logic?
-    # FIXME: It is not correct to leave model_version = 0. Get the real version from the artifact.
-    model_version = 0
+    # Attach links to the best model artifact in the feature view and the training dataset of the feature store.
     fs_tag = {
         "name": "best_model",
-        "version": f"v{model_version}",
-        "type": "model",
-        "url": f"https://wandb.ai/{SETTINGS['WANDB_ENTITY']}/{SETTINGS['WANDB_PROJECT']}/artifacts/model/best_model/v{model_version}/overview",
-        "artifact_name": f"{SETTINGS['WANDB_ENTITY']}/{SETTINGS['WANDB_PROJECT']}/best_model:latest",
+        "version": best_model_artifact.version,
+        "type": best_model_artifact.type,
+        "url": f"https://wandb.ai/{SETTINGS['WANDB_ENTITY']}/{SETTINGS['WANDB_PROJECT']}/artifacts/{best_model_artifact.type}/{best_model_artifact._name}/{best_model_artifact.version}/overview",
+        "artifact_name": f"{SETTINGS['WANDB_ENTITY']}/{SETTINGS['WANDB_PROJECT']}/{best_model_artifact.name}",
     }
     feature_view.add_tag(name="wandb", value=fs_tag)
     feature_view.add_training_dataset_tag(
-        training_dataset_version=1, name="wandb", value=fs_tag
+        training_dataset_version=training_dataset_version, name="wandb", value=fs_tag
     )
 
-    feature_store_metadata = {
-        "feature_view": feature_view.name,
-        "feature_view_version": feature_view.version,
-        "training_dataset_version": training_dataset_version,
-    }
-
-    api = wandb.Api()
-    best_model_artifact = api.artifact(
-        f"{SETTINGS['WANDB_ENTITY']}/{SETTINGS['WANDB_PROJECT']}/best_model:latest"
-    )
-    best_model_artifact.metadata = {
-        **best_model_artifact.metadata,
-        "feature_store": feature_store_metadata,
-    }
-    best_model_artifact.save()
-
-    # TODO: Add model schema & input example as docs.
+    # Upload the model to the Hopsworks model registry.
     best_model_dir = best_model_artifact.download()
     best_model_path = Path(best_model_dir) / "best_model.pkl"
     best_model_metrics = best_model_artifact.metadata["results"]["test"]

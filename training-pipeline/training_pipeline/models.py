@@ -9,6 +9,15 @@ from training_pipeline import transformers
 
 
 def build_model(config: dict):
+    """
+    Build an Sktime model using the given config.
+
+    It supports defaults for windowing the following parameters:
+    - lag: list(range(1, 72 + 1))
+    - mean: [[1, 24], [1, 48], [1, 72]]
+    - std: [[1, 24], [1, 48], [1, 72]]
+    """
+
     lag = config.pop(
         "forecaster_transformers__window_summarizer__lag_feature__lag",
         list(range(1, 72 + 1)),
@@ -54,7 +63,7 @@ def build_model(config: dict):
     return pipe
 
 
-def build_baseline_model():
-    forecaster = NaiveForecaster(sp=24)
+def build_baseline_model(seasonal_periodicity: int):
+    """Builds a naive forecaster baseline model using Sktime that predicts the last value given a seasonal periodicity."""
 
-    return forecaster
+    return NaiveForecaster(sp=seasonal_periodicity)

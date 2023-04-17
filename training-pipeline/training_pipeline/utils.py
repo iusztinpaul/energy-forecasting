@@ -109,6 +109,8 @@ def init_wandb_run(
     project: str = settings.SETTINGS["WANDB_PROJECT"],
     entity: str = settings.SETTINGS["WANDB_ENTITY"],
 ):
+    """Wrapper over the wandb.init function."""
+
     if add_timestamp_to_name:
         name = f"{name}_{pd.Timestamp.now().strftime('%Y-%m-%d_%H-%M-%S')}"
 
@@ -131,6 +133,8 @@ def check_if_artifact_exists(
     project: str = settings.SETTINGS["WANDB_PROJECT"],
     entity: str = settings.SETTINGS["WANDB_ENTITY"],
 ) -> bool:
+    """Utiliy function that checks if a W&B artifact exists."""
+
     try:
         get_artifact(artifact_name, project, entity)
 
@@ -144,6 +148,8 @@ def get_artifact(
     project: str = settings.SETTINGS["WANDB_PROJECT"],
     entity: str = settings.SETTINGS["WANDB_ENTITY"],
 ) -> wandb.Artifact:
+    """Get the latest version of a W&B artifact."""
+
     api = wandb.Api()
     artifact = api.artifact(f"{entity}/{project}/{artifact_name}:latest")
 

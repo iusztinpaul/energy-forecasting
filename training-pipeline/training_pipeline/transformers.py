@@ -3,6 +3,8 @@ from sktime.transformations.compose import CORE_MTYPES
 
 
 class AttachAreaConsumerType(BaseTransformer):
+    """Transformer used to extract the area and consumer type from the index to the input data."""
+
     _tags = {
         "capability:inverse_transform": True,  # can the transformer inverse transform?
         "univariate-only": False,  # can the transformer handle multivariate X?

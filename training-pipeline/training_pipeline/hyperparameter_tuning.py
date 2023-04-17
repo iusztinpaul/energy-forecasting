@@ -27,7 +27,20 @@ def run(
     fh: int = 24,
     feature_view_version: Optional[int] = None,
     training_dataset_version: Optional[int] = None,
-) -> str:
+) -> dict:
+    """Run hyperparameter optimization search.
+
+    Args:
+        fh (int, optional): Forecasting horizon. Defaults to 24.
+        feature_view_version (Optional[int], optional): feature store - feature view version.
+             If none, it will try to load the version from the cached feature_view_metadata.json file. Defaults to None.
+        training_dataset_version (Optional[int], optional): feature store - feature view - training dataset version.
+            If none, it will try to load the version from the cached feature_view_metadata.json file. Defaults to None.
+
+    Returns:
+        dict: Dictionary containing metadata about the hyperparameter optimization run.
+    """
+
     feature_view_metadata = utils.load_json("feature_view_metadata.json")
     if feature_view_version is None:
         feature_view_version = feature_view_metadata["feature_view_version"]
@@ -37,7 +50,7 @@ def run(
     y_train, _, X_train, _ = load_dataset_from_feature_store(
         feature_view_version=feature_view_version,
         training_dataset_version=training_dataset_version,
-        fh=fh
+        fh=fh,
     )
 
     sweep_id = run_hyperparameter_optimization(y_train, X_train, fh=fh)
@@ -51,6 +64,8 @@ def run(
 def run_hyperparameter_optimization(
     y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int
 ):
+    """Runs hyperparameter optimization search using W&B sweeps."""
+
     sweep_id = wandb.sweep(
         sweep=gridsearch_configs.sweep_configs, project=SETTINGS["WANDB_PROJECT"]
     )
@@ -65,6 +80,8 @@ def run_hyperparameter_optimization(
 
 
 def run_sweep(y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int):
+    """Runs a single hyperparameter optimization step (train + CV eval) using W&B sweeps."""
+
     with init_wandb_run(
         name="experiment", job_type="hpo", group="train", add_timestamp_to_name=True
     ) as run:
@@ -95,6 +112,8 @@ def run_sweep(y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int):
 def train_model_cv(
     model, y_train: pd.DataFrame, X_train: pd.DataFrame, fh: int, k: int = 3
 ):
+    """Train and evaluate the given model using cross-validation."""
+
     data_length = len(y_train.index.get_level_values(-1).unique())
     assert data_length >= fh * 10, "Not enough data to perform a 3 fold CV."
 
@@ -135,6 +154,8 @@ def train_model_cv(
 
 
 def render_cv_scheme(cv, y_train: pd.DataFrame) -> str:
+    """Render the CV scheme used for training and log it to W&B."""
+
     random_time_series = (
         y_train.groupby(level=[0, 1])
         .get_group((1, 111))

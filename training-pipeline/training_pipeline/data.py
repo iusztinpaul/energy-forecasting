@@ -90,7 +90,9 @@ def load_dataset_from_feature_store(
     return y_train, y_test, X_train, X_test
 
 
-def prepare_data(data: pd.DataFrame, target: str = "energy_consumption", fh: int = 24) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def prepare_data(
+    data: pd.DataFrame, target: str = "energy_consumption", fh: int = 24
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Structure the data for training:
     - Set the index as is required by sktime.
