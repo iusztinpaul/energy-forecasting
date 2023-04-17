@@ -9,7 +9,7 @@ API_URL = "http://172.17.0.1:8001/api/v1"
 
 st.title("Energy Consumption")
 
-# Input area
+# Create dropdown for area selection.
 area_response = requests.get(f"{API_URL}/area_values/")
 json_area_response = area_response.json()
 
@@ -20,26 +20,25 @@ area = st.selectbox(
     options=(json_area_response.get("values")),
 )
 
-# Input consumer_type
+# Create drown down for consumer type selection.
 consumer_type_response = requests.get(f"{API_URL}/consumer_type_values/")
 json_consumer_type_response = consumer_type_response.json()
 
 consumer_type = st.selectbox(
-    label="The consumer type is the Industry Code DE35 which is owned\
-          and maintained by Danish Energy, a non-commercial lobby\
-              organization for Danish energy compa-nies. \
+    label="The consumer type is the Industry Code DE35 which is owned \
+          and maintained by Danish Energy, a non-commercial lobby \
+              organization for Danish energy companies. \
                 The code is used by Danish energy companies.",
     options=(json_consumer_type_response.get("values")),
 )
 
 input_data = {"area": area, "consumer_type": consumer_type}
 
-# Check both area and consumer type have values listed
+# Check if both area and consumer type have values listed.
 if area and consumer_type:
     response = requests.get(
         f"{API_URL}/predictions/{area}/{consumer_type}", verify=False
     )
-
     json_response = response.json()
 
     datetime_utc = json_response.get("datetime_utc")

@@ -7,6 +7,7 @@ from fastapi import APIRouter
 from api import schemas
 from api.config import get_settings
 
+
 fs = gcsfs.GCSFileSystem(
     project=get_settings().GCP_PROJECT,
     token=get_settings().GCP_SERVICE_ACCOUNT_JSON_PATH,
@@ -18,8 +19,9 @@ api_router = APIRouter()
 @api_router.get("/health", response_model=schemas.Health, status_code=200)
 def health() -> dict:
     """
-    Root Get
+    Health check endpoint.
     """
+
     health = schemas.Health(name=get_settings().PROJECT_NAME, api_version="1.0.0")
 
     return health.dict()
@@ -29,6 +31,10 @@ def health() -> dict:
     "/consumer_type_values", response_model=schemas.UniqueConsumerType, status_code=200
 )
 def consumer_type_values() -> List:
+    """
+    Retrieve unique consumer types.
+    """
+
     X = pd.read_parquet(f"{get_settings().GCP_BUCKET}/X.parquet", filesystem=fs)
 
     unique_consumer_type = list(X.index.unique(level="consumer_type"))
@@ -40,6 +46,10 @@ def consumer_type_values() -> List:
 
 @api_router.get("/area_values", response_model=schemas.UniqueArea, status_code=200)
 def area_values() -> List:
+    """
+    Retrieve unique areas.
+    """
+
     X = pd.read_parquet(f"{get_settings().GCP_BUCKET}/X.parquet", filesystem=fs)
 
     unique_area = list(X.index.unique(level="area"))
@@ -56,7 +66,7 @@ def area_values() -> List:
 )
 async def get_predictions(area: int, consumer_type: int) -> Any:
     """
-    Get predictions from GCP
+    Get forecasted predictions based on the given area and consumer type.
     """
 
     y_train = pd.read_parquet(f"{get_settings().GCP_BUCKET}/y.parquet", filesystem=fs)

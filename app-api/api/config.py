@@ -13,10 +13,10 @@ class LoggingSettings(BaseSettings):
 
 
 class Settings(BaseSettings):
-    API_V1_STR: str = "/api/v1"
-
-    # Meta
     logging: LoggingSettings = LoggingSettings()
+
+    API_V1_STR: str = "/api/v1"
+    PROJECT_NAME: str = "Energy Consumption API"
 
     # BACKEND_CORS_ORIGINS is a comma-separated list of origins
     # e.g: http://localhost,http://localhost:4200,http://localhost:3000
@@ -27,9 +27,7 @@ class Settings(BaseSettings):
         "https://localhost:8000",
     ]
 
-    PROJECT_NAME: str = "Energy Consumption API"
-
-    # Google Cloud Platform
+    # Google Cloud Platform credentials
     GCP_PROJECT: Optional[str] = None
     GCP_BUCKET: Optional[str] = None
     GCP_SERVICE_ACCOUNT_JSON_PATH: Optional[str] = None
