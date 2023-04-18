@@ -90,7 +90,7 @@ def from_best_config(
         # Log the config to the experiment.
         run.config.update(config)
 
-        # Baseline model
+        # # Baseline model
         baseline_forecaster = build_baseline_model(seasonal_periodicity=fh)
         baseline_forecaster = train_model(baseline_forecaster, y_train, X_train, fh=fh)
         _, metrics_baseline = evaluate(baseline_forecaster, y_test, X_test)
@@ -117,7 +117,14 @@ def from_best_config(
         render(results, prefix="images_test")
 
         # Update best model with the test set.
-        best_forecaster = best_forecaster.update(y_test, X=X_test)
+        # NOTE: Method update() is not supported by LightGBM + Sktime. Instead we will retrain the model on the entire dataset.
+        # best_forecaster = best_forecaster.update(y_test, X=X_test)
+        best_forecaster = train_model(
+            model=best_forecaster,
+            y_train=pd.concat([y_train, y_test]).sort_index(),
+            X_train=pd.concat([X_train, X_test]).sort_index(),
+            fh=fh,
+        )
         X_forecast = compute_forecast_exogenous_variables(X_test, fh)
         y_forecast = forecast(best_forecaster, X_forecast)
         logger.info(

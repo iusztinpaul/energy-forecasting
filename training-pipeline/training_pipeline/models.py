@@ -66,4 +66,4 @@ def build_model(config: dict):
 def build_baseline_model(seasonal_periodicity: int):
     """Builds a naive forecaster baseline model using Sktime that predicts the last value given a seasonal periodicity."""
 
-    return NaiveForecaster(sp=seasonal_periodicity)
+    return NaiveForecaster(sp=24)
