@@ -161,6 +161,7 @@ Run the following to build and publish all the modules:
 cd <root_dir>
 sh deploy/ml-pipeline.sh
 ```
+**NOTE:** Be sure that are modules are deployed before starting the DAG. Otherwise, it won't know how to load them inside the DAG. 
 
 ### Run Server
 Note that the image is hooked to the airflow docker compose command.
