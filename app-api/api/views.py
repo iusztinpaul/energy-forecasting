@@ -22,9 +22,9 @@ def health() -> dict:
     Health check endpoint.
     """
 
-    health = schemas.Health(name=get_settings().PROJECT_NAME, api_version="1.0.0")
+    health_data = schemas.Health(name=get_settings().PROJECT_NAME, api_version="1.0.0")
 
-    return health.dict()
+    return health_data.dict()
 
 
 @api_router.get(
@@ -35,13 +35,12 @@ def consumer_type_values() -> List:
     Retrieve unique consumer types.
     """
 
+    # Download the data from GCS.
     X = pd.read_parquet(f"{get_settings().GCP_BUCKET}/X.parquet", filesystem=fs)
 
     unique_consumer_type = list(X.index.unique(level="consumer_type"))
 
-    results = {"values": unique_consumer_type}
-
-    return results
+    return {"values": unique_consumer_type}
 
 
 @api_router.get("/area_values", response_model=schemas.UniqueArea, status_code=200)
@@ -50,13 +49,12 @@ def area_values() -> List:
     Retrieve unique areas.
     """
 
+    # Download the data from GCS.
     X = pd.read_parquet(f"{get_settings().GCP_BUCKET}/X.parquet", filesystem=fs)
 
     unique_area = list(X.index.unique(level="area"))
 
-    results = {"values": unique_area}
-
-    return results
+    return {"values": unique_area}
 
 
 @api_router.get(
@@ -69,14 +67,16 @@ async def get_predictions(area: int, consumer_type: int) -> Any:
     Get forecasted predictions based on the given area and consumer type.
     """
 
-    y_train = pd.read_parquet(f"{get_settings().GCP_BUCKET}/y.parquet", filesystem=fs)
-    preds = pd.read_parquet(
+    # Download the data from GCS.
+    train_df = pd.read_parquet(f"{get_settings().GCP_BUCKET}/y.parquet", filesystem=fs)
+    preds_df = pd.read_parquet(
         f"{get_settings().GCP_BUCKET}/predictions.parquet", filesystem=fs
     )
 
+    # Query the data for the given area and consumer type.
     try:
-        train_df = y_train.xs((area, consumer_type), level=["area", "consumer_type"])
-        preds_df = preds.xs((area, consumer_type), level=["area", "consumer_type"])
+        train_df = train_df.xs((area, consumer_type), level=["area", "consumer_type"])
+        preds_df = preds_df.xs((area, consumer_type), level=["area", "consumer_type"])
     except KeyError:
         raise HTTPException(
             status_code=404,
@@ -88,7 +88,11 @@ async def get_predictions(area: int, consumer_type: int) -> Any:
             status_code=404,
             detail=f"No data found for the given area and consumer type: {area}, {consumer_type}",
         )
+    
+    # Return only the latest week of observations.
+    train_df = train_df.sort_index().tail(24 * 7)
 
+    # Prepare data to be returned.
     datetime_utc = train_df.index.get_level_values("datetime_utc").to_list()
     energy_consumption = train_df["energy_consumption"].to_list()
 
@@ -115,6 +119,7 @@ async def get_metrics() -> Any:
     Get monitoring metrics.
     """
 
+    # Download the data from GCS.
     metrics = pd.read_parquet(
         f"{get_settings().GCP_BUCKET}/metrics_monitoring.parquet", filesystem=fs
     )
@@ -138,6 +143,7 @@ async def get_predictions(area: int, consumer_type: int) -> Any:
     Get forecasted predictions based on the given area and consumer type.
     """
 
+    # Download the data from GCS.
     y_monitoring = pd.read_parquet(
         f"{get_settings().GCP_BUCKET}/y_monitoring.parquet", filesystem=fs
     )
@@ -148,6 +154,7 @@ async def get_predictions(area: int, consumer_type: int) -> Any:
     #     predictions_monitoring.index.get_level_values("datetime_utc").isin(y_monitoring.index.get_level_values("datetime_utc"))
     # ]
 
+    # Query the data for the given area and consumer type.
     try:
         y_monitoring = y_monitoring.xs(
             (area, consumer_type), level=["area", "consumer_type"]
@@ -167,6 +174,7 @@ async def get_predictions(area: int, consumer_type: int) -> Any:
             detail=f"No data found for the given area and consumer type: {area}, {consumer_type}",
         )
 
+    # Prepare data to be returned.
     y_monitoring_datetime_utc = y_monitoring.index.get_level_values(
         "datetime_utc"
     ).to_list()
