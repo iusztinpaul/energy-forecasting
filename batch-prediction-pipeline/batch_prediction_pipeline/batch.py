@@ -164,7 +164,7 @@ def save(X: pd.DataFrame, y: pd.DataFrame, predictions: pd.DataFrame):
 
 
 def save_for_monitoring(
-    predictions: pd.DataFrame, start_datetime: datetime, end_datetime: datetime
+    predictions: pd.DataFrame, start_datetime: datetime
 ):
     """Save predictions to GCS for monitoring.
 

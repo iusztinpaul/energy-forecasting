@@ -28,7 +28,7 @@ def build_metrics_plot():
     fig = go.Figure()
     fig.update_layout(
         title=dict(
-            text="Predictions vs. Observations | Metrics",
+            text="Predictions vs. Observations | Aggregated Metrics",
             font=dict(family="Arial", size=16),
         ),
         showlegend=True,
