@@ -4,7 +4,7 @@
 
 --------
 
-This repository is a 7-lesson course that will walk you step-by-step through how to design, implement, and deploy an ML system using MLOps good practices. During the course, you will build a production-ready model forecasting energy consumption for the next 24 hours across multiple consumer types from Denmark.
+This repository is a **7-lesson course** that will walk you step-by-step through how to **design, implement, and deploy an ML system** using **MLOps good practices**. During the course, you will build a production-ready model forecasting energy consumption for the next 24 hours across multiple consumer types from Denmark.
 
 This course targets mid/advanced machine learning engineers who want to level up their skills by building their own end-to-end projects.
 
@@ -12,13 +12,24 @@ Following the documentation and the Medium articles you can reproduce and unders
 
 **At the end of the course you will know how to build everything from the diagram below.**
 
-Don't worry if something doesn't make sense to you. I will explain everything in detail.
+Don't worry if something doesn't make sense to you. I will explain everything in detail in my Medium series [placeholder for Medium link].
 
-![Architecture](images/architecture.png)
+<p align="center">
+  <img src="images/architecture.png">
+</p>
 
 As long as you keep the LICENSE, you can safely use this code as a starting point for your awesome project.
 
-# What You Will Learn
+# Table of Contents
+1. [What You will Learn](#learn)
+2. [Lessons & Tutorials](#lessons)
+3. [Data](#data)
+4. [Code Structure](#structure)
+5. [Installation](#installation)
+6. [Usage](#usage)
+7. [Licensing & Contributing](#licensing)
+
+# 🤔 What You Will Learn <a name=learn></a>
 **At the end of this 7 lessons course, you will know how to:**
 * design a batch-serving architecture
 * use Hopsworks as a feature store
@@ -40,7 +51,7 @@ If that sounds like a lot, don't worry, after you will  cover this course you wi
 
 [placeholder for Medium link to Lesson 1]
 
-# Lessons
+# 🤌 Lessons & Tutorials <a name=lessons></a>
 **👇 Access the step-by-step lessons on Medium 👇**
 1. Batch Serving. Feature Stores. Feature Engineering Pipelines.
 2. Training Pipelines. ML Platforms. Hyperparameter Tuning.
@@ -51,7 +62,7 @@ If that sounds like a lot, don't worry, after you will  cover this course you wi
 7. Deploy Everything on GCP. Build a CI/CD Pipeline using GitHub Actions.
 
 
-# Data
+# 📊 Data <a name=data></a>
 We used an open API that provides hourly energy consumption values for all the energy consumer types within Denmark.
 
 They provide an intuitive interface where you can easily query and visualize the data. You can access the data [here](https://www.energidataservice.dk/tso-electricity/ConsumptionDE35Hour).
@@ -76,16 +87,31 @@ Thus, we will build a model that independently forecasts the energy consumption 
 
 [Check out our live demo to better understand how the data looks.](http://35.207.134.188:8501/)
 
-# Pipelines 
-## #1. Feature Engineering Pipeline
+# 🧬 Code Structure <a name=structure></a>
 
-## #2. Training Pipeline
+The code is split in two main components: the pipeline and the web app.
 
-## #3. Batch Prediction Pipeline
+The pipeline consists of three modules:
+- `feature-pipeline`
+- `training-pipeline`
+- `batch-prediction-pipeline`
 
------
+The web app consits of other three modules:
+- `app-api`
+- `app-frontend`
+- `app-monitoring`
 
-# Install
+**Also,** we have the following folders:
+- `airflow` : Airflow files | Orchestration
+- `.github` : GitHub Actions files | CI/CD
+
+
+# 🪛 Installation <a name=installation></a>
+
+
+# 🔎 Usage <a name=usage></a>
+
+# 🏆 Licensing & Contributing <a name=licensing></a>
 
 
 # Setup Machine
