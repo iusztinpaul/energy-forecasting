@@ -1,6 +1,6 @@
 # The Full Stack 7-Steps MLOps Framework
 
-##### LIVE DEMO [FORECASTING](http://35.207.134.188:8501/) - [MONITORING](http://35.207.134.188:8502/)
+##### LIVE DEMO [FORECASTING](http://35.207.134.188:8501/) | LIVE DEMO [MONITORING](http://35.207.134.188:8502/)
 
 --------
 
@@ -10,16 +10,69 @@ This course targets mid/advanced machine learning engineers who want to level up
 
 Following the documentation and the Medium articles you can reproduce and understand every piece of the code!
 
-** At the end of the course you will know how to build everything from the diagram below.**
+**At the end of the course you will know how to build everything from the diagram below.**
 
 Don't worry if something doesn't make sense to you. I will explain everything in detail.
 
-![Architecture](images/Architecture.png)
+![Architecture](images/architecture.png)
 
 As long as you keep the LICENSE, you can safely use this code as a starting point for your awesome project.
 
+# What You Will Learn
+**At the end of this 7 lessons course, you will know how to:**
+* design a batch-serving architecture
+* use Hopsworks as a feature store
+* design a feature engineering pipeline that reads data from an API
+* build a training pipeline with hyper-parameter tunning
+* use W&B as an ML Platform to track your experiments, models, and metadata
+* implement a batch prediction pipeline
+* use Poetry to build your own Python packages
+* deploy your own private PyPi server
+* orchestrate everything with Airflow
+* use the predictions to code a web app using FastAPI and Streamlit
+* use Docker to containerize your code
+* use Great Expectations to ensure data validation and integrity
+* monitor the performance of the predictions over time
+* deploy everything to GCP
+* build a CI/CD pipeline using GitHub Actions
+
+If that sounds like a lot, don't worry, after you will  cover this course you will understand everything I said before. Most importantly, you will know WHY I used all these tools and how they work together as a system.
+
+[placeholder for Medium link to Lesson 1]
+
+# Lessons
+**👇 Access the step-by-step lessons on Medium 👇**
+1. Batch Serving. Feature Stores. Feature Engineering Pipelines.
+2. Training Pipelines. ML Platforms. Hyperparameter Tuning.
+3. Batch Prediction Pipeline. Package Python Modules with Poetry.
+4. Private PyPi Server. Orchestrate Everything with Airflow.
+5. Build Your Own App with FastAPI and Streamlit.
+6. Data Validation and Integrity using GE. Monitor Model Performance.
+7. Deploy Everything on GCP. Build a CI/CD Pipeline using GitHub Actions.
+
+
 # Data
-We used the daily energy consumption from Denmark data which you can access [here](https://www.energidataservice.dk/tso-electricity/ConsumptionDE35Hour).
+We used an open API that provides hourly energy consumption values for all the energy consumer types within Denmark.
+
+They provide an intuitive interface where you can easily query and visualize the data. You can access the data [here](https://www.energidataservice.dk/tso-electricity/ConsumptionDE35Hour).
+
+The data has 4 main attributes:
+* **Hour UTC**: the UTC datetime when the data point was observed. 
+* **Price Area**: Denmark is divided into two price areas: DK1 and DK2 - divided by the Great Belt. DK1 is west of the Great Belt, and DK2 is east of the Great Belt.
+* **Consumer Type**: The consumer type is the Industry Code DE35, owned and maintained by Danish Energy.
+* **Total Consumption**: Total electricity consumption in kWh
+
+**Note:** The observations have a lag of 15 days! But for our demo use case, that is not a problem, as we can simulate the same steps as it would be in real-time.
+
+![Demo Forecasting](images/forecasting_demo_screenshot.png)
+
+The data points have an hourly resolution. For example: "2023–04–15 21:00Z", "2023–04–15 20:00Z", "2023–04–15 19:00Z", etc.
+
+We will model the data as multiple time series. Each unique price area and consumer type tuple represents its unique time series. 
+
+Thus, we will build a model that independently forecasts the energy consumption for the next 24 hours for every time series.
+
+[Check out our live demo to better understand how the data looks.](http://35.207.134.188:8501/)
 
 # Pipelines 
 ## #1. Feature Engineering Pipeline
