@@ -199,29 +199,18 @@ def save_for_monitoring(
             suffixes=("_new", "_cached"),
         )
         new_predictions = merged_predictions.filter(regex=".*?_new")
+        new_predictions.columns = new_predictions.columns.str.replace("_new", "")
         cached_predictions = merged_predictions.filter(regex=".*?_cached")
-        predictions = new_predictions.fillna(cached_predictions)
-        predictions.columns = predictions.columns.str.replace("_new", "")
+        cached_predictions.columns = cached_predictions.columns.str.replace("_cached", "")
+        
+        # NOTE: fillna() not working properly on multindex DataFrames. Got nasty bugs because of it.
+        new_predictions.update(cached_predictions)
+        predictions = new_predictions
 
-    # Make sure that the predictions are sorted, continous and in the right range.
-    predictions = predictions.sort_index()
-    predictions = (
-        predictions.unstack(level=[0, 1])
-        .resample("1H")
-        .asfreq()
-        .stack(level=[2, 1])
-        .swaplevel(2, 0)
-    )
     predictions = predictions.loc[
-        (
-            predictions.index.get_level_values("datetime_utc")
-            >= pd.Period(start_datetime, freq="H")
-        )
-        & (
-            predictions.index.get_level_values("datetime_utc")
-            <= pd.Period(end_datetime, freq="H")
-        )
+            predictions.index.get_level_values("datetime_utc") >= pd.Period(start_datetime, freq="H")
     ]
+    predictions = predictions.dropna(subset=["energy_consumption"])
 
     utils.write_blob_to(
         bucket=bucket,
@@ -229,7 +218,7 @@ def save_for_monitoring(
         data=predictions,
     )
     logger.info(
-        f"Successfully cached predictions between {start_datetime} and {end_datetime}."
+        f"Successfully cached predictions forecasted before {start_datetime}."
     )
 
 
