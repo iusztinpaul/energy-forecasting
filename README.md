@@ -1,7 +1,18 @@
-# energy-forecasting
+# The Full Stack 7-Steps MLOps Framework
 
-[FORECASTING - LIVE DEMO](http://35.207.134.188:8501/)
-[MONITORING - LIVE DEMO](http://35.207.134.188:8502/)
+[FORECASTING - LIVE DEMO](http://35.207.134.188:8501/) --- [MONITORING - LIVE DEMO](http://35.207.134.188:8502/)
+
+--------
+
+This repository is a 7-lesson course that will walk you step-by-step through how to design, implement, and deploy an ML system using MLOps good practices. During the course, you will build a production-ready model forecasting energy consumption for the next 24 hours across multiple consumer types from Denmark.
+
+This course targets mid/advanced machine learning engineers who want to level up their skills by building their own end-to-end projects.
+
+Following the documentation and the Medium articles you can reproduce and understand every piece of the code!
+
+![Architecture](images/Architecture.png)
+
+As long as you keep the LICENSE, you can safely use this code as a starting point for your awesome project.
 
 # Data
 We used the daily energy consumption from Denmark data which you can access [here](https://www.energidataservice.dk/tso-electricity/ConsumptionDE35Hour).

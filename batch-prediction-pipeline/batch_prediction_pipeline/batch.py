@@ -87,7 +87,7 @@ def predict(
 
     # Save the predictions to the bucket for monitoring.
     logger.info("Merging predictions with cached predictions...")
-    save_for_monitoring(predictions, start_datetime, predictions_end_datetime)
+    save_for_monitoring(predictions, start_datetime)
     logger.info("Successfully merged predictions with cached predictions...")
 
 
