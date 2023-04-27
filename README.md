@@ -229,7 +229,7 @@ docker compose -f deploy/app-docker-compose.yml --project-directory . up --build
 ```
 Run local dev from root dir:
 ```shell
-docker compose -f deploy/app-docker-compose.yml -f deploy/app-docker-compose.local.ym --project-directory . up --build
+docker compose -f deploy/app-docker-compose.yml -f deploy/app-docker-compose.local.yml --project-directory . up --build
 ```
 
 

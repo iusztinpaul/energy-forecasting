@@ -4,6 +4,8 @@ services:
   frontend:
     build:
         dockerfile: app-frontend/Dockerfile
+    image: app-frontend:${APP_FRONTEND_VERSION:-latest}
+    restart: always
     ports:
       - 8501:8501
     depends_on:
@@ -12,6 +14,8 @@ services:
   api:
     build:
         dockerfile: app-api/Dockerfile
+    image: app-api:${APP_API_VERSION:-latest}
+    restart: always
     volumes:
       - ./credentials:/app/src/credentials
     env_file:

@@ -2,7 +2,7 @@ import gcsfs
 from typing import Any, List
 
 import pandas as pd
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from api import schemas
 from api.config import get_settings
@@ -74,8 +74,20 @@ async def get_predictions(area: int, consumer_type: int) -> Any:
         f"{get_settings().GCP_BUCKET}/predictions.parquet", filesystem=fs
     )
 
-    train_df = y_train.xs((area, consumer_type), level=["area", "consumer_type"])
-    preds_df = preds.xs((area, consumer_type), level=["area", "consumer_type"])
+    try:
+        train_df = y_train.xs((area, consumer_type), level=["area", "consumer_type"])
+        preds_df = preds.xs((area, consumer_type), level=["area", "consumer_type"])
+    except KeyError:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No data found for the given area and consumer type: {area}, {consumer_type}"
+        )
+    
+    if len(train_df) == 0 or len(preds_df) == 0:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No data found for the given area and consumer type: {area}, {consumer_type}"
+        )
 
     datetime_utc = train_df.index.get_level_values("datetime_utc").to_list()
     energy_consumption = train_df["energy_consumption"].to_list()
@@ -88,6 +100,70 @@ async def get_predictions(area: int, consumer_type: int) -> Any:
         "energy_consumption": energy_consumption,
         "preds_datetime_utc": preds_datetime_utc,
         "preds_energy_consumption": preds_energy_consumption,
+    }
+
+    return results
+
+
+@api_router.get(
+    "/monitoring/metrics",
+    response_model=schemas.MonitoringMetrics,
+    status_code=200,
+)
+async def get_metrics() -> Any:
+    """
+    Get monitoring metrics.
+    """
+
+    metrics = pd.read_parquet(f"{get_settings().GCP_BUCKET}/metrics_monitoring.parquet", filesystem=fs)
+
+    datetime_utc = metrics.index.to_list()
+    mape = metrics["MAPE"].to_list()
+
+    return {
+        "datetime_utc": datetime_utc,
+        "mape": mape,
+    }
+
+
+@api_router.get(
+    "/monitoring/values/{area}/{consumer_type}",
+    response_model=schemas.MonitoringValues,
+    status_code=200,
+)
+async def get_predictions(area: int, consumer_type: int) -> Any:
+    """
+    Get forecasted predictions based on the given area and consumer type.
+    """
+
+    y_monitoring = pd.read_parquet(f"{get_settings().GCP_BUCKET}/y_monitoring.parquet", filesystem=fs)
+    predictions_monitoring = pd.read_parquet(
+        f"{get_settings().GCP_BUCKET}/predictions_monitoring.parquet", filesystem=fs
+    )
+    # predictions_monitoring = predictions_monitoring[
+    #     predictions_monitoring.index.get_level_values("datetime_utc").isin(y_monitoring.index.get_level_values("datetime_utc"))
+    # ]
+
+    try:
+        y_monitoring = y_monitoring.xs((area, consumer_type), level=["area", "consumer_type"])
+        predictions_monitoring = predictions_monitoring.xs((area, consumer_type), level=["area", "consumer_type"])
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"No data found for the given area and consumer type: {area}, {consumer_type}")
+    
+    if len(y_monitoring) == 0 or len(predictions_monitoring) == 0:
+        raise HTTPException(status_code=404, detail=f"No data found for the given area and consumer type: {area}, {consumer_type}")
+
+    y_monitoring_datetime_utc = y_monitoring.index.get_level_values("datetime_utc").to_list()
+    y_monitoring_energy_consumption = y_monitoring["energy_consumption"].to_list()
+
+    predictions_monitoring_datetime_utc = predictions_monitoring.index.get_level_values("datetime_utc").to_list()
+    predictions_monitoring_energy_consumptionc = predictions_monitoring["energy_consumption"].to_list()
+
+    results = {
+        "y_monitoring_datetime_utc": y_monitoring_datetime_utc,
+        "y_monitoring_energy_consumption": y_monitoring_energy_consumption,
+        "predictions_monitoring_datetime_utc": predictions_monitoring_datetime_utc,
+        "predictions_monitoring_energy_consumptionc": predictions_monitoring_energy_consumptionc,
     }
 
     return results

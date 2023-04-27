@@ -7,7 +7,9 @@ import plotly.graph_objects as go
 from settings import API_URL, TITLE
 
 
+st.set_page_config(page_title=TITLE)
 st.title(TITLE)
+
 
 # Create dropdown for area selection.
 area_response = requests.get(API_URL / "area_values")
@@ -33,6 +35,7 @@ consumer_type = st.selectbox(
 )
 
 input_data = {"area": area, "consumer_type": consumer_type}
+
 
 # Check if both area and consumer type have values listed.
 if area and consumer_type:
@@ -61,19 +64,7 @@ if area and consumer_type:
     preds_df["datetime_utc"] = pd.to_datetime(preds_df["datetime_utc"], unit="h")
 
     # Create plot.
-    fig = go.Figure(
-        data=[
-            go.Scatter(
-                x=train_df["datetime_utc"],
-                y=train_df["energy_consumption"],
-                line=dict(color="blue"),
-                name="Observations",
-                hovertemplate="<br>".join(
-                    ["Datetime: %{x}", "Energy Consumption: %{y} kWh"]
-                ),
-            )
-        ]
-    )
+    fig = go.Figure()
     fig.update_layout(
         title=dict(
             text="Energy Consumption per DE35 Industry Code per Hour",
@@ -84,11 +75,20 @@ if area and consumer_type:
     fig.update_xaxes(title_text="Datetime UTC")
     fig.update_yaxes(title_text="Total Consumption")
     fig.add_scatter(
+        x=train_df["datetime_utc"],
+        y=train_df["energy_consumption"],
+        name="Observations",
+        line=dict(color="#C4B6B6"),
+        hovertemplate="<br>".join(
+            ["Datetime: %{x}", "Energy Consumption: %{y} kWh"]
+        ),
+    )
+    fig.add_scatter(
         x=preds_df["datetime_utc"],
         y=preds_df["energy_consumption"],
         name="Predictions",
-        line=dict(color="red"),
-        hovertemplate="<br>".join(["Datetime: %{x}", "Total Consumption: %{y} kWh"]),
+        line=dict(color="#FFC703"),
+        hovertemplate="<br>".join(["Datetime: %{x}", "Total Consumption: %{y} kWh"])
     )
 
     # Show plot.
