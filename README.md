@@ -1,6 +1,7 @@
 # energy-forecasting
 
-[LIVE DEMO](http://35.207.134.188:8501/)
+[FORECASTING - LIVE DEMO](http://35.207.134.188:8501/)
+[MONITORING - LIVE DEMO](http://35.207.134.188:8502/)
 
 # Data
 We used the daily energy consumption from Denmark data which you can access [here](https://www.energidataservice.dk/tso-electricity/ConsumptionDE35Hour).
@@ -238,7 +239,7 @@ docker compose -f deploy/app-docker-compose.yml -f deploy/app-docker-compose.loc
 #### GCP Resources
 
 - VM: e2-micro - 0.25 2 vCPU - 1 GB memory - 15 GB standard persisted disk
-- firewall: expose ports 8501, 8001
+- firewall: expose ports 8501, 8502, 8001
 - firewall: IAP for TCP tunneling
 - create static external IP address - [docs](https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address#console)
 - service roles for: reading buckets & SSH access

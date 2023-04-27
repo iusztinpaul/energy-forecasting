@@ -150,10 +150,7 @@ async def get_predictions(area: int, consumer_type: int) -> Any:
     predictions_monitoring = pd.read_parquet(
         f"{get_settings().GCP_BUCKET}/predictions_monitoring.parquet", filesystem=fs
     )
-    # predictions_monitoring = predictions_monitoring[
-    #     predictions_monitoring.index.get_level_values("datetime_utc").isin(y_monitoring.index.get_level_values("datetime_utc"))
-    # ]
-
+   
     # Query the data for the given area and consumer type.
     try:
         y_monitoring = y_monitoring.xs(
@@ -173,6 +170,8 @@ async def get_predictions(area: int, consumer_type: int) -> Any:
             status_code=404,
             detail=f"No data found for the given area and consumer type: {area}, {consumer_type}",
         )
+    
+    print(predictions_monitoring)
 
     # Prepare data to be returned.
     y_monitoring_datetime_utc = y_monitoring.index.get_level_values(
