@@ -38,7 +38,6 @@ class Settings(BaseSettings):
     # - Enable uvicorn reloading.
     RELOAD: bool = False
 
-    API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "Energy Consumption API"
 
     # Google Cloud Platform credentials

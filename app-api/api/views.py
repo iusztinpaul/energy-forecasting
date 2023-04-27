@@ -22,7 +22,7 @@ def health() -> dict:
     Health check endpoint.
     """
 
-    health_data = schemas.Health(name=get_settings().PROJECT_NAME, api_version="1.0.0")
+    health_data = schemas.Health(name=get_settings().PROJECT_NAME, api_version=get_settings().VERSION)
 
     return health_data.dict()
 
