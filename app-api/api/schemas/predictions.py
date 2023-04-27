@@ -15,7 +15,6 @@ class MonitoringMetrics(BaseModel):
     mape: List[float]
 
 
-
 class MonitoringValues(BaseModel):
     y_monitoring_datetime_utc: List[int]
     y_monitoring_energy_consumption: List[float]

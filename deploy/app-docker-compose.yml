@@ -11,6 +11,16 @@ services:
     depends_on:
       - api
 
+  monitoring:
+    build:
+        dockerfile: app-monitoring/Dockerfile
+    image: app-monitoring:${APP_MONITORING_VERSION:-latest}
+    restart: always
+    ports:
+      - 8502:8502
+    depends_on:
+      - api
+
   api:
     build:
         dockerfile: app-api/Dockerfile

@@ -1,14 +1,14 @@
 [tool.poetry]
-name = "app-frontend"
+name = "app-monitoring"
 version = "0.1.0"
 description = ""
-authors = ["iusztinpaul <p.e.iusztin@gmail.com>", "Kurtis Pykes <kurtispykes@gmail.com>"]
+authors = ["iusztinpaul <p.e.iusztin@gmail.com>"]
 readme = "README.md"
-packages = [{include = "frontend"}]
+packages = [{include = "monitoring"}]
 
 [tool.poetry.dependencies]
 python = ">3.9.7,<3.10"
-streamlit = ">=1.20.0,<1.21.0"
+streamlit = ">=1.21.0,<1.22.0"
 plotly = ">=5.14.1,<5.15.0"
 yarl = "^1.8.2"
 

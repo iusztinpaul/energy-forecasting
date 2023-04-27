@@ -2,7 +2,7 @@
 name = "app-api"
 version = "0.1.0"
 description = ""
-authors = ["iusztinpaul <p.e.iusztin@gmail.com>"]
+authors = ["iusztinpaul <p.e.iusztin@gmail.com>", "Kurtis Pykes <kurtispykes@gmail.com>"]
 readme = "README.md"
 packages = [{include = "api"}]
 

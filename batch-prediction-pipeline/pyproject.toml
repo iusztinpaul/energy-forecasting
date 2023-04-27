@@ -3,8 +3,7 @@ name = "batch-prediction-pipeline"
 version = "0.1.0"
 description = ""
 authors = [
-"Paul Iusztin <paul.lusztin@coreai.ai>",
-"Kurtis Pykes <kurtispykes@gmail.com>"
+"Paul Iusztin <paul.lusztin@coreai.ai>"
 ]
 readme = "README.md"
 packages = [{include = "batch_prediction_pipeline"}]

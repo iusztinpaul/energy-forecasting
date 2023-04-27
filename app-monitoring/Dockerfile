@@ -10,12 +10,12 @@ RUN pip install --no-cache poetry==1.4.2
 RUN poetry config virtualenvs.create false
 
 # First copy & install requirements to speed up the build process in case only the code changes.
-COPY ./app-frontend/pyproject.toml /app/src/
-COPY ./app-frontend/poetry.lock /app/src/
+COPY ./app-monitoring/pyproject.toml /app/src/
+COPY ./app-monitoring/poetry.lock /app/src/
 
 RUN poetry install --no-interaction --no-root -vvv
 
 # Copy the rest of the files.
-ADD ./app-frontend /app/src
+ADD ./app-monitoring /app/src
 
-CMD ["streamlit", "run", "frontend/main.py", "--server.port", "8501"]
+CMD ["streamlit", "run", "monitoring/main.py", "--server.port", "8502"]

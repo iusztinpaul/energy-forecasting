@@ -8,15 +8,12 @@ from api.views import api_router
 from api.config import get_settings
 
 
-
-
 def get_app() -> FastAPI:
-
     app = FastAPI(
-    title=get_settings().PROJECT_NAME,
-    docs_url=f"/api/{get_settings().VERSION}/docs",
-    redoc_url=f"/api/{get_settings().VERSION}/redoc",
-    openapi_url=f"/api/{get_settings().VERSION}/openapi.json",
+        title=get_settings().PROJECT_NAME,
+        docs_url=f"/api/{get_settings().VERSION}/docs",
+        redoc_url=f"/api/{get_settings().VERSION}/redoc",
+        openapi_url=f"/api/{get_settings().VERSION}/openapi.json",
     )
     # For demo purposes, allow all origins.
     app.add_middleware(

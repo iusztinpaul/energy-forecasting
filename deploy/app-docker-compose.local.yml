@@ -3,12 +3,14 @@ version: '3.9'
 services:
   frontend:
     volumes:
-      # Adds current directory as volume.
     - ./app-frontend:/app/src/
+
+  monitoring:
+    volumes:
+    - ./app-monitoring:/app/src/
 
   api:
     volumes:
-      # Adds current directory as volume.
     - ./app-api:/app/src/
     environment:
       # Enables autoreload.
