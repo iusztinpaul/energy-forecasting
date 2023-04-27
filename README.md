@@ -64,7 +64,9 @@ The data has 4 main attributes:
 
 **Note:** The observations have a lag of 15 days! But for our demo use case, that is not a problem, as we can simulate the same steps as it would be in real-time.
 
-![Demo Forecasting](images/forecasting_demo_screenshot.png)
+<p align="center">
+  <img src="images/forecasting_demo_screenshot.png">
+</p>
 
 The data points have an hourly resolution. For example: "2023–04–15 21:00Z", "2023–04–15 20:00Z", "2023–04–15 19:00Z", etc.
 
