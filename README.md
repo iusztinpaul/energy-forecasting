@@ -91,12 +91,12 @@ Thus, we will build a model that independently forecasts the energy consumption 
 
 The code is split in two main components: the pipeline and the web app.
 
-The pipeline consists of three modules:
+The **pipeline** consists of three modules:
 - `feature-pipeline`
 - `training-pipeline`
 - `batch-prediction-pipeline`
 
-The web app consits of other three modules:
+The **web app** consits of other three modules:
 - `app-api`
 - `app-frontend`
 - `app-monitoring`
@@ -108,15 +108,12 @@ The web app consits of other three modules:
 
 # 🪛 Installation <a name=installation></a>
 
+**The code is tested only on Ubuntu 20.04 and 22.04.**
 
-# 🔎 Usage <a name=usage></a>
+## Common
 
-# 🏆 Licensing & Contributing <a name=licensing></a>
+### Poetry
 
-
-# Setup Machine
-
-## Poetry
 Install Python system dependencies:
 ```shell
 sudo apt-get install -y python3-distutils
@@ -126,14 +123,77 @@ sudo apt-get install -y python3-distutils
 curl -sSL https://install.python-poetry.org | python3 -
 nano ~/.bashrc
 ```
+
 Add `export PATH=~/.local/bin:$PATH` to `~/.bashrc`
-Check poetry
+
+Check if Poetry is intalled:
 ```shell
 source ~/.bashrc
 poetry --version
 ```
 
-Check official Poetry instructions [here](https://python-poetry.org/docs/#installation).
+[Official Poetry installation instructions.](https://python-poetry.org/docs/#installation)
+
+### Docker
+
+[Install Docker on Ubuntu](https://docs.docker.com/engine/install/ubuntu/).
+
+
+### Configure Private PyPi Server
+Create credentials:
+```shell
+sudo apt install -y apache2-utils
+pip install passlib
+
+mkdir ~/.htpasswd
+htpasswd -sc ~/.htpasswd/htpasswd.txt energy-forecasting
+```
+
+Set credentials:
+```shell
+poetry config repositories.my-pypi http://localhost
+poetry config http-basic.my-pypi energy-forecasting <password>
+```
+
+Check credentials:
+```shell
+cat ~/.config/pypoetry/auth.toml
+```
+
+
+
+
+
+
+
+
+# 🔎 Usage <a name=usage></a>
+
+# 🏆 Licensing & Contributing <a name=licensing></a>
+
+
+# Setup Machine
+
+## Poetry
+
+Install Python system dependencies:
+```shell
+sudo apt-get install -y python3-distutils
+```
+
+```shell
+curl -sSL https://install.python-poetry.org | python3 -
+nano ~/.bashrc
+```
+
+Add `export PATH=~/.local/bin:$PATH` to `~/.bashrc`
+
+Check if Poetry is intalled:
+```shell
+source ~/.bashrc
+poetry --version
+```
+
 
 ## Private PyPi Server Credentials
 Install pip:
