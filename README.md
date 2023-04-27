@@ -1,6 +1,6 @@
 # The Full Stack 7-Steps MLOps Framework
 
-[FORECASTING - LIVE DEMO](http://35.207.134.188:8501/) --- [MONITORING - LIVE DEMO](http://35.207.134.188:8502/)
+##### LIVE DEMO [FORECASTING](http://35.207.134.188:8501/) - [MONITORING](http://35.207.134.188:8502/)
 
 --------
 
@@ -9,6 +9,10 @@ This repository is a 7-lesson course that will walk you step-by-step through how
 This course targets mid/advanced machine learning engineers who want to level up their skills by building their own end-to-end projects.
 
 Following the documentation and the Medium articles you can reproduce and understand every piece of the code!
+
+** At the end of the course you will know how to build everything from the diagram below.**
+
+Don't worry if something doesn't make sense to you. I will explain everything in detail.
 
 ![Architecture](images/Architecture.png)
 
