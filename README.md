@@ -113,7 +113,7 @@ The **web app** consits of other three modules:
 
 **The code is tested only on Ubuntu 20.04 and 22.04 using Python 3.9.**
 
-If you have problems during the installation, please leave us an issue and we will take a look and update the README for future readers.
+If you have problems during the installation, please leave us an issue and we will respond to you and update the README for future readers.
 
 ## Poetry
 
@@ -138,7 +138,6 @@ poetry --version
 [Official Poetry installation instructions.](https://python-poetry.org/docs/#installation)
 
 ## Docker
-
 
  <br/>[Install Docker on Ubuntu.](https://docs.docker.com/engine/install/ubuntu/) <br/>
 [Install Docker on Mac.](https://docs.docker.com/desktop/install/mac-install/) <br/>
@@ -196,22 +195,44 @@ As before, you have to create an account and a project. Using solely the bucket 
 At the time I am writing this documentation GCS is free until 5GB.
 
 **If you want everything to work with the default settings use the following names:**
-- create a `project` caleed `energy_consumption`
+- create a `project` called `energy_consumption`
 
-#### Storage
+### Storage
+
+At this step you have to do five things:
+- create a project
+- create a bucket
+- create a service account that has admin permissions to the newly created bucket
+- create a service account that has read-only permissions to the newly create bucket
+- download a JSON key for the newly create service accounts.
+
+[Docs for creating a bucket on GCP.](https://cloud.google.com/storage/docs/creating-buckets)<br/>
+[Docs for creating a service account on GCP.](https://cloud.google.com/iam/docs/service-accounts-create)<br/>
+
+Your `bucket admin service account` should have assigned the following role: `Storage Object Admin`<br/>
+Your `bucket read-only service account` should have assigned the following role: `Storage Object Viewer`<br/>
+
 
 **If you want everything to work with the default settings use the following names:**
 - create a `bucket` called `hourly-batch-predictions`
+- rename your `admin` JSON service key to `admin-buckets.json`
+- rename your `read-only` JSON service key to `read-buckets.json`
+
+If you want to see more step-by-step instructions checkout this [Medium article](placeholder Medium article).
 
 
-#### Deployment
+### Deployment
+
+This step has to be finished only if you want to deploy the code on GCP VMs and build the CI/CD with GitHub Actions.
+
+See [this document](/README_DEPLOY.md) for detailed instructions on this step.
 
 
 # 🔎 Usage <a name=usage></a>
 
 **The code is tested only on Ubuntu 20.04 and 22.04 using Python 3.9.**
 
-If you have problems during the installation, please leave us an issue and we will take a look and update the README for future readers.
+If you have problems during the installation, please leave us an issue and we will respond to you and update the README for future readers.
 
 ## The Pipeline
 
@@ -387,289 +408,6 @@ ML_PIPELINE_ROOT_DIR=/path/to/root/directory/energy-forecasting/repository pytho
 
 The code is under the MIT License. Thus, as long as you keep distributing the License, feel free to share, clone, change the code as you like.
 
-Also, if you find any bugs or missing pieces in the documentation I encourage you to add an issue. I will take the time to adapt the code and docs for future readers.
+Also, if you find any bugs or missing pieces in the documentation I encourage you to add an issue on GitHub. I will take the time to respond you and adapt the code and docs for future readers.
 
 Thanks!
-
-
-# Setup Machine
-
-## Poetry
-
-Install Python system dependencies:
-```shell
-sudo apt-get install -y python3-distutils
-```
-
-```shell
-curl -sSL https://install.python-poetry.org | python3 -
-nano ~/.bashrc
-```
-
-Add `export PATH=~/.local/bin:$PATH` to `~/.bashrc`
-
-Check if Poetry is intalled:
-```shell
-source ~/.bashrc
-poetry --version
-```
-
-
-## Private PyPi Server Credentials
-Install pip:
-```shell
-sudo apt-get -y install python3-pip
-```
-
-Create credentials:
-```shell
-sudo apt install -y apache2-utils
-pip install passlib
-
-mkdir ~/.htpasswd
-htpasswd -sc ~/.htpasswd/htpasswd.txt energy-forecasting
-```
-Set credentials:
-```shell
-poetry config repositories.my-pypi http://localhost
-poetry config http-basic.my-pypi energy-forecasting <password>
-```
-Check credentials:
-```shell
-cat ~/.config/pypoetry/auth.toml
-```
-
-
-## Airflow & Private PyPi Server
-
-Run backfil:
-```shell
-docker exec -it <container_id_of_airflow-airflow-webserver> sh
-# Rerun runs:
-airflow tasks clear --start-date "2023/04/11 00:00:00" --end-date "2023/04/13 23:59:59" ml_pipeline
-# Run from scratch:
-airflow dags backfill --start-date "2023/04/11 00:00:00" --end-date "2023/04/13 23:59:59" ml_pipeline
-```
-
-## Install Docker
-
-Install Docker on GCP instructions [here](https://tomroth.com.au/gcp-docker/).
-
-TLDR
-```shell
-sudo apt update
-sudo apt install --yes apt-transport-https ca-certificates curl gnupg2 software-properties-common
-curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
-sudo apt update
-sudo apt install --yes docker-ce
-```
-docker sudo access:
-```shell
-sudo usermod -aG docker $USER
-logout 
-```
-
-### Setup
-You can read the official documentation [here](https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html) or follow the steps bellow for a fast start.
-
-#### Run
-
-clone repo
-```shell
-git clone https://github.com/iusztinpaul/energy-forecasting.git
-cd energy-forecasting
-```
-
-```shell
-# Move to the airflow directory.
-cd airflow
-
-# Make expected directories and set an expected environment variable
-mkdir -p ./logs ./plugins
-sudo chmod 777 ./logs ./plugins
-echo -e "AIRFLOW_UID=$(id -u)" > .env
-echo "ML_PIPELINE_ROOT_DIR=/opt/airflow/dags" >> .env
-
-
-
-cd ./dags
-# Copy bucket writing access GCP service JSON file
-mkdir -p credentials/gcp/energy_consumption
-gcloud compute scp --recurse --zone europe-west3-c --quiet --tunnel-through-iap --project silver-device-379512 ~/Documents/credentials/gcp/energy_consumption/admin-buckets.json ml-pipeline:~/energy-forecasting/airflow/dags/credentials/gcp/energy_consumption/
-
-touch .env
-# Complete env vars from the .env file
-# Check .env.default for all possible variables.
-gcloud compute scp --recurse --zone europe-west3-c --quiet --tunnel-through-iap --project silver-device-379512 ~/Documents/projects/energy-forecasting/airflow/dags/.env ml-pipeline:~/energy-forecasting/airflow/dags/
-
-# Initialize the database
-cd <airflow_dir>
-docker compose up airflow-init
-
-# Start up all services
-# Note: You should setup the PyPi server credentials before running the docker containers.
-docker compose --env-file .env up --build -d
-```
-
-#### Clean Up
-```shell
-docker compose down --volumes --rmi all
-```
-
-#### Set Variables
-ml_pipeline_days_export = 30
-ml_pipeline_feature_group_version = 5
-ml_pipeline_should_run_hyperparameter_tuning = False
-
-## Build & Publish Python Modules
-Set experimental installer to false:
-```shell
-poetry config experimental.new-installer false
-```
-Build and publish:
-```shell
-cd <module>
-poetry build
-poetry publish -r my-pypi
-```
-Run the following to build and publish all the modules:
-```shell
-cd <root_dir>
-sh deploy/ml-pipeline.sh
-```
-**NOTE:** Be sure that are modules are deployed before starting the DAG. Otherwise, it won't know how to load them inside the DAG. 
-
-### Run Server
-Note that the image is hooked to the airflow docker compose command.
-```shell
-docker run -p 80:8080 -v ~/.htpasswd:/data/.htpasswd pypiserver/pypiserver:latest run -P .htpasswd/htpasswd.txt --overwrite
-```
-
-### GCP
-
-install gcp SDK:
-```shell
-```
-
-IAM principals - service accounts:
-* read-buckets
-* admin-buckets
-* admin-vm
-
-Firewall rules:
-* IAP for TCP tunneling [docs](https://cloud.google.com/iap/docs/using-tcp-forwarding)
-* Expose port 8080
-
-[Open 8080 Port](https://stackoverflow.com/questions/21065922/how-to-open-a-specific-port-such-as-9090-in-google-compute-engine)
-[Open 8080 Port](https://www.howtogeek.com/devops/how-to-open-firewall-ports-on-a-gcp-compute-engine-instance/)
-
-
-VM machine:
-* 2 vCPU cores - 8 GB RAM / e2-standard-2 with 20 GB Storage
-
-create VM machine `ml-pipeline`:
-```shell
-```
-
-connect to VM machine through shh:
-```shell
-gcloud compute ssh ml-pipeline --zone europe-west3-c --quiet --tunnel-through-iap --project silver-device-379512
-```
-###### Set credentials for GitHub Actions
-
-print json credentials in one line:
-```shell
-jq -c . admin-vm.json 
-```
-
-set private key:
-```
-```
-
-
-
-# Run APP
-Copy the GCP credentials with which you can read from the GCP buckets:
-```shell
-mkdir -p credentials/gcp/energy_consumption
-cp your/location/file.json credentials/gcp/energy_consumption/
-```
-Create `.env` file:
-```shell
-cp app-api/.env.default app-api/.env
-# Change values in .env if necessary
-```
-Build & run:
-```shell
-docker compose -f deploy/app-docker-compose.yml --project-directory . up --build
-```
-Run local dev from root dir:
-```shell
-docker compose -f deploy/app-docker-compose.yml -f deploy/app-docker-compose.local.yml --project-directory . up --build
-```
-
-
-### Deploy APP on GCP
-
-#### GCP Resources
-
-- VM: e2-micro - 0.25 2 vCPU - 1 GB memory - 15 GB standard persisted disk
-- firewall: expose ports 8501, 8502, 8001
-- firewall: IAP for TCP tunneling
-- create static external IP address - [docs](https://cloud.google.com/compute/docs/ip-addresses/reserve-static-external-ip-address#console)
-- service roles for: reading buckets & SSH access
-
-#### Commands
-
-Connect to VM:
-```shell
-gcloud compute ssh app --zone europe-west3-c --quiet --tunnel-through-iap --project silver-device-379512
-```
-Install requirements:
-```shell
-sudo apt-get update && sudo apt-get upgrade
-sudo apt-get install -y git
-```
-Install docker:
-```shell
-sudo apt update
-sudo apt install --yes apt-transport-https ca-certificates curl gnupg2 software-properties-common
-curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"
-sudo apt update
-sudo apt install --yes docker-ce
-
-# docker sudo access:
-sudo usermod -aG docker $USER
-logout
-```
-SSH again:
-```shell
-gcloud compute ssh app --zone europe-west3-c --quiet --tunnel-through-iap --project silver-device-379512
-```
-Clone repo:
-```shell
-git clone https://github.com/iusztinpaul/energy-forecasting.git
-cd energy-forecasting
-```
-Create credentials folder:
-```shell
-mkdir -p credentials/gcp/energy_consumption
-```
-Copy GCP credentials JSON file:
-```shell
-gcloud compute scp --recurse --zone europe-west3-c --quiet --tunnel-through-iap --project silver-device-379512 ~/Documents/credentials/gcp/energy_consumption/read-buckets.json app:~/energy-forecasting/credentials/gcp/energy_consumption/
-```
-Create `.env` file:
-```shell
-cp app-api/.env.default app-api/.env
-```
-Install numpy to speed up IAP TCP upload bandwidth:
-```shell
-$(gcloud info --format="value(basic.python_location)") -m pip install numpy
-```
-Build & run:
-```shell
-docker compose -f deploy/app-docker-compose.yml --project-directory . up --build
-```
