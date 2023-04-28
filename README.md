@@ -208,10 +208,12 @@ At this step you have to do five things:
 
 [Docs for creating a bucket on GCP.](https://cloud.google.com/storage/docs/creating-buckets)<br/>
 [Docs for creating a service account on GCP.](https://cloud.google.com/iam/docs/service-accounts-create)<br/>
+[Docs for creating a JSON key for a GCP service account.](https://cloud.google.com/iam/docs/keys-create-delete)<br/>
 
 Your `bucket admin service account` should have assigned the following role: `Storage Object Admin`<br/>
 Your `bucket read-only service account` should have assigned the following role: `Storage Object Viewer`<br/>
 
+Again, I want to highligh that at the time I am writing this course GCP storage is free until 5GB.
 
 **If you want everything to work with the default settings use the following names:**
 - create a `bucket` called `hourly-batch-predictions`
@@ -224,6 +226,10 @@ If you want to see more step-by-step instructions checkout this [Medium article]
 ### Deployment
 
 This step has to be finished only if you want to deploy the code on GCP VMs and build the CI/CD with GitHub Actions.
+
+Note that this step might result in a few consts on GCP. It won't be much. While I developed this course I spent only ~20$. For you most probably it will be less.
+
+Also, if you have a new GCP account, you most probably got some free credits. Just be sure to delete the resources after you finished the course.
 
 See [this document](/README_DEPLOY.md) for detailed instructions on this step.
 
