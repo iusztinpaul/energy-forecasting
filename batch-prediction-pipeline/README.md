@@ -20,3 +20,19 @@ poetry install
 ```
 
 Check the [Set Up Additional Tools](https://github.com/iusztinpaul/energy-forecasting#-set-up-additional-tools-) and [Usage](https://github.com/iusztinpaul/energy-forecasting#usage) sections to see **how to set up** the **additional tools** and **credentials** you need to run this project.
+
+## Usage for Development
+
+To start batch prediction script, run:
+```shell
+python -m batch_prediction_pipeline.batch
+```
+
+To compute the monitoring metrics based, run the following:
+```shell
+python -m batch_prediction_pipeline.monitoring
+```
+
+Check out this [Medium article](placeholder-medium-article) for more details about this module.
+
+**NOTE:** Be careful to set the `ML_PIPELINE_ROOT_DIR` variable as explain in the 

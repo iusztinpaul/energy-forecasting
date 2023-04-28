@@ -27,7 +27,7 @@ As long as you keep the LICENSE, you can safely use this code as a starting poin
 4. [Code Structure](#structure)
 5. [Set Up Additional Tools](#tools)
 6. [Usage](#usage)
-7. [Installation for Development](#installation)
+7. [Installation & Usage for Development](#installation)
 8. [Licensing & Contributing](#licensing)
 
 # 🤔 What You Will Learn <a name=learn></a>
@@ -331,7 +331,7 @@ docker compose -f deploy/app-docker-compose.yml -f deploy/app-docker-compose.loc
 * [Frontend](http://127.0.0.1:8501/)
 * [Monitoring](http://127.0.0.1:8502/)
 
-# 🧑‍💻 Installation for Development <a name=installation></a>
+# 🧑‍💻 Installation & Usage for Development <a name=installation></a>
 
 All the modules support Poetry. Thus the installation is straightforward.
 
@@ -346,6 +346,17 @@ If Poetry is not using Python 3.9, you can follow the next steps:
 2. `cd /path/to/project`, for example `cd ./feature-pipeline`
 3. run `which python3.9` to find where Python3.9 is
 3. run `poetry env use /path/to/python3.9`
+
+**!!!** Before installing every module individually, **one key step** is to set the `ML_PIPELINE_ROOT_DIR` variable to your root directory of the `energy-forecasting` project:
+```shell
+gedit ~/.bashrc
+export ML_PIPELINE_ROOT_DIR=/path/to/root/directory/energy-forecasting/repository
+```
+
+Another option is to run every Python script with the `ML_PIPELINE_ROOT_DIR` variables. For example:
+```shell
+ML_PIPELINE_ROOT_DIR=/path/to/root/directory/energy-forecasting/repository python -m feature_pipeline.pipeline
+```
 
 See here how to install every project individually:
 - [Feature Pipeline](/feature-pipeline/README.md)
