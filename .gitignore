@@ -150,3 +150,6 @@ artifacts/
 # Sensitive
 credentials/
 .hw_api_key
+
+# Local notes
+deploy_hardcoded_steps.md
