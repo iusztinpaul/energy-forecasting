@@ -12,7 +12,7 @@ Following the documentation and the [Medium articles](#lessons), you can reprodu
 
 **At the end of the course, you will know how to build everything from the diagram below.**
 
-Don't worry if something doesn't make sense to you. I will explain everything in detail in my Medium series [placeholder for Medium link].
+Don't worry if something doesn't make sense to you. I will explain everything in detail in the [Medium series](#lessons).
 
 <p align="center">
   <img src="images/architecture.png">
@@ -110,7 +110,7 @@ The **web app** consists of other 3 modules:
 <br/>
 <br/>
 
-To follow the structure in its natural form, read the folders in the following order:
+To follow the structure in its natural flow, read the folders in the following order:
 1. `feature-pipeline`
 2. `training-pipeline`
 3. `batch-prediction-pipeline`
@@ -119,7 +119,7 @@ To follow the structure in its natural form, read the folders in the following o
 6. `app-frontend` & `app-monitoring`
 7. `.github`
 
-**Read the Medium articles in the [Lessons & Tutorials](#lessons) section for the whole experience.**
+**Read the Medium articles listed in the [Lessons & Tutorials](#lessons) section for the whole experience.**
 <br/>
 <br/>
 
@@ -146,7 +146,9 @@ Open the `.bashrc` file to add the Poetry PATH:
 nano ~/.bashrc
 ```
 
-Add `export PATH=~/.local/bin:$PATH` to `~/.bashrc`
+Add `export PATH=~/.local/bin:$PATH`
+
+to `~/.bashrc`
 
 Check if Poetry is installed:
 ```shell
@@ -164,7 +166,7 @@ poetry --version
 
 
 ## Configure Credentials for the Private PyPi Server
-**We will run the private PyPi server using Docker down the line. But it will already expect the credentials configuration.**
+**We will run the private PyPi server using Docker down the line. But it will already expect the credentials configured.**
 
 Create credentials using `passlib`:
 ```shell
@@ -177,20 +179,20 @@ mkdir ~/.htpasswd
 htpasswd -sc ~/.htpasswd/htpasswd.txt energy-forecasting
 ```
 
-Set credentials inside `poetry`:
+Set `poetry` to use the credentials:
 ```shell
 poetry config repositories.my-pypi http://localhost
 poetry config http-basic.my-pypi energy-forecasting <password>
 ```
 
-Check credentials in your poetry `auth.toml` file:
+Check that the credentials are set correctly in your poetry `auth.toml` file:
 ```shell
 cat ~/.config/pypoetry/auth.toml
 ```
 
 ## Hopsworks 
 
-We will use [Hopsworks](https://www.hopsworks.ai/) as our serverless feature store. Thus, you have to create an account and a project on Hopsworks. We will show you how to configure the code for your Hopsworks project later.
+You will use [Hopsworks](https://www.hopsworks.ai/) as your serverless feature store. Thus, you have to create an account and a project on Hopsworks. We will show you how to configure the code to use your Hopsworks project later.
 
 [I explained in this lesson how to create an API Key on Hopsworks.](https://medium.com/towards-data-science/a-framework-for-building-a-production-ready-feature-engineering-pipeline-f0b29609b20f) But long story short, you can go to your Hopsworks account settings and create the API Key from there.
 
@@ -202,7 +204,7 @@ We will use [Hopsworks](https://www.hopsworks.ai/) as our serverless feature sto
 
 ## Weights & Biases
 
-We will use Weights & Biases as our serverless ML platform. Thus, you must create an account and a project on Weights & Biases. We will show you how to configure our code to use your W&B project later.
+You will use Weights & Biases as your serverless ML platform. Thus, you must create an account and a project on Weights & Biases. We will show you how to configure the code to use your W&B project later.
 
 [I explained in this lesson how to create an API Key on W&B.](placeholder Medium article) But long story short, you can go to your W&B user settings and create the API Key from there.
 
@@ -214,13 +216,13 @@ We will use Weights & Biases as our serverless ML platform. Thus, you must creat
 
 ## GCP
 
-First, we must install the `gcloud` GCP CLI on our machine.
+First, you must install the `gcloud` GCP CLI on your machine.
 
-[Follow this great tutorial to install it.](https://cloud.google.com/sdk/docs/install)
+[Follow this tutorial to install it.](https://cloud.google.com/sdk/docs/install)
 
 **If you only want to run the code locally, go straight to the "Storage" section.**<br/>
 
-As before, you have to create an account and a project. Using solely the bucket as storage will be free of charge.
+As before, you have to create an account and a project on GCP. Using solely the bucket as storage will be free of charge.
 
 When I am writing this documentation, GCS is free until 5GB.
 
@@ -243,12 +245,12 @@ At this step, you have to do 5 things:
 Your `bucket admin service account` should have assigned the following role: `Storage Object Admin`<br/>
 Your `bucket read-only service account` should have assigned the following role: `Storage Object Viewer`<br/>
 
-Again, when I am writing this course, GCP storage is free until 5GB.
+Reminder: When I write this course, GCP storage is free until 5GB.
 
-**If you want everything to work with the default settings, use the following names:**
+**If you want everything to work with the default settings, use the following naming conventions:**
 - create a `bucket` called `hourly-batch-predictions`
-- rename your `admin` JSON service key to `admin-buckets.json`
-- rename your `read-only` JSON service key to `read-buckets.json`
+- rename your downloaded `admin` JSON service key to `admin-buckets.json`
+- rename your downloaded `read-only` JSON service key to `read-buckets.json`
 
 Check out our [Medium article](placeholder Medium article) for more step-by-step instructions.
 
@@ -259,7 +261,7 @@ This step must only be finished if you want to deploy the code on GCP VMs and bu
 
 Note that this step might result in a few costs on GCP. It won't be much. While developing this course, I spent only ~20$, which will probably be less for you.
 
-Also, you can get some free credits if you have a new GCP account. Just be sure to delete the resources after you finish the course.
+Also, you can get some free credits if you have a new GCP account (I had 300$). Just be sure to delete the resources after you finish the course.
 
 See [this document](/README_DEPLOY.md) for detailed instructions.
 
@@ -289,7 +291,7 @@ sudo chmod 777 ./logs ./plugins
 
 # It will be used by Airflow to identify your user.
 echo -e "AIRFLOW_UID=$(id -u)" > .env
-# This signals our project root directory
+# This shows where our project root directory is located.
 echo "ML_PIPELINE_ROOT_DIR=/opt/airflow/dags" >> .env
 ```
 
@@ -316,7 +318,7 @@ docker compose up airflow-init
 docker compose --env-file .env up --build -d
 ```
 
-[Read the official Airflow installation using Docker, but NOTE that we modified their docker-compose.yaml file.](https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html)
+[Read the official Airflow installation using Docker, but NOTE that we modified their official docker-compose.yaml file.](https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html)
 
 Wait a while for the containers to build and run. After access `127.0.0.1:8080` to login into Airflow.<br/>
 Use the following default credentials to log in:
@@ -327,20 +329,14 @@ Use the following default credentials to log in:
   <img src="images/airflow_login_screenshot.png">
 </p>
 
-Before starting the pipeline DAG, we must deploy our modules to the private PyPi server. Go back to the root folder of the `energy-forecasting` repository and run the following to deploy the pipeline modules to your private PyPi server:
+Before starting the pipeline DAG, you must deploy the modules to the private PyPi server. Go back to the root folder of the `energy-forecasting` repository and run the following to build and deploy the pipeline modules to your private PyPi server:
 ```shell
 # Set the experimental installer of Poetry to False. For us, it crashed when it was on True.
 poetry config experimental.new-installer false
 # Build & deploy the pipelines modules.
 sh deploy/ml-pipeline.sh
 ```
-Airflow will know how to install the packages from this private PyPi server. <br/>
-
-Go to the `DAGS/All` section and search for the `ml_pipeline` DAG. Toggle the activation button. It should automatically start in a few seconds. Also, you can manually run it by hitting the play button from the top-right side of the `ml_pipeline` window.
-
-<p align="center">
-  <img src="images/airflow_ml_pipeline_dag_overview_screenshot.png">
-</p>
+Airflow will know how to install the packages from the private PyPi server. <br/>
 
 One final step is to configure the parameters used to run the pipeline. Go to the `Admin` tab, then hit `Variables.` There you can click on the `blue` `+` button to add a new variable.
 These are the three parameters you can configure with our suggested values:
@@ -353,6 +349,11 @@ These are the three parameters you can configure with our suggested values:
   <img src="images/airflow_variables_screenshot.png">
 </p>
 
+Now, go to the `DAGS/All` section and search for the `ml_pipeline` DAG. Toggle the activation button. It should automatically start in a few seconds. Also, you can manually run it by hitting the play button from the top-right side of the `ml_pipeline` window.
+
+<p align="center">
+  <img src="images/airflow_ml_pipeline_dag_overview_screenshot.png">
+</p>
 
 That is it. You can run the entire pipeline with a single button if all the credentials are set up correctly. How cool is that?
 
@@ -388,7 +389,7 @@ airflow tasks clear --start-date "2023/04/11 00:00:00" --end-date "2023/04/13 23
 
 #### Run Private PyPi Server Separately
 
-The private Pypi server is already hooked to the airflow docker compose file. But if you want to run it separately for whatever reason, you can run this command instead:
+The private PyPi server is already hooked to the airflow docker compose file. But if you want to run it separately for whatever reason, you can run this command instead:
 ```shell
 docker run -p 80:8080 -v ~/.htpasswd:/data/.htpasswd pypiserver/pypiserver:latest run -P .htpasswd/htpasswd.txt --overwrite
 ```
@@ -401,7 +402,7 @@ Copy the bucket read-only GCP credentials to the root directory of your `energy-
 ```shell
 # Create the folder where the program expects its GCP credentials.
 mkdir -p credentials/gcp/energy_consumption
-# Copy the GCP service credetials that gives you admin access to GCS. 
+# Copy the GCP service credetials that gives you read-only access to GCS. 
 cp -r /path/to/admin/gcs/credentials/read-buckets.json credentials/gcp/energy_consumption
 # NOTE that if you want everything to work outside the box your JSON file should be called read-buckets.json.
 # Otherwise, you have to manually configure the APP_API_GCP_SERVICE_ACCOUNT_JSON_PATH variable from the .env file of the API.
@@ -426,7 +427,7 @@ If you want to run it in development mode, run the following command:
 docker compose -f deploy/app-docker-compose.yml -f deploy/app-docker-compose.local.yml --project-directory . up --build
 ```
 
-**Now you can see the apps running here:**
+**Now you can see the apps running at:**
 * [API](http://127.0.0.1:8001/api/v1/docs)
 * [Frontend](http://127.0.0.1:8501/)
 * [Monitoring](http://127.0.0.1:8502/)
@@ -435,7 +436,7 @@ docker compose -f deploy/app-docker-compose.yml -f deploy/app-docker-compose.loc
 
 All the modules support Poetry. Thus the installation is straightforward.
 
-**NOTE:** Ensure you have installed Python 3.9, not Python 3.8 or Python 3.10.
+**NOTE:** Just ensure you have installed Python 3.9, not Python 3.8 or Python 3.10.
 
 ## The Pipeline
 
@@ -444,8 +445,8 @@ All the modules support Poetry. Thus the installation is straightforward.
 If Poetry is not using Python 3.9, you can follow the next steps:
 1. Install Python 3.9 on your machine.
 2. `cd /path/to/project`, for example, `cd ./feature-pipeline`
-3. run `which python3.9` to find where Python3.9 is
-3. run `poetry env use /path/to/python3.9`
+3. run `which python3.9` to find where Python3.9 is located
+4. run `poetry env use /path/to/python3.9`
 
 ##### Set Up the ML_PIPELINE_ROOT_DIR Variable
 

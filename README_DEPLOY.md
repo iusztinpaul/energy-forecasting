@@ -10,7 +10,7 @@ This step must only be finished if you want to deploy the code on GCP VMs and bu
 
 Note that this step might result in a few costs on GCP. It won't be much. While developing this course, I spent only ~20$, which will probably be less for you.
 
-Also, you can get some free credits if you have a new GCP account. Just be sure to delete the resources after you finish the course.
+Also, you can get some free credits if you have a new GCP account (I had 300$ free credits). Just be sure to delete the resources after you finish the course.
 
 [Access the step-by-step Medium Lesson.](placeholder for Medium article)
 
