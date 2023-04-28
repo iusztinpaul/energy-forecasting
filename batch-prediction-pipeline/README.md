@@ -35,4 +35,4 @@ python -m batch_prediction_pipeline.monitoring
 
 Check out this [Medium article](placeholder-medium-article) for more details about this module.
 
-**NOTE:** Be careful to set the `ML_PIPELINE_ROOT_DIR` variable as explain in the 
+**NOTE:** Be careful to set the `ML_PIPELINE_ROOT_DIR` variable as explain in this [section]()

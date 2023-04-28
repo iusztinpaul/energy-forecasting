@@ -347,6 +347,8 @@ If Poetry is not using Python 3.9, you can follow the next steps:
 3. run `which python3.9` to find where Python3.9 is
 3. run `poetry env use /path/to/python3.9`
 
+##### Set Up the ML_PIPELINE_ROOT_DIR Variable
+
 **!!!** Before installing every module individually, **one key step** is to set the `ML_PIPELINE_ROOT_DIR` variable to your root directory of the `energy-forecasting` project:
 ```shell
 gedit ~/.bashrc
