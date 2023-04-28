@@ -218,6 +218,8 @@ If you have problems during the installation, please leave us an issue and we wi
 #### Run 
 We will run the pipeline using Airflow. Don't be scared. Docker makes everything very simple to setup.
 
+**NOTE:** We also hooked the **private PyPi server** in the same docker-compose.yaml file. Thus, everythign will start with one command.
+
 ```shell
 # Move to the airflow directory.
 cd airflow
@@ -284,6 +286,13 @@ That is it. If all the credentials are setup corectly you can run the entire pip
 docker compose down --volumes --rmi all
 ```
 
+#### Run Private PyPi Server Separately
+
+The private Pypi server is already hooked to the airflow docker compose file. But if you want to run it separately for whatever reason you can run this command instead:
+```shell
+docker run -p 80:8080 -v ~/.htpasswd:/data/.htpasswd pypiserver/pypiserver:latest run -P .htpasswd/htpasswd.txt --overwrite
+```
+
 ## The Web App
 
 Here, everything is a lot simpler. Here we need to setup only a few credentials. <br/>
@@ -319,13 +328,13 @@ docker compose -f deploy/app-docker-compose.yml -f deploy/app-docker-compose.loc
 
 # 🧑‍💻 Installation for Development <a name=installation></a>
 
-## The Pipeline
-
-**We support Docker to run the whole pipeline. Check out the [Usage](#usage) section if you only want to run it as a whole.**<br/><br/> 
-
 All the modules support Poetry. Thus the installation is straightforward.
 
 **NOTE:** Make sure that you have installed Python 3.9, not Python 3.8 or Python 3.10.
+
+## The Pipeline
+
+**We support Docker to run the whole pipeline. Check out the [Usage](#usage) section if you only want to run it as a whole.**<br/><br/> 
 
 If Poetry is not using Python 3.9, you can follow the next steps:
 1. Install Python 3.9 on your machine.
@@ -339,55 +348,13 @@ See here how to install every project individually:
 - [Batch Prediction Pipeline](/batch-prediction-pipeline/README.md)
 
 
-### Batch Prediction Pipeline
-
-The batch prediction pipeline uses the training pipeline module as a dependency. Thus, as a first step we have to be sure that the training pipeline is published to our private PyPi server.
-
-**NOTE:** Make sure that your private PyPi server is running. Check [this section](#) if it isn't. [placeholder to add reference to the Airflow docker installation]
-```shell
-cd training-pipeline
-poetry build
-poetry publish -r my-pypi
-cd ..
-```
-
-```shell
-cd batch-prediction-pipeline
-poetry shell
-poetry install
-```
-
 ## The Web App
 **We support Docker to run the web app. Check out the [Usage](#usage) section if you only want to run it as a whole.**<br/><br/> 
 
-Again, Poetry makes everything simple:
-
-### API
-
-```shell
-cd app-api
-poetry shell
-poetry install
-```
-
-
-### Frotend
-
-```shell
-cd app-frontend
-poetry shell
-poetry install
-```
-
-
-### Monitoring
-
-```shell
-cd app-monitoring
-poetry shell
-poetry install
-```
-
+See here how to install every project individually:
+- [API](/app-api/README.md)
+- [Frontend](/app-frontend/README.md)
+- [Monitoring](/app-monitoring/README.md)`
 
 
 # 🏆 Licensing & Contributing <a name=licensing></a>
