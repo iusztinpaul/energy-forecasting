@@ -35,4 +35,4 @@ python -m batch_prediction_pipeline.monitoring
 
 Check out this [Medium article](placeholder-medium-article) for more details about this module.
 
-**NOTE:** Be careful to set the `ML_PIPELINE_ROOT_DIR` variable as explain in this [section](https://github.com/iusztinpaul/energy-forecasting#set-up-the-ml_pipeline_root_dir-variable).
+**NOTE:** Be careful to set the `ML_PIPELINE_ROOT_DIR` variable as explained in this [section](https://github.com/iusztinpaul/energy-forecasting#set-up-the-ml_pipeline_root_dir-variable).

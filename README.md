@@ -275,10 +275,16 @@ Airflow will know how to install the packages from this private PyPi server. <br
 Now, go to the `DAGS/All` section and search for the `ml_pipeline` DAG. Toggle the activation button. It should automatically start in a few seconds. Also, you can manually run it hitting the play button from the top-right side of the `ml_pipeline` window.
 
 <p align="center">
-  <img src="images/airflow_ml_pipeline_dag_screenshot.png">
+  <img src="images/airflow_ml_pipeline_dag_overview_screenshot.png">
 </p>
 
 That is it. If all the credentials are setup corectly you can run the entire pipeline with a single button. How cool is that?
+
+Here is how the DAG should look like 👇
+
+<p align="center">
+  <img src="images/airflow_ml_pipeline_dag_screenshot.png">
+</p>
 
 
 #### Clean Up
@@ -360,7 +366,9 @@ Another option is to run every Python script with the `ML_PIPELINE_ROOT_DIR` var
 ML_PIPELINE_ROOT_DIR=/path/to/root/directory/energy-forecasting/repository python -m feature_pipeline.pipeline
 ```
 
-See here how to install every project individually:
+-------
+
+**See here how to install every project individually:**
 - [Feature Pipeline](/feature-pipeline/README.md)
 - [Training Pipeline](/training-pipeline/README.md)
 - [Batch Prediction Pipeline](/batch-prediction-pipeline/README.md)
@@ -369,7 +377,7 @@ See here how to install every project individually:
 ## The Web App
 **We support Docker to run the web app. Check out the [Usage](#usage) section if you only want to run it as a whole.**<br/><br/> 
 
-See here how to install every project individually:
+**See here how to install every project individually:**
 - [API](/app-api/README.md)
 - [Frontend](/app-frontend/README.md)
 - [Monitoring](/app-monitoring/README.md)`
