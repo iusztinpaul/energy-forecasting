@@ -25,7 +25,7 @@ As long as you keep the LICENSE, you can safely use this code as a starting poin
 2. [Lessons & Tutorials](#lessons)
 3. [Data](#data)
 4. [Code Structure](#structure)
-5. [Setup Additional Tools](#tools)
+5. [Set Up Additional Tools](#tools)
 6. [Usage](#usage)
 7. [Installation for Development](#installation)
 8. [Licensing & Contributing](#licensing)
@@ -109,7 +109,7 @@ The **web app** consits of other three modules:
 <br/>
 <br/>
 
-# 🔧 Setup Additional Tools <a name=tools></a>
+# 🔧 Set Up Additional Tools <a name=tools></a>
 
 **The code is tested only on Ubuntu 20.04 and 22.04 using Python 3.9.**
 
@@ -333,21 +333,11 @@ If Poetry is not using Python 3.9, you can follow the next steps:
 3. run `which python3.9` to find where Python3.9 is
 3. run `poetry env use /path/to/python3.9`
 
-### Feature Pipeline
+See here how to install every project individually:
+- [Feature Pipeline](/feature-pipeline/README.md)
+- [Training Pipeline](/training-pipeline/README.md)
+- [Batch Prediction Pipeline](/batch-prediction-pipeline/README.md)
 
-```shell
-cd feature-pipeline
-poetry shell
-poetry install
-```
-
-### Training Pipeline
-
-```shell
-cd training-pipeline
-poetry shell
-poetry install
-```
 
 ### Batch Prediction Pipeline
 
