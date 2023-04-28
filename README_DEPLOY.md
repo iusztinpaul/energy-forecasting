@@ -1,6 +1,6 @@
 # The Full Stack 7-Steps MLOps Framework
 
-### LIVE DEMO [FORECASTING](http://35.207.134.188:8501/) | LIVE DEMO [MONITORING](http://35.207.134.188:8502/)
+### LIVE DEMO [WEB APP - FORECASTING](http://35.207.134.188:8501/) | LIVE DEMO [WEB APP - MONITORING](http://35.207.134.188:8502/)
 
 --------
 
@@ -235,3 +235,8 @@ gcloud compute ssh app --zone europe-west3-c --quiet --tunnel-through-iap --proj
 This time you are in luck. You can repeat the exact same steps as in the [Deploy - The Pipeline Section](https://github.com/iusztinpaul/energy-forecasting/blob/main/README_DEPLOY.md#deploy---the-pipeline).
 
 You have to consider the exact same observations, while repeating the steps for `The Web App` from the [Set Up Additional Tools](https://github.com/iusztinpaul/energy-forecasting#-set-up-additional-tools-) and [Usage](https://github.com/iusztinpaul/energy-forecasting#usage) sections.
+
+
+----
+
+As you can see, here we have done everything manually. If you want to see how we created a simple CI/CD using GitHub Actions [check out this section](https://github.com/iusztinpaul/energy-forecasting/blob/main/README_CICD.md).
