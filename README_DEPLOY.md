@@ -240,4 +240,4 @@ You have to consider the exact same observations while repeating the steps for `
 
 ----
 
-As you can see, here you have done everything manually. If you want to know how to create a simple CI/CD using GitHub Actions [check out this section](https://github.com/iusztinpaul/energy-forecasting/blob/main/README_CICD.md).
+👀 **As you can see, here you have done everything manually. If you want to know how to create a simple CI/CD using GitHub Actions [check out this section](https://github.com/iusztinpaul/energy-forecasting/blob/main/README_CICD.md).**
