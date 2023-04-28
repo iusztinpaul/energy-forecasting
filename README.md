@@ -90,14 +90,14 @@ Thus, we will build a model that independently forecasts the energy consumption 
 
 # 🧬 Code Structure <a name=structure></a>
 
-The code is split in two main components: the pipeline and the web app.
+The code is split into two main components: the `pipeline` and the `web app`.
 
-The **pipeline** consists of three modules:
+The **pipeline** consists of 3 modules:
 - `feature-pipeline`
 - `training-pipeline`
 - `batch-prediction-pipeline`
 
-The **web app** consits of other three modules:
+The **web app** consists of other 3 modules:
 - `app-api`
 - `app-frontend`
 - `app-monitoring`
@@ -106,6 +106,18 @@ The **web app** consits of other three modules:
 - `airflow` : Airflow files | Orchestration
 - `.github` : GitHub Actions files | CI/CD
 <br/>
+<br/>
+
+To follow the structure in its natural form, read the folders in the following order:
+1. `feature-pipeline`
+2. `training-pipeline`
+3. `batch-prediction-pipeline`
+4. `airflow`
+5. `app-api`
+6. `app-frontend` & `app-monitoring`
+7. `.github`
+
+**Read the Medium articles in the [Lessons & Tutorials](#lessons) section for the whole experience.**
 <br/>
 <br/>
 
@@ -189,7 +201,11 @@ We will use Weights & Biases as our serverless ML plaform. Thus, you have to cre
 
 ## GCP
 
-**If you only want to run the code locally follow only the steps from the "Storage" section.**<br/>
+First, we have to install the `gcloud` GCP CLI on our machine.
+
+[Follow this great tutorial to install it.](https://cloud.google.com/sdk/docs/install)
+
+**If you only want to run the code locally go straight from the "Storage" section.**<br/>
 
 As before, you have to create an account and a project. Using solely the bucket as storage will be free of charge.
 At the time I am writing this documentation GCS is free until 5GB.
@@ -225,13 +241,13 @@ If you want to see more step-by-step instructions checkout this [Medium article]
 
 ### Deployment
 
-This step has to be finished only if you want to deploy the code on GCP VMs and build the CI/CD with GitHub Actions.
+This step must only be finished if you want to deploy the code on GCP VMs and build the CI/CD with GitHub Actions.
 
-Note that this step might result in a few consts on GCP. It won't be much. While I developed this course I spent only ~20$. For you most probably it will be less.
+Note that this step might result in a few costs on GCP. It won't be much. While I was developing this course, I spent only ~20$, and it will probably be less for you.
 
-Also, if you have a new GCP account, you most probably got some free credits. Just be sure to delete the resources after you finished the course.
+Also, you can get some free credits if you have a new GCP account. Just be sure to delete the resources after you finish the course.
 
-See [this document](/README_DEPLOY.md) for detailed instructions on this step.
+See [this document](/README_DEPLOY.md) for detailed instructions.
 
 
 # 🔎 Usage <a name=usage></a>
@@ -284,6 +300,8 @@ docker compose up airflow-init
 docker compose --env-file .env up --build -d
 ```
 
+[Read the official Airflow installation, but NOTE that we modified their docker-compose.yaml file.](https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html)
+
 Wait a while for the containers to build and run. After access `127.0.0.1:8080` to login into Airflow.<br/>
 Use the following credentials to login:
 * username: `airflow`
@@ -293,8 +311,11 @@ Use the following credentials to login:
   <img src="images/airflow_login_screenshot.png">
 </p>
 
-Before starting the pipeline DAG, we have one last step to do. Go back to the root folder of the `energy-forecasting` repository and run the following to deploy the pipeline modules to your private PyPi server:
+Before starting the pipeline DAG, we have to deploy our modules to the private Pypi server. Go back to the root folder of the `energy-forecasting` repository and run the following to deploy the pipeline modules to your private PyPi server:
 ```shell
+# Set the experimental installer of Poetry to False. For us, it crashed when it was on True.
+poetry config experimental.new-installer false
+# Build & deploy the pipelines modules.
 sh deploy/ml-pipeline.sh
 ```
 Airflow will know how to install the packages from this private PyPi server. <br/>
@@ -304,6 +325,17 @@ Now, go to the `DAGS/All` section and search for the `ml_pipeline` DAG. Toggle t
 <p align="center">
   <img src="images/airflow_ml_pipeline_dag_overview_screenshot.png">
 </p>
+
+One final step is to configure the parameters used to run the pipeline. Go to the `Admin` tab, then hit `Variables.` There you can click on the `blue` `+` button to add a new variable.
+These are the three parameters you can configure with our suggested values:
+* `ml_pipeline_days_export = 30`
+* `ml_pipeline_feature_group_version = 5`
+* `ml_pipeline_should_run_hyperparameter_tuning = False`
+
+<p align="center">
+  <img src="images/airflow_variables_screenshot.png">
+</p>
+
 
 That is it. If all the credentials are setup corectly you can run the entire pipeline with a single button. How cool is that?
 
@@ -318,6 +350,24 @@ Here is how the DAG should look like 👇
 ```shell
 docker compose down --volumes --rmi all
 ```
+
+#### Backfil Using Airflow
+
+Find your `airflow-webserver` docker container ID:
+```shell
+docker ps
+```
+Start a shell inside the `airflow-webserver` container and run `airflow dags backfill` as follows (in this example we did a backfill between `2023/04/11 00:00:00` and `2023/04/13 23:59:59`):
+```shell
+docker exec -it <container-id-of-airflow-airflow-webserver> sh
+airflow dags backfill --start-date "2023/04/11 00:00:00" --end-date "2023/04/13 23:59:59" ml_pipeline
+```
+If you want to clear the tasks and run them again, run these commands:
+```shell
+docker exec -it <container-id-of-airflow-airflow-webserver> sh
+airflow tasks clear --start-date "2023/04/11 00:00:00" --end-date "2023/04/13 23:59:59" ml_pipeline
+```
+
 
 #### Run Private PyPi Server Separately
 
@@ -393,6 +443,14 @@ Another option is to run every Python script with the `ML_PIPELINE_ROOT_DIR` var
 ML_PIPELINE_ROOT_DIR=/path/to/root/directory/energy-forecasting/repository python -m feature_pipeline.pipeline
 ```
 
+## Deploy to GCP
+
+[Check out this section.](./README_DEPLOY.md)
+
+## Set UP CI/CD with GitHub Actions
+
+[Check out this section.](./README_CICD.md)
+
 -------
 
 **See here how to install every project individually:**
@@ -408,6 +466,11 @@ ML_PIPELINE_ROOT_DIR=/path/to/root/directory/energy-forecasting/repository pytho
 - [API](/app-api/README.md)
 - [Frontend](/app-frontend/README.md)
 - [Monitoring](/app-monitoring/README.md)`
+
+You can also run the whole web app in development mode using docker:
+```shell
+docker compose -f deploy/app-docker-compose.yml -f deploy/app-docker-compose.local.yml --project-directory . up --build
+```
 
 
 # 🏆 Licensing & Contributing <a name=licensing></a>
