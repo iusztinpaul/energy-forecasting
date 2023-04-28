@@ -25,9 +25,10 @@ As long as you keep the LICENSE, you can safely use this code as a starting poin
 2. [Lessons & Tutorials](#lessons)
 3. [Data](#data)
 4. [Code Structure](#structure)
-5. [Installation](#installation)
+5. [Setup Additional Tools](#tools)
 6. [Usage](#usage)
-7. [Licensing & Contributing](#licensing)
+7. [Installation for Development](#installation)
+8. [Licensing & Contributing](#licensing)
 
 # 🤔 What You Will Learn <a name=learn></a>
 **At the end of this 7 lessons course, you will know how to:**
@@ -104,17 +105,17 @@ The **web app** consits of other three modules:
 **Also,** we have the following folders:
 - `airflow` : Airflow files | Orchestration
 - `.github` : GitHub Actions files | CI/CD
+<br/>
+<br/>
+<br/>
 
-
-# 🪛 Installation <a name=installation></a>
+# 🔧 Setup Additional Tools <a name=tools></a>
 
 **The code is tested only on Ubuntu 20.04 and 22.04 using Python 3.9.**
 
 If you have problems during the installation, please leave us an issue and we will take a look and update the README for future readers.
 
-## Setup Additional Tools
-
-### Poetry
+## Poetry
 
 Install Python system dependencies:
 ```shell
@@ -136,7 +137,7 @@ poetry --version
 
 [Official Poetry installation instructions.](https://python-poetry.org/docs/#installation)
 
-### Docker
+## Docker
 
 
  <br/>[Install Docker on Ubuntu.](https://docs.docker.com/engine/install/ubuntu/) <br/>
@@ -144,7 +145,7 @@ poetry --version
 [Install Docker on Windows.](https://docs.docker.com/desktop/install/windows-install/) <br/>
 
 
-### Configure Credentials for the Private PyPi Server
+## Configure Credentials for the Private PyPi Server
 **We will run the private PyPi server using Docker down the line. But it will already expect the credentials configuration.**
 
 Create credentials using `passlib`:
@@ -167,7 +168,7 @@ Check credentials in your poetry `auth.toml` file:
 cat ~/.config/pypoetry/auth.toml
 ```
 
-### Hopsworks 
+## Hopsworks 
 
 We will use [Hopsworks](https://www.hopsworks.ai/) as our serverless feature store. Thus, you have to create an account and a project on Hopsworks. We will show you later how to configure our code to use your Hopsworks project.
 
@@ -177,7 +178,7 @@ We will use [Hopsworks](https://www.hopsworks.ai/) as our serverless feature sto
 [Click here to start with Hopsworks](https://www.hopsworks.ai/).
 
 
-### Weights & Biases
+## Weights & Biases
 
 We will use Weights & Biases as our serverless ML plaform. Thus, you have to create an account and a project on Weights & Biases. We will show you later how to configure our code to use your W&B project.
 
@@ -187,7 +188,7 @@ We will use Weights & Biases as our serverless ML plaform. Thus, you have to cre
 
 [Click here to start with Weights & Biases](https://wandb.ai/).
 
-### GCP
+## GCP
 
 **If you only want to run the code locally follow only the steps from the "Storage" section.**<br/>
 
@@ -205,87 +206,12 @@ At the time I am writing this documentation GCS is free until 5GB.
 
 #### Deployment
 
-## Install the Pipeline for Development
-
-**We support Docker to run the whole pipeline. Check out the [Usage](#usage) section if you only want to run it as a whole.**<br/><br/> 
-
-All the modules support Poetry. Thus the installation is straightforward.
-
-**NOTE:** Make sure that you have installed Python 3.9, not Python 3.8 or Python 3.10.
-
-If Poetry is not using Python 3.9, you can follow the next steps:
-1. Install Python 3.9 on your machine.
-2. `cd /path/to/project`, for example `cd ./feature-pipeline`
-3. run `which python3.9` to find where Python3.9 is
-3. run `poetry env use /path/to/python3.9`
-
-### Feature Pipeline
-
-```shell
-cd feature-pipeline
-poetry shell
-poetry install
-```
-
-### Training Pipeline
-
-```shell
-cd training-pipeline
-poetry shell
-poetry install
-```
-
-### Batch Prediction Pipeline
-
-The batch prediction pipeline uses the training pipeline module as a dependency. Thus, as a first step we have to be sure that the training pipeline is published to our private PyPi server.
-
-**NOTE:** Make sure that your private PyPi server is running. Check [this section](#) if it isn't. [placeholder to add reference to the Airflow docker installation]
-```shell
-cd training-pipeline
-poetry build
-poetry publish -r my-pypi
-cd ..
-```
-
-```shell
-cd batch-prediction-pipeline
-poetry shell
-poetry install
-```
-
-## Install the Web App for Development
-**We support Docker to run the web app. Check out the [Usage](#usage) section if you only want to run it as a whole.**<br/><br/> 
-
-Again, Poetry makes everything simple:
-
-### API
-
-```shell
-cd app-api
-poetry shell
-poetry install
-```
-
-
-### Frotend
-
-```shell
-cd app-frontend
-poetry shell
-poetry install
-```
-
-
-### Monitoring
-
-```shell
-cd app-monitoring
-poetry shell
-poetry install
-```
-
 
 # 🔎 Usage <a name=usage></a>
+
+**The code is tested only on Ubuntu 20.04 and 22.04 using Python 3.9.**
+
+If you have problems during the installation, please leave us an issue and we will take a look and update the README for future readers.
 
 ## The Pipeline
 
@@ -390,6 +316,88 @@ If you want to run it in development mode run the following command:
 ```shell
 docker compose -f deploy/app-docker-compose.yml -f deploy/app-docker-compose.local.yml --project-directory . up --build
 ```
+
+# 🧑‍💻 Installation for Development <a name=installation></a>
+
+## The Pipeline
+
+**We support Docker to run the whole pipeline. Check out the [Usage](#usage) section if you only want to run it as a whole.**<br/><br/> 
+
+All the modules support Poetry. Thus the installation is straightforward.
+
+**NOTE:** Make sure that you have installed Python 3.9, not Python 3.8 or Python 3.10.
+
+If Poetry is not using Python 3.9, you can follow the next steps:
+1. Install Python 3.9 on your machine.
+2. `cd /path/to/project`, for example `cd ./feature-pipeline`
+3. run `which python3.9` to find where Python3.9 is
+3. run `poetry env use /path/to/python3.9`
+
+### Feature Pipeline
+
+```shell
+cd feature-pipeline
+poetry shell
+poetry install
+```
+
+### Training Pipeline
+
+```shell
+cd training-pipeline
+poetry shell
+poetry install
+```
+
+### Batch Prediction Pipeline
+
+The batch prediction pipeline uses the training pipeline module as a dependency. Thus, as a first step we have to be sure that the training pipeline is published to our private PyPi server.
+
+**NOTE:** Make sure that your private PyPi server is running. Check [this section](#) if it isn't. [placeholder to add reference to the Airflow docker installation]
+```shell
+cd training-pipeline
+poetry build
+poetry publish -r my-pypi
+cd ..
+```
+
+```shell
+cd batch-prediction-pipeline
+poetry shell
+poetry install
+```
+
+## The Web App
+**We support Docker to run the web app. Check out the [Usage](#usage) section if you only want to run it as a whole.**<br/><br/> 
+
+Again, Poetry makes everything simple:
+
+### API
+
+```shell
+cd app-api
+poetry shell
+poetry install
+```
+
+
+### Frotend
+
+```shell
+cd app-frontend
+poetry shell
+poetry install
+```
+
+
+### Monitoring
+
+```shell
+cd app-monitoring
+poetry shell
+poetry install
+```
+
 
 
 # 🏆 Licensing & Contributing <a name=licensing></a>
