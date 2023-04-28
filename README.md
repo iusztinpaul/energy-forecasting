@@ -326,6 +326,11 @@ If you want to run it in development mode run the following command:
 docker compose -f deploy/app-docker-compose.yml -f deploy/app-docker-compose.local.yml --project-directory . up --build
 ```
 
+**Now you can see the apps running here:**
+* [API](http://127.0.0.1:8001/api/v1/docs)
+* [Frontend](http://127.0.0.1:8501/)
+* [Monitoring](http://127.0.0.1:8502/)
+
 # 🧑‍💻 Installation for Development <a name=installation></a>
 
 All the modules support Poetry. Thus the installation is straightforward.
