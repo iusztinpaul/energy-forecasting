@@ -2,6 +2,7 @@
 
 ## Install for Development
 
+Run:
 ```shell
 cd feature-pipeline
 poetry shell
