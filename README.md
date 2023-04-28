@@ -105,6 +105,7 @@ The **web app** consists of other 3 modules:
 **Also,** we have the following folders:
 - `airflow` : Airflow files | Orchestration
 - `.github` : GitHub Actions files | CI/CD
+- `deploy` : Build & Deploy
 <br/>
 <br/>
 
