@@ -14,7 +14,7 @@ Check the [Set Up Additional Tools](https://github.com/iusztinpaul/energy-foreca
 
 ## Usage for Development
 
-</br> Run the scripts in the following order: </br>
+</br> **Run the scripts in the following order:** </br></br>
 
 
 1. To start the hyperparameter tuning script, run:
