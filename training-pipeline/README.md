@@ -14,16 +14,19 @@ Check the [Set Up Additional Tools](https://github.com/iusztinpaul/energy-foreca
 
 ## Usage for Development
 
-To start the hyperparameter tuning script, run:
+</br> Run the scripts in the following order: </br>
+
+
+1. To start the hyperparameter tuning script, run:
 ```shell
 python -m training_pipeline.hyperparameter_tuning
 ```
 
-To upload the best config, based on the previous hyperparameter tuning step, run:
+2. To upload the best config, based on the previous hyperparameter tuning step, run:
 ```shell
 python -m training_pipeline.best_config
 ```
-To start the training script based on the best configuration uploaded one step before, run the following:
+3. To start the training script based on the best configuration uploaded one step before, run the following:
 ```shell
 python -m training_pipeline.train
 ```
