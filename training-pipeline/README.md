@@ -23,7 +23,7 @@ To upload the best config, based on the previous hyperparameter tuning step, run
 ```shell
 python -m training_pipeline.best_config
 ```
-
+To start the training script based on the best configuration uploaded one step before, run the following:
 ```shell
 python -m training_pipeline.train
 ```
