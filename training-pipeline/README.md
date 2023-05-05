@@ -26,7 +26,7 @@ python -m training_pipeline.hyperparameter_tuning
 ```shell
 python -m training_pipeline.best_config
 ```
-3. Start the training script based on the best configuration uploaded one step before:
+3. Start the training script using the best configuration uploaded one step before:
 ```shell
 python -m training_pipeline.train
 ```
