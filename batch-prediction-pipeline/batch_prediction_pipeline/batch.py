@@ -163,9 +163,7 @@ def save(X: pd.DataFrame, y: pd.DataFrame, predictions: pd.DataFrame):
         logger.info(f"Successfully saved {blob_name} to bucket.")
 
 
-def save_for_monitoring(
-    predictions: pd.DataFrame, start_datetime: datetime
-):
+def save_for_monitoring(predictions: pd.DataFrame, start_datetime: datetime):
     """Save predictions to GCS for monitoring.
 
     The predictions are saved as a parquet file in GCS.
@@ -201,14 +199,17 @@ def save_for_monitoring(
         new_predictions = merged_predictions.filter(regex=".*?_new")
         new_predictions.columns = new_predictions.columns.str.replace("_new", "")
         cached_predictions = merged_predictions.filter(regex=".*?_cached")
-        cached_predictions.columns = cached_predictions.columns.str.replace("_cached", "")
-        
+        cached_predictions.columns = cached_predictions.columns.str.replace(
+            "_cached", ""
+        )
+
         # NOTE: fillna() not working properly on multindex DataFrames. Got nasty bugs because of it.
         new_predictions.update(cached_predictions)
         predictions = new_predictions
 
     predictions = predictions.loc[
-            predictions.index.get_level_values("datetime_utc") >= pd.Period(start_datetime, freq="H")
+        predictions.index.get_level_values("datetime_utc")
+        >= pd.Period(start_datetime, freq="H")
     ]
     predictions = predictions.dropna(subset=["energy_consumption"])
 
@@ -217,9 +218,7 @@ def save_for_monitoring(
         blob_name=f"predictions_monitoring.parquet",
         data=predictions,
     )
-    logger.info(
-        f"Successfully cached predictions forecasted before {start_datetime}."
-    )
+    logger.info(f"Successfully cached predictions forecasted before {start_datetime}.")
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
 name = "app-monitoring"
 version = "0.1.0"
 description = ""
-authors = ["iusztinpaul <p.e.iusztin@gmail.com>"]
+authors = ["Iusztin Paul <p.e.iusztin@gmail.com>"]
 readme = "README.md"
 packages = [{include = "monitoring"}]
 

@@ -2,10 +2,7 @@
 name = "feature-pipeline"
 version = "0.1.0"
 description = ""
-authors = [
-"Paul Iusztin <paul.lusztin@coreai.ai>",
-"Kurtis Pykes <kurtispykes@gmail.com>"
-]
+authors = ["Iusztin Paul <p.e.iusztin@gmail.com>", "Kurtis Pykes <kurtispykes@gmail.com>"]
 readme = "README.md"
 packages = [{include = "feature_pipeline"}]
 

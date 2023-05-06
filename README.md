@@ -160,6 +160,7 @@ poetry --version
 [Official Poetry installation instructions.](https://python-poetry.org/docs/#installation)
 
 ## Docker
+##### ``<< free usage >>``
 
  <br/>[Install Docker on Ubuntu.](https://docs.docker.com/engine/install/ubuntu/) <br/>
 [Install Docker on Mac.](https://docs.docker.com/desktop/install/mac-install/) <br/>
@@ -167,7 +168,9 @@ poetry --version
 
 
 ## Configure Credentials for the Private PyPi Server
-**We will run the private PyPi server using Docker down the line. But it will already expect the credentials configured.**
+##### ``<< free usage >>``
+
+**<br/>We will run the private PyPi server using Docker down the line. But it will already expect the credentials configured.<br/>**
 
 Create credentials using `passlib`:
 ```shell
@@ -192,6 +195,7 @@ cat ~/.config/pypoetry/auth.toml
 ```
 
 ## Hopsworks 
+##### ``<< free usage >>``
 
 You will use [Hopsworks](https://www.hopsworks.ai/) as your serverless feature store. Thus, you have to create an account and a project on Hopsworks. We will show you how to configure the code to use your Hopsworks project later.
 
@@ -202,8 +206,11 @@ You will use [Hopsworks](https://www.hopsworks.ai/) as your serverless feature s
 
 [Click here to start with Hopsworks](https://www.hopsworks.ai/).
 
+**Note:** Our course will use only the Hopsworks freemium plan, making it free of charge to replicate the code within the series. 
+
 
 ## Weights & Biases
+##### ``<< free usage >>``
 
 You will use Weights & Biases as your serverless ML platform. Thus, you must create an account and a project on Weights & Biases. We will show you how to configure the code to use your W&B project later.
 
@@ -214,6 +221,8 @@ You will use Weights & Biases as your serverless ML platform. Thus, you must cre
 - create a `project` called `energy_consumption`
 
 [Click here to start with Weights & Biases](https://wandb.ai/).
+
+**Note:** Our course will use only the W&B freemium plan, making it free of charge to replicate the code within the series. 
 
 ## GCP
 
@@ -231,6 +240,7 @@ When I am writing this documentation, GCS is free until 5GB.
 - create a `project` called `energy_consumption`
 
 ### Storage
+##### ``<< free usage >>``
 
 At this step, you have to do 5 things:
 - create a project
@@ -246,7 +256,7 @@ At this step, you have to do 5 things:
 Your `bucket admin service account` should have assigned the following role: `Storage Object Admin`<br/>
 Your `bucket read-only service account` should have assigned the following role: `Storage Object Viewer`<br/>
 
-Reminder: When I write this course, GCP storage is free until 5GB.
+**NOTE:** When I write this course, GCP storage is free until 5GB.
 
 **If you want everything to work with the default settings, use the following naming conventions:**
 - create a `bucket` called `hourly-batch-predictions`
@@ -257,12 +267,13 @@ Check out our [Medium article](placeholder Medium article) for more step-by-step
 
 
 ### Deployment
+##### ``<< ~20$ >>``
 
 This step must only be finished if you want to deploy the code on GCP VMs and build the CI/CD with GitHub Actions.
 
 Note that this step might result in a few costs on GCP. It won't be much. While developing this course, I spent only ~20$, which will probably be less for you.
 
-Also, you can get some free credits if you have a new GCP account (I had 300$). Just be sure to delete the resources after you finish the course.
+Also, you can get some free credits if you create a new GCP account (I had a new account and received 300$ in GCP credits). Just be sure to delete the resources after you finish the course.
 
 See [this document](/README_DEPLOY.md) for detailed instructions.
 
@@ -499,3 +510,7 @@ The code is under the MIT License. Thus, as long as you keep distributing the Li
 Also, if you find any bugs or missing pieces in the documentation, I encourage you to add an issue on GitHub. I will respond to you and adapt the code and docs for future readers.
 
 Furthermore, you can contact me directly on [LinkedIn](https://www.linkedin.com/in/pauliusztin/) if you have any questions.
+
+-----
+
+I want to thank @kurtispykes for being an awesome copilot and helping me make this course happen.

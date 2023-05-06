@@ -22,7 +22,9 @@ def health() -> dict:
     Health check endpoint.
     """
 
-    health_data = schemas.Health(name=get_settings().PROJECT_NAME, api_version=get_settings().VERSION)
+    health_data = schemas.Health(
+        name=get_settings().PROJECT_NAME, api_version=get_settings().VERSION
+    )
 
     return health_data.dict()
 
@@ -88,7 +90,7 @@ async def get_predictions(area: int, consumer_type: int) -> Any:
             status_code=404,
             detail=f"No data found for the given area and consumer type: {area}, {consumer_type}",
         )
-    
+
     # Return only the latest week of observations.
     train_df = train_df.sort_index().tail(24 * 7)
 
@@ -150,7 +152,7 @@ async def get_predictions(area: int, consumer_type: int) -> Any:
     predictions_monitoring = pd.read_parquet(
         f"{get_settings().GCP_BUCKET}/predictions_monitoring.parquet", filesystem=fs
     )
-   
+
     # Query the data for the given area and consumer type.
     try:
         y_monitoring = y_monitoring.xs(
@@ -170,7 +172,7 @@ async def get_predictions(area: int, consumer_type: int) -> Any:
             status_code=404,
             detail=f"No data found for the given area and consumer type: {area}, {consumer_type}",
         )
-    
+
     print(predictions_monitoring)
 
     # Prepare data to be returned.
