@@ -291,7 +291,7 @@ Also, if you have any questions, you can contact me directly on [LinkedIn](https
 ## The Pipeline
 
 #### Run 
-You will run the pipeline using Airflow. Don't be scared. Docker makes everything very simple to set up.
+You will run the pipeline using Airflow (`free usage`). Don't be scared. Docker makes everything very simple to set up.
 
 **NOTE:** We also hooked the **private PyPi server** in the same docker-compose.yaml file with Airflow. Thus, everything will start with one command.
 
