@@ -69,8 +69,8 @@ def load_dataset_from_feature_store(
 
             split_metadata = {
                 "timespan": [
-                    split_X.index.get_level_values(-2).min(),
-                    split_X.index.get_level_values(-2).max(),
+                    split_X.index.get_level_values(-1).min(),
+                    split_X.index.get_level_values(-1).max(),
                 ],
                 "dataset_size": len(split_X),
                 "num_areas": len(split_X.index.get_level_values(0).unique()),
