@@ -20,7 +20,7 @@ Don't worry if something doesn't make sense to you. I will explain everything in
 
 You can safely use this code as you like, as long as you respect the terms and agreement of the MIT License.
 
-``Using all the tools suggested in the course will be free of charge, except the ones from Lesson 7, where you will be deploying your application to GCP which will cost you ~20$.``
+``<<< Using all the tools suggested in the course will be free of charge, except the ones from Lesson 7, where you will be deploying your application to GCP which will cost you ~20$. >>>``
 
 # Table of Contents
 1. [What You Will Learn](#learn)
