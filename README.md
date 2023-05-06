@@ -132,7 +132,7 @@ If you have problems during the setup, please leave us an issue, and we will res
 Also, if you have any questions, you can contact me directly on [LinkedIn](https://www.linkedin.com/in/pauliusztin/).
 
 ## Poetry
-##### ``free``
+#### ``free``
 
 Install Python system dependencies:
 ```shell
