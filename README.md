@@ -63,7 +63,7 @@ The course consists of 7 lessons hosted on Medium Towards Data Science publicati
 4. Private PyPi Server. Orchestrate Everything with Airflow.
 5. Build Your Own App with FastAPI and Streamlit.
 6. Data Validation and Integrity using GE. Monitor Model Performance.
-7. Deploy Everything on GCP. Build a CI/CD Pipeline using GitHub Actions.
+7. Deploy Everything to GCP. Build a CI/CD Pipeline using GitHub Actions.
 
 
 # 📊 Data <a name=data></a>
