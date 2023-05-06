@@ -20,6 +20,8 @@ Don't worry if something doesn't make sense to you. I will explain everything in
 
 You can safely use this code as you like, as long as you respect the terms and agreement of the MIT License.
 
+``Using all the tools suggested in the course will be free of charge, except the ones from Lesson 7, where you will be deploying your application to GCP which will cost you ~20$.``
+
 # Table of Contents
 1. [What You Will Learn](#learn)
 2. [Lessons & Tutorials](#lessons)
@@ -513,4 +515,4 @@ Furthermore, you can contact me directly on [LinkedIn](https://www.linkedin.com/
 
 -----
 
-I want to thank @kurtispykes for being an awesome copilot and helping me make this course happen.
+I want to thank [Kurtis Pykes](https://github.com/kurtispykes) for being an awesome copilot and helping me make this course happen.
