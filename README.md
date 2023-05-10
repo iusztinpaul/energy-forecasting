@@ -57,8 +57,8 @@ If that sounds like a lot, don't worry. After you cover this course, you will un
 The course consists of 7 lessons hosted on Medium Towards Data Science publication. To get the best out of this course, you should also run the code while you read the articles.
 
 **👇 Access the step-by-step lessons on Medium 👇**
-1. [Batch Serving. Feature Stores. Feature Engineering Pipelines](https://medium.com/towards-data-science/a-framework-for-building-a-production-ready-feature-engineering-pipeline-f0b29609b20f).
-2. Training Pipelines. ML Platforms. Hyperparameter Tuning.
+1. [Batch Serving. Feature Stores. Feature Engineering Pipelines.](https://medium.com/towards-data-science/a-framework-for-building-a-production-ready-feature-engineering-pipeline-f0b29609b20f).
+2. [Training Pipelines. ML Platforms. Hyperparameter Tuning.](https://medium.com/towards-data-science/a-guide-to-building-effective-training-pipelines-for-maximum-results-6fdaef594cee)
 3. Batch Prediction Pipeline. Package Python Modules with Poetry.
 4. Private PyPi Server. Orchestrate Everything with Airflow.
 5. Build Your Own App with FastAPI and Streamlit.

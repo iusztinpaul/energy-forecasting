@@ -2,7 +2,7 @@
 
 ## Install for Development
 
-Run:
+Create virtual environment:
 ```shell
 cd training-pipeline
 poetry shell
@@ -11,7 +11,7 @@ poetry install
 
 Check the [Set Up Additional Tools](https://github.com/iusztinpaul/energy-forecasting#-set-up-additional-tools-) and [Usage](https://github.com/iusztinpaul/energy-forecasting#usage) sections to see **how to set up** the **additional tools** and **credentials** you need to run this project.
 
-Check out this [Medium article](placeholder-medium-article) for more details about this module.
+Check out this [Medium article](https://medium.com/towards-data-science/a-guide-to-building-effective-training-pipelines-for-maximum-results-6fdaef594cee) for more details about this module.
 
 
 ## Usage for Development

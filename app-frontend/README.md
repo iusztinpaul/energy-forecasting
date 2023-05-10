@@ -2,7 +2,7 @@
 
 ## Install for Development
 
-Run:
+Create virtual environment:
 ```shell
 cd app-frontend
 poetry shell
