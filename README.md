@@ -246,10 +246,12 @@ When I am writing this documentation, GCS is free until 5GB.
 
 At this step, you have to do 5 things:
 - create a project
-- create a bucket
+- create a non-public bucket
 - create a service account that has admin permissions to the newly created bucket
 - create a service account that has read-only permissions to the newly created bucket
 - download a JSON key for the newly created service accounts.
+
+![Bucket Creation](images/gcp_gcs_screenshot.png)
 
 [Docs for creating a bucket on GCP.](https://cloud.google.com/storage/docs/creating-buckets)<br/>
 [Docs for creating a service account on GCP.](https://cloud.google.com/iam/docs/service-accounts-create)<br/>
@@ -258,10 +260,12 @@ At this step, you have to do 5 things:
 Your `bucket admin service account` should have assigned the following role: `Storage Object Admin`<br/>
 Your `bucket read-only service account` should have assigned the following role: `Storage Object Viewer`<br/>
 
+
 **NOTE:** When I write this course, GCP storage is free until 5GB.
 
 **If you want everything to work with the default settings, use the following naming conventions:**
-- create a `bucket` called `hourly-batch-predictions`
+- create a `project` called `energy_consumption`
+- create a `non-public bucket` called `hourly-batch-predictions` (Pick any region, but just be aware of it.)
 - rename your downloaded `admin` JSON service key to `admin-buckets.json`
 - rename your downloaded `read-only` JSON service key to `read-buckets.json`
 
