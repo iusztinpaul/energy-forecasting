@@ -6,6 +6,7 @@ The batch prediction pipeline uses the training pipeline module as a dependency.
 
 **NOTE:** Make sure that your private PyPi server is running. Check the [Usage section](https://github.com/iusztinpaul/energy-forecasting#the-pipeline) if it isn't.
 
+Build & publish the `training-pipeline` to your private PyPi server:
 ```shell
 cd training-pipeline
 poetry build
@@ -13,6 +14,7 @@ poetry publish -r my-pypi
 cd ..
 ```
 
+Install the virtual environment for `batch-prediction-pipeline`:
 ```shell
 cd batch-prediction-pipeline
 poetry shell
