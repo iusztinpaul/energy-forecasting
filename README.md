@@ -501,7 +501,7 @@ ML_PIPELINE_ROOT_DIR=/path/to/root/directory/energy-forecasting/repository pytho
 **See here how to install every project individually:**
 - [API](/app-api/README.md)
 - [Frontend](/app-frontend/README.md)
-- [Monitoring](/app-monitoring/README.md)`
+- [Monitoring](/app-monitoring/README.md)
 
 You can also run the whole web app in development mode using Docker:
 ```shell
