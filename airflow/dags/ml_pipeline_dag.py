@@ -15,7 +15,7 @@ from airflow.utils.edgemodifier import Label
     tags=["feature-engineering", "model-training", "batch-prediction"],
     max_active_runs=1,
 )
-def feature_pipeline():
+def ml_pipeline():
     @task.virtualenv(
         task_id="run_feature_pipeline",
         requirements=[
