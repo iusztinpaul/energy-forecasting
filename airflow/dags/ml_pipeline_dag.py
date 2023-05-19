@@ -340,4 +340,4 @@ def ml_pipeline():
     )
 
 
-feature_pipeline()
+ml_pipeline()
