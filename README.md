@@ -14,6 +14,8 @@ Following the documentation and the [Medium articles](#lessons), you can reprodu
 
 Don't worry if something doesn't make sense to you. I will explain everything in detail in the [Medium series](#lessons).
 
+More concretely, you will learn how to build, train, serve, and monitor an ML model using a batch architecture. 
+
 <p align="center">
   <img src="images/architecture.png">
 </p>
