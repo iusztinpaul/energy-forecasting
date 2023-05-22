@@ -397,12 +397,12 @@ docker ps
 ```
 Start a shell inside the `airflow-webserver` container and run `airflow dags backfill` as follows (in this example, we did a backfill between `2023/04/11 00:00:00` and `2023/04/13 23:59:59`):
 ```shell
-docker exec -it <container-id-of-airflow-airflow-webserver> sh
+docker exec -it <container-id-of-airflow-webserver> sh
 airflow dags backfill --start-date "2023/04/11 00:00:00" --end-date "2023/04/13 23:59:59" ml_pipeline
 ```
 If you want to clear the tasks and run them again, run these commands:
 ```shell
-docker exec -it <container-id-of-airflow-airflow-webserver> sh
+docker exec -it <container-id-of-airflow-webserver> sh
 airflow tasks clear --start-date "2023/04/11 00:00:00" --end-date "2023/04/13 23:59:59" ml_pipeline
 ```
 
