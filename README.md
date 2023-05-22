@@ -407,7 +407,7 @@ airflow tasks clear --start-date "2023/04/11 00:00:00" --end-date "2023/04/13 23
 ```
 
 
-#### Run Private PyPi Server Separately
+### Run Private PyPi Server Separately
 
 The private PyPi server is already hooked to the airflow docker compose file. But if you want to run it separately for whatever reason, you can run this command instead:
 ```shell
