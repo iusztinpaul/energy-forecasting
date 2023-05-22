@@ -481,7 +481,7 @@ Another option is to run every Python script with the `ML_PIPELINE_ROOT_DIR` var
 ML_PIPELINE_ROOT_DIR=/path/to/root/directory/energy-forecasting/repository python -m feature_pipeline.pipeline
 ```
 
-**NOTE:** This step is **critical** as every pipeline component needs to access the previous pipelines' metadata. By setting up the **ML_PIPELINE_ROOT_DIR** variable, all the metadata will be saved and accessed from the same location between different processes.
+**NOTE:** This step is **critical** as every pipeline component needs to access the previous pipelines' metadata. By setting up the **ML_PIPELINE_ROOT_DIR** variable, all the metadata will be saved and accessed from the same location between different processes. For example, the batch prediction pipeline will read the model version it needs to use to make predictions, which is a byproduct of the training pipeline passed as metadata between processes.
 
 ## Deploy the Code to GCP
 
