@@ -468,7 +468,7 @@ If Poetry is not using Python 3.9, you can follow the next steps:
 3. run `which python3.9` to find where Python3.9 is located
 4. run `poetry env use /path/to/python3.9`
 
-##### Set Up the ML_PIPELINE_ROOT_DIR Variable
+### Set Up the ML_PIPELINE_ROOT_DIR Variable
 
 **!!!** Before installing every module individually, **one key step** is to set the `ML_PIPELINE_ROOT_DIR` variable to your root directory of the `energy-forecasting` project:
 ```shell
@@ -480,6 +480,8 @@ Another option is to run every Python script with the `ML_PIPELINE_ROOT_DIR` var
 ```shell
 ML_PIPELINE_ROOT_DIR=/path/to/root/directory/energy-forecasting/repository python -m feature_pipeline.pipeline
 ```
+
+**NOTE:** This step is **critical** as every pipeline component needs to access the previous pipelines' metadata. By setting up the **ML_PIPELINE_ROOT_DIR** variable, all the metadata will be saved and accessed from the same location between different processes.
 
 ## Deploy the Code to GCP
 
