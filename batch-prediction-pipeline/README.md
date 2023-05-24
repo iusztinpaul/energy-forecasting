@@ -1,5 +1,7 @@
 # Batch Prediction Pipeline
 
+Check out this [Medium article](https://towardsdatascience.com/unlock-the-secret-to-efficient-batch-prediction-pipelines-using-python-a-feature-store-and-gcs-17a1462ca489) for more details about this module.
+
 ## Install for Development
 
 The batch prediction pipeline uses the training pipeline module as a dependency. Thus, as a first step, we must ensure that the training pipeline module is published to our private PyPi server.
@@ -34,7 +36,5 @@ To compute the monitoring metrics based, run the following:
 ```shell
 python -m batch_prediction_pipeline.monitoring
 ```
-
-Check out this [Medium article](placeholder-medium-article) for more details about this module.
 
 **NOTE:** Be careful to set the `ML_PIPELINE_ROOT_DIR` variable as explained in this [section](https://github.com/iusztinpaul/energy-forecasting#set-up-the-ml_pipeline_root_dir-variable).
