@@ -296,6 +296,8 @@ Also, if you have any questions, you can contact me directly on [LinkedIn](https
 
 ## The Pipeline
 
+Check out this [lesson on Medium](https://towardsdatascience.com/unlocking-mlops-using-airflow-a-comprehensive-guide-to-ml-system-orchestration-880aa9be8cff) to understand how everything is orchestrated using Airflow. 
+
 #### Run 
 You will run the pipeline using Airflow (`free usage`). Don't be scared. Docker makes everything very simple to set up.
 
