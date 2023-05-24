@@ -34,7 +34,7 @@ You can safely use this code as you like, as long as you respect the terms and a
 7. [Installation & Usage for Development](#installation)
 8. [Licensing & Contributing](#licensing)
 
-# 🤔 What You Will Learn <a name=learn></a>
+# 🤔 1. What You Will Learn <a name=learn></a>
 **At the end of this 7 lessons course, you will know how to:**
 * design a batch-serving architecture
 * use Hopsworks as a feature store
@@ -54,7 +54,7 @@ You can safely use this code as you like, as long as you respect the terms and a
 
 If that sounds like a lot, don't worry. After you cover this course, you will understand everything I said before. Most importantly, you will know WHY I used all these tools and how they work together as a system.
 
-# 🤌 Lessons & Tutorials <a name=lessons></a>
+# 🤌 2. Lessons & Tutorials <a name=lessons></a>
 
 The course consists of 7 lessons hosted on Medium Towards Data Science publication. To get the best out of this course, you should also run the code while you read the articles.
 
@@ -68,7 +68,7 @@ The course consists of 7 lessons hosted on Medium Towards Data Science publicati
 7. Deploy Everything to GCP. Build a CI/CD Pipeline using GitHub Actions.
 
 
-# 📊 Data <a name=data></a>
+# 📊 3. Data <a name=data></a>
 We used an open API that provides hourly energy consumption values for all the energy consumer types within Denmark.
 
 They provide an intuitive interface where you can easily query and visualize the data. You can access the data [here](https://www.energidataservice.dk/tso-electricity/ConsumptionDE35Hour).
@@ -485,15 +485,6 @@ ML_PIPELINE_ROOT_DIR=/path/to/root/directory/energy-forecasting/repository pytho
 
 **NOTE:** This step is **critical** as every pipeline component needs to access the previous pipelines' metadata. By setting up the **ML_PIPELINE_ROOT_DIR** variable, all the metadata will be saved and accessed from the same location between different processes. For example, the batch prediction pipeline will read the model version it needs to use to make predictions, which is a byproduct of the training pipeline passed as metadata between processes.
 
-## Deploy the Code to GCP
-
-[Check out this section.](./README_DEPLOY.md)
-
-## Set UP CI/CD with GitHub Actions
-
-[Check out this section.](./README_CICD.md)
-
--------
 
 **See here how to install every project individually:**
 - [Feature Pipeline](/feature-pipeline/README.md)
@@ -513,6 +504,14 @@ You can also run the whole web app in development mode using Docker:
 ```shell
 docker compose -f deploy/app-docker-compose.yml -f deploy/app-docker-compose.local.yml --project-directory . up --build
 ```
+
+## Deploy the Code to GCP
+
+[Check out this section.](./README_DEPLOY.md)
+
+## Set UP CI/CD with GitHub Actions
+
+[Check out this section.](./README_CICD.md)
 
 
 # 🏆 Licensing & Contributing <a name=licensing></a>
