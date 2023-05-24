@@ -34,6 +34,8 @@ You can safely use this code as you like, as long as you respect the terms and a
 7. [Installation & Usage for Development](#installation)
 8. [Licensing & Contributing](#licensing)
 
+--------
+
 # 🤔 1. What You Will Learn <a name=learn></a>
 **At the end of this 7 lessons course, you will know how to:**
 * design a batch-serving architecture
@@ -68,6 +70,9 @@ The course consists of 7 lessons hosted on Medium Towards Data Science publicati
 7. Deploy Everything to GCP. Build a CI/CD Pipeline using GitHub Actions.
 
 
+---------
+
+
 # 📊 3. Data <a name=data></a>
 We used an open API that provides hourly energy consumption values for all the energy consumer types within Denmark.
 
@@ -93,7 +98,9 @@ Thus, we will build a model that independently forecasts the energy consumption 
 
 [Check out our live demo to better understand how the data looks.](http://35.207.134.188:8501/)
 
-# 🧬 Code Structure <a name=structure></a>
+----------
+
+# 🧬 4. Code Structure <a name=structure></a>
 
 The code is split into two main components: the `pipeline` and the `web app`.
 
@@ -127,7 +134,9 @@ To follow the structure in its natural flow, read the folders in the following o
 <br/>
 <br/>
 
-# 🔧 Set Up Additional Tools <a name=tools></a>
+-------
+
+# 🔧 5. Set Up Additional Tools <a name=tools></a>
 
 **The code is tested only on Ubuntu 20.04 and 22.04 using Python 3.9.**
 
@@ -285,8 +294,9 @@ Also, you can get some free credits if you create a new GCP account (I had a new
 
 See [this document](/README_DEPLOY.md) for detailed instructions.
 
+-------
 
-# 🔎 Usage <a name=usage></a>
+# 🔎 6. Usage <a name=usage></a>
 
 **The code is tested only on Ubuntu 20.04 and 22.04 using Python 3.9.**
 
@@ -416,6 +426,8 @@ The private PyPi server is already hooked to the airflow docker compose file. Bu
 docker run -p 80:8080 -v ~/.htpasswd:/data/.htpasswd pypiserver/pypiserver:latest run -P .htpasswd/htpasswd.txt --overwrite
 ```
 
+------
+
 ## The Web App
 
 Here, everything is a lot simpler. This time, we need to set up only a few credentials. <br/>
@@ -454,7 +466,21 @@ docker compose -f deploy/app-docker-compose.yml -f deploy/app-docker-compose.loc
 * [Frontend](http://127.0.0.1:8501/)
 * [Monitoring](http://127.0.0.1:8502/)
 
-# 🧑‍💻 Installation & Usage for Development <a name=installation></a>
+-----
+
+## Deploy the Code to GCP
+
+[Check out this section.](./README_DEPLOY.md)
+
+## Set UP CI/CD with GitHub Actions
+
+[Check out this section.](./README_CICD.md)
+
+
+------
+
+
+# 🧑‍💻 7. Installation & Usage for Development <a name=installation></a>
 
 All the modules support Poetry. Thus the installation is straightforward.
 
@@ -505,16 +531,9 @@ You can also run the whole web app in development mode using Docker:
 docker compose -f deploy/app-docker-compose.yml -f deploy/app-docker-compose.local.yml --project-directory . up --build
 ```
 
-## Deploy the Code to GCP
+------
 
-[Check out this section.](./README_DEPLOY.md)
-
-## Set UP CI/CD with GitHub Actions
-
-[Check out this section.](./README_CICD.md)
-
-
-# 🏆 Licensing & Contributing <a name=licensing></a>
+# 🏆 8. Licensing & Contributing <a name=licensing></a>
 
 The code is under the MIT License. Thus, as long as you keep distributing the License, feel free to share, clone, or change the code as you like.
 
