@@ -62,7 +62,7 @@ The course consists of 7 lessons hosted on Medium Towards Data Science publicati
 1. [Batch Serving. Feature Stores. Feature Engineering Pipelines.](https://medium.com/towards-data-science/a-framework-for-building-a-production-ready-feature-engineering-pipeline-f0b29609b20f).
 2. [Training Pipelines. ML Platforms. Hyperparameter Tuning.](https://medium.com/towards-data-science/a-guide-to-building-effective-training-pipelines-for-maximum-results-6fdaef594cee)
 3. [Batch Prediction Pipeline. Package Python Modules with Poetry.](https://medium.com/towards-data-science/unlock-the-secret-to-efficient-batch-prediction-pipelines-using-python-a-feature-store-and-gcs-17a1462ca489)
-4. Private PyPi Server. Orchestrate Everything with Airflow.
+4. [Private PyPi Server. Orchestrate Everything with Airflow.](https://towardsdatascience.com/unlocking-mlops-using-airflow-a-comprehensive-guide-to-ml-system-orchestration-880aa9be8cff)
 5. Build Your Own App with FastAPI and Streamlit.
 6. Data Validation and Integrity using GE. Monitor Model Performance.
 7. Deploy Everything to GCP. Build a CI/CD Pipeline using GitHub Actions.
