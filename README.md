@@ -543,4 +543,13 @@ Furthermore, you can contact me directly on [LinkedIn](https://www.linkedin.com/
 
 -----
 
-I want to thank [Kurtis Pykes](https://github.com/kurtispykes) for being an awesome copilot and helping me make this course happen.
+Creating this free course took me a lot of time. If you enjoyed my work, you could support me to keep making awesome stuff by:
+
+* [Joining Medium through my referral link](https://pauliusztin.medium.com/membership) - It won't cost you additional $$$.
+* [Buying me a coffee](https://www.buymeacoffee.com/pauliusztin)
+
+Thank you ✌🏼 !
+
+<br/>
+
+I also want to thank [Kurtis Pykes](https://github.com/kurtispykes) for being an awesome copilot and helping me make this course happen.
