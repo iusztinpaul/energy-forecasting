@@ -545,7 +545,7 @@ Furthermore, you can contact me directly on [LinkedIn](https://www.linkedin.com/
 
 Creating this free course took me a lot of time. If you enjoyed my work, you could support me to keep making awesome stuff by:
 
-* [Joining Medium through my referral link](https://pauliusztin.medium.com/membership) - It won't cost you additional $$$.
+* [Joining Medium through my referral link](https://pauliusztin.medium.com/membership) - It won't cost you any additional $$$.
 * [Buying me a coffee](https://www.buymeacoffee.com/pauliusztin)
 
 Thank you ✌🏼 !
