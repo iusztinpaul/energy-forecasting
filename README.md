@@ -541,6 +541,8 @@ Also, if you find any bugs or missing pieces in the documentation, I encourage y
 
 Furthermore, you can contact me directly on [LinkedIn](https://www.linkedin.com/in/pauliusztin/) if you have any questions.
 
+I also want to thank [Kurtis Pykes](https://github.com/kurtispykes) for being an awesome copilot and helping me make this course happen.
+
 -----
 
 ### Let's Connect:
@@ -554,12 +556,10 @@ Furthermore, you can contact me directly on [LinkedIn](https://www.linkedin.com/
 <br/>
 <br/>
 
+-----
+
 `🎨 Creating content takes me a lot of time. If you enjoyed my work, you could support me by:`
 - [Joining Medium through my referral link](https://medium.com/membership/@pauliusztin) - It won't cost you any additional $$$.
 - [Buying me a coffee](https://www.buymeacoffee.com/pauliusztin)
 
 Thank you ✌🏼 !
-
-<br/>
-
-I also want to thank [Kurtis Pykes](https://github.com/kurtispykes) for being an awesome copilot and helping me make this course happen.
