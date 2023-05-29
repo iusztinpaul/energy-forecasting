@@ -552,6 +552,7 @@ Furthermore, you can contact me directly on [LinkedIn](https://www.linkedin.com/
 [<img alt="gmail" width="40px" src="images/twitter.png" align="left" style="padding-right:20px;"/>](https://twitter.com/iusztinpaul)
 
 <br/>
+<br/>
 
 `🎨 Creating content takes me a lot of time. If you enjoyed my work, you could support me by:`
 - [Joining Medium through my referral link](https://medium.com/membership/@pauliusztin) - It won't cost you any additional $$$.
