@@ -543,10 +543,19 @@ Furthermore, you can contact me directly on [LinkedIn](https://www.linkedin.com/
 
 -----
 
-Creating this free course took me a lot of time. If you enjoyed my work, you could support me to keep making awesome stuff by:
+### Let's Connect:
 
-* [Joining Medium through my referral link](https://pauliusztin.medium.com/membership) - It won't cost you any additional $$$.
-* [Buying me a coffee](https://www.buymeacoffee.com/pauliusztin)
+[<img alt="linkedin" width="40px" src="images/linkedin.png" align="left" style="padding-right:20px;"/>](https://www.linkedin.com/in/pauliusztin)
+[<img alt="medium" width="43px" src="images/medium.png" align="left" style="padding-right:20px;"/>](https://pauliusztin.medium.com/)
+[<img alt="substack" width="37px" src="images/substack.png" align="left" style="padding-right:20px;"/>](https://pauliusztin.substack.com/)
+[<img alt="gmail" width="40px" src="images/gmail.png" align="left" style="padding-right:20px;"/>](mailto:p.b.iusztin@gmail.com?subject=[From%20GitHub]%20ML%20Collaborations)
+[<img alt="gmail" width="40px" src="images/twitter.png" align="left" style="padding-right:20px;"/>](https://twitter.com/iusztinpaul)
+
+<br/>
+
+`🎨 Creating content takes me a lot of time. If you enjoyed my work, you could support me by:`
+- [Joining Medium through my referral link](https://medium.com/membership/@pauliusztin) - It won't cost you any additional $$$.
+- [Buying me a coffee](https://www.buymeacoffee.com/pauliusztin)
 
 Thank you ✌🏼 !
 
