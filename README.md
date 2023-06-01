@@ -547,7 +547,7 @@ I also want to thank [Kurtis Pykes](https://github.com/kurtispykes) for being an
 
 ### Let's connect if you want to level up in designing and productionizing ML systems:
 
-I post almost daily content on 👇🏼
+I post almost daily AI content on 👇🏼
 
 [<img alt="linkedin" width="40px" src="images/linkedin.png" align="left" style="padding-right:20px;"/>](https://www.linkedin.com/in/pauliusztin)
 [<img alt="medium" width="40px" src="images/medium.png" align="left" style="padding-right:20px;"/>](https://pauliusztin.medium.com/)
