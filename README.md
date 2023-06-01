@@ -545,16 +545,21 @@ I also want to thank [Kurtis Pykes](https://github.com/kurtispykes) for being an
 
 -----
 
-### Let's Connect:
+#### `Let's connect if you want to level up in designing and productionizing ML systems.`:
+
+I post almost daily content on 👇🏼
 
 [<img alt="linkedin" width="40px" src="images/linkedin.png" align="left" style="padding-right:20px;"/>](https://www.linkedin.com/in/pauliusztin)
 [<img alt="medium" width="40px" src="images/medium.png" align="left" style="padding-right:20px;"/>](https://pauliusztin.medium.com/)
 [<img alt="substack" width="35px" src="images/substack.png" align="left" style="padding-right:20px;"/>](https://pauliusztin.substack.com/)
 [<img alt="gmail" width="40px" src="images/gmail.png" align="left" style="padding-right:20px;"/>](mailto:p.b.iusztin@gmail.com?subject=[From%20GitHub]%20ML%20Collaborations)
-[<img alt="gmail" width="40px" src="images/twitter.png" align="left" style="padding-right:20px;"/>](https://twitter.com/iusztinpaul)
+[<img alt="twitter" width="40px" src="images/twitter.png" align="left" style="padding-right:20px;"/>](https://twitter.com/iusztinpaul)
 
 <br/>
 <br/>
+<br/>
+
+Subscribe to my [ML engineering weekly newsletter](https://pauliusztin.substack.com/).
 
 -----
 
@@ -562,4 +567,4 @@ I also want to thank [Kurtis Pykes](https://github.com/kurtispykes) for being an
 - [Joining Medium through my referral link](https://medium.com/membership/@pauliusztin) - It won't cost you any additional $$$.
 - [Buying me a coffee](https://www.buymeacoffee.com/pauliusztin)
 
-Thank you ✌🏼 !
+<br/>Thank you ✌🏼 !<br/>
