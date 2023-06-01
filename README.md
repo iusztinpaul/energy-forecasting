@@ -565,7 +565,7 @@ Subscribe to my [ML engineering weekly newsletter](https://pauliusztin.substack.
 
 `🎨 Creating content takes me a lot of time. If you enjoyed my work, you could support me by:`
 1. **joining Medium** through [**my referral link**](https://medium.com/membership/@pauliusztin), you can support me without any extra cost while enjoying limitless access to Medium’s rich collection of stories;
-2. [**Buying me a coffee.**](https://www.buymeacoffee.com/pauliusztin)
+2. [**buying me a coffee.**](https://www.buymeacoffee.com/pauliusztin)
 
 <br/>Thank you ✌🏼 !<br/>
 
