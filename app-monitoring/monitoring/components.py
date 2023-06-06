@@ -1,3 +1,4 @@
+from typing import List
 import requests
 
 import pandas as pd
@@ -12,23 +13,26 @@ def build_metrics_plot():
     """
 
     response = requests.get(API_URL / "monitoring" / "metrics", verify=False)
-    json_response = response.json()
+    if response.status_code != 200:
+        # If the response is invalid, build empty dataframes in the proper format.
+        metrics_df = build_dataframe([], [], values_column_name="mape")
 
-    datetime_utc = json_response.get("datetime_utc", [])
-    mape = json_response.get("mape", [])
+        title = "No metrics available."
+    else:
+        json_response = response.json()
 
-    # Prepare data for plotting.
-    metrics_df = pd.DataFrame(
-        list(zip(datetime_utc, mape)),
-        columns=["datetime_utc", "mape"],
-    )
-    metrics_df["datetime_utc"] = pd.to_datetime(metrics_df["datetime_utc"], unit="h")
+        # Build DataFrame for plotting.
+        datetime_utc = json_response.get("datetime_utc", [])
+        mape = json_response.get("mape", [])
+        metrics_df = build_dataframe(datetime_utc, mape, values_column_name="mape")
+
+        title = "Predictions vs. Observations | Aggregated Metrics"
 
     # Create plot.
     fig = go.Figure()
     fig.update_layout(
         title=dict(
-            text="Predictions vs. Observations | Aggregated Metrics",
+            text=title,
             font=dict(family="Arial", size=16),
         ),
         showlegend=True,
@@ -55,42 +59,37 @@ def build_data_plot(area: int, consumer_type: int):
     response = requests.get(
         API_URL / "monitoring" / "values" / f"{area}" / f"{consumer_type}", verify=False
     )
-    json_response = response.json()
+    if response.status_code != 200:
+        # If the response is invalid, build empty dataframes in the proper format.
+        train_df = build_dataframe([], [])
+        preds_df = build_dataframe([], [])
 
-    y_monitoring_datetime_utc = json_response.get("y_monitoring_datetime_utc", [])
-    y_monitoring_energy_consumption = json_response.get(
-        "y_monitoring_energy_consumption", []
-    )
-    predictions_monitoring_datetime_utc = json_response.get(
-        "predictions_monitoring_datetime_utc", []
-    )
-    predictions_monitoring_energy_consumptionc = json_response.get(
-        "predictions_monitoring_energy_consumptionc", []
-    )
+        title = "NO DATA AVAILABLE FOR THE GIVEN AREA AND CONSUMER TYPE"
+    else:
+        json_response = response.json()
 
-    # Prepare data for plotting.
-    train_df = pd.DataFrame(
-        list(zip(y_monitoring_datetime_utc, y_monitoring_energy_consumption)),
-        columns=["datetime_utc", "energy_consumption"],
-    )
-    preds_df = pd.DataFrame(
-        list(
-            zip(
-                predictions_monitoring_datetime_utc,
-                predictions_monitoring_energy_consumptionc,
-            )
-        ),
-        columns=["datetime_utc", "energy_consumption"],
-    )
+        # Build DataFrames for plotting.
+        y_monitoring_datetime_utc = json_response.get("y_monitoring_datetime_utc", [])
+        y_monitoring_energy_consumption = json_response.get(
+            "y_monitoring_energy_consumption", []
+        )
+        predictions_monitoring_datetime_utc = json_response.get(
+            "predictions_monitoring_datetime_utc", []
+        )
+        predictions_monitoring_energy_consumptionc = json_response.get(
+            "predictions_monitoring_energy_consumptionc", []
+        )
 
-    train_df["datetime_utc"] = pd.to_datetime(train_df["datetime_utc"], unit="h")
-    preds_df["datetime_utc"] = pd.to_datetime(preds_df["datetime_utc"], unit="h")
+        train_df = build_dataframe(y_monitoring_datetime_utc, y_monitoring_energy_consumption)
+        preds_df = build_dataframe(predictions_monitoring_datetime_utc, predictions_monitoring_energy_consumptionc)
+        
+        title = "Predictions vs. Observations | Energy Consumption"
 
     # Create plot.
     fig = go.Figure()
     fig.update_layout(
         title=dict(
-            text="Predictions vs. Observations | Energy Consumption",
+            text=title,
             font=dict(family="Arial", size=16),
         ),
         showlegend=True,
@@ -117,3 +116,26 @@ def build_data_plot(area: int, consumer_type: int):
     )
 
     return fig
+
+def build_dataframe(datetime_utc: List[int], energy_consumption_values: List[float], values_column_name: str = "energy_consumption"):
+    """
+    Build DataFrame for plotting from timestamps and energy consumption values.
+
+    Args:
+        datetime_utc (List[int]): list of timestamp values in UTC 
+        values (List[float]): list of energy consumption values
+        values_column_name (str): name of the column containing the values
+    """
+
+    df = pd.DataFrame(
+        list(zip(datetime_utc, energy_consumption_values)),
+        columns=["datetime_utc", values_column_name],
+    )
+    df["datetime_utc"] = pd.to_datetime(df["datetime_utc"], unit="h")
+
+    # Resample to hourly frequency to make the data continuous.
+    df = df.set_index("datetime_utc")
+    df = df.resample("H").asfreq()
+    df = df.reset_index()
+
+    return df

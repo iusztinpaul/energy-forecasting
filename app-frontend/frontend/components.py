@@ -20,18 +20,20 @@ def build_data_plot(area: int, consumer_type: int):
         # If the response is invalid, build empty dataframes in the proper format.
         train_df = build_dataframe([], [])
         preds_df = build_dataframe([], [])
+
         title = "NO DATA AVAILABLE FOR THE GIVEN AREA AND CONSUMER TYPE"
     else:
         json_response = response.json()
 
+        # Build DataFrames for plotting.
         datetime_utc = json_response.get("datetime_utc")
         energy_consumption = json_response.get("energy_consumption")
         pred_datetime_utc = json_response.get("preds_datetime_utc")
         pred_energy_consumption = json_response.get("preds_energy_consumption")
-
-        # Build DataFrame for plotting.
+        
         train_df = build_dataframe(datetime_utc, energy_consumption)
         preds_df = build_dataframe(pred_datetime_utc, pred_energy_consumption)
+
         title = "Energy Consumption per DE35 Industry Code per Hour"
 
     # Create plot.
@@ -65,7 +67,7 @@ def build_data_plot(area: int, consumer_type: int):
 
 def build_dataframe(datetime_utc: List[int], energy_consumption_values: List[float]):
     """
-    Build dataframe from timestamps and energy consumption values.
+    Build DataFrame for plotting from timestamps and energy consumption values.
 
     Args:
         datetime_utc (List[int]): list of timestamp values in UTC 
