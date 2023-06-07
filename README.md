@@ -175,11 +175,9 @@ poetry --version
 ## Docker
 ##### ``<< free usage >>``
 
-<br/>
-*[Install Docker on Ubuntu.](https://docs.docker.com/engine/install/ubuntu/)
-*[Install Docker on Mac.](https://docs.docker.com/desktop/install/mac-install/)
-*[Install Docker on Windows.](https://docs.docker.com/desktop/install/windows-install/)
-<br/>
+* [Install Docker on Ubuntu.](https://docs.docker.com/engine/install/ubuntu/)
+* [Install Docker on Mac.](https://docs.docker.com/desktop/install/mac-install/)
+* [Install Docker on Windows.](https://docs.docker.com/desktop/install/windows-install/)
 
 ## Configure Credentials for the Private PyPi Server
 ##### ``<< free usage >>``
