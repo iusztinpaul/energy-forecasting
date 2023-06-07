@@ -261,15 +261,14 @@ At this step, you have to do 5 things:
 - create a service account that has read-only permissions to the newly created bucket
 - download a JSON key for the newly created service accounts.
 
+Your `bucket admin service account` should have assigned the following role: `Storage Object Admin`<br/>
+Your `bucket read-only service account` should have assigned the following role: `Storage Object Viewer`<br/>
+
 ![Bucket Creation](images/gcp_gcs_screenshot.png)
 
 * [Docs for creating a bucket on GCP.](https://cloud.google.com/storage/docs/creating-buckets)<br/>
 * [Docs for creating a service account on GCP.](https://cloud.google.com/iam/docs/service-accounts-create)<br/>
 * [Docs for creating a JSON key for a GCP service account.](https://cloud.google.com/iam/docs/keys-create-delete)<br/>
-
-Your `bucket admin service account` should have assigned the following role: `Storage Object Admin`<br/>
-Your `bucket read-only service account` should have assigned the following role: `Storage Object Viewer`<br/>
-
 
 **NOTE:** When I write this course, GCP storage is free until 5GB.
 
