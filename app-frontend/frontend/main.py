@@ -20,7 +20,7 @@ area = st.selectbox(
     options=area_response.json().get("values", []),
 )
 
-# Create drown down for consumer type selection.
+# Create dropdown for consumer type selection.
 consumer_type_response = requests.get(API_URL / "consumer_type_values")
 
 consumer_type = st.selectbox(

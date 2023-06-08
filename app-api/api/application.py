@@ -9,6 +9,8 @@ from api.config import get_settings
 
 
 def get_app() -> FastAPI:
+    """Create FastAPI app."""
+    
     app = FastAPI(
         title=get_settings().PROJECT_NAME,
         docs_url=f"/api/{get_settings().VERSION}/docs",
