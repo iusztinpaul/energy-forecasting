@@ -1,7 +1,5 @@
 # The Full Stack 7-Steps MLOps Framework
 
-## CI/CD
-
 Congratulations, you are close to the whole experience if you reached this far. This is the last step from the 7 lessons of the course.
 
 **NOTE:** You can finish this lesson only if you deploy your code to GCP. If you haven't. [Check out this section to see how.](https://github.com/iusztinpaul/energy-forecasting/blob/main/README_DEPLOY.md)
