@@ -10,10 +10,11 @@ Also, you can get some free credits if you have a new GCP account (I had 300$ fr
 
 [Access the step-by-step Medium Lesson.](placeholder for Medium article)
 
+------
+
 ## General Set Up
 
-Before setting up the code, we must go to our GCP `energy_consumption` project and create a few resources. After, you can SSH to your machines and deploy your code.
-
+Before setting up the code, we must go to your GCP `energy_consumption` project and create a few resources. After, you can SSH to your machines and deploy your code.
 
 #### GCP Resources
 
