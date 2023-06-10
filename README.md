@@ -23,6 +23,12 @@ More concretely, you will learn how to build, train, serve, and monitor an ML mo
 Check out the video below to better understand what you will build during this course 👇
 [![Introduction Video](https://img.youtube.com/vi/OKk9U310qYE/0.jpg)](https://youtu.be/OKk9U310qYE)
 
+ <iframe width="560" height="315"
+src="[https://www.youtube.com/embed/MUQfKFzIOeU](https://youtu.be/OKk9U310qYE)" 
+frameborder="0" 
+allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+allowfullscreen></iframe>
+
 You can safely use this code as you like, as long as you respect the terms and agreement of the MIT License.
 
 ``<<< Using all the tools suggested in the course will be free of charge, except the ones from Lesson 7 (last lesson), where you will be deploying your application to GCP which will cost you ~20$. >>>``
