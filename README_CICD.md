@@ -1,8 +1,6 @@
 # The Full Stack 7-Steps MLOps Framework
 
-### 🔥 LIVE DEMO 🔥 | [WEB APP - FORECASTING](http://35.207.134.188:8501/) | [WEB APP - MONITORING](http://35.207.134.188:8502/)
-
---------
+## CI/CD
 
 Congratulations, you are close to the whole experience if you reached this far. This is the last step from the 7 lessons of the course.
 
