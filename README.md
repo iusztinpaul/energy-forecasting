@@ -20,12 +20,17 @@ Don't worry if something doesn't make sense to you. I will explain everything in
   <img src="images/architecture.png">
 </p>
 
+<br/>
+
 <div align="center">
   <a href="https://youtu.be/OKk9U310qYE">
     <strong>Check out the video below to better understand what you will build during this course 👇</strong>
     <img src="images/screenshot_introduction_video.png" alt="Introduction Video" style="width:75%;">
   </a>
 </div>
+
+<br/>
+<br/>
 
 You can safely use this code as you like, as long as you respect the terms and agreement of the MIT License.
 
