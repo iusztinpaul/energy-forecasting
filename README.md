@@ -21,8 +21,8 @@ Don't worry if something doesn't make sense to you. I will explain everything in
 </p>
 
 <div align="center">
-  <strong>Check out the video below to better understand what you will build during this course 👇</strong>
   <a href="https://youtu.be/OKk9U310qYE">
+    <strong>Check out the video below to better understand what you will build during this course 👇</strong>
     <img src="https://img.youtube.com/vi/OKk9U310qYE/0.jpg" alt="Introduction Video" style="width:50%;">
   </a>
 </div>
