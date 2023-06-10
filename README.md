@@ -21,7 +21,9 @@ More concretely, you will learn how to build, train, serve, and monitor an ML mo
 </p>
 
 Check out the video below to better understand what you will build during this course 👇
-[![Introduction Video](https://img.youtube.com/vi/OKk9U310qYE/0.jpg)](https://youtu.be/OKk9U310qYE)
+<p align="center">
+  [![Introduction Video](https://img.youtube.com/vi/OKk9U310qYE/0.jpg)](https://youtu.be/OKk9U310qYE)
+</p>
 
  <iframe width="560" height="315"
 src="[https://www.youtube.com/embed/MUQfKFzIOeU](https://youtu.be/OKk9U310qYE)" 
