@@ -1,8 +1,6 @@
 # The Full Stack 7-Steps MLOps Framework
 
---------
-
-This repository is a **7-lesson course** that will walk you step-by-step through how to **design, implement, and deploy an ML system** using **MLOps good practices**. During the course, you will build a production-ready model forecasting energy consumption for the next 24 hours across multiple consumer types from Denmark.
+This repository contains a **7-lesson course** that will walk you step-by-step through how to **design, implement, and deploy an ML system** using **MLOps good practices**. During the course, you will build a production-ready model forecasting energy consumption for the next 24 hours across multiple consumer types from Denmark.
 
 More concretely, you will learn how to build, train, serve, and monitor an ML model using a batch architecture. Also, you will learn how to integrate an experiment tracker, a model registry, a feature store, Airflow, and more!
 
