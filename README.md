@@ -24,7 +24,7 @@ More concretely, you will learn how to build, train, serve, and monitor an ML mo
 
 <div align="center">
   <a href="https://youtu.be/OKk9U310qYE">
-    <img src="https://img.youtube.com/vi/OKk9U310qYE/0.jpg" alt="Introduction Video" style="width:75%;">
+    <img src="https://img.youtube.com/vi/OKk9U310qYE/0.jpg" alt="Introduction Video" style="width:50%;">
   </a>
 </div>
 
