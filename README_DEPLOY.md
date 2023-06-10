@@ -1,10 +1,6 @@
 # The Full Stack 7-Steps MLOps Framework
 
-### 🔥 LIVE DEMO 🔥 | [WEB APP - FORECASTING](http://35.207.134.188:8501/) | [WEB APP - MONITORING](http://35.207.134.188:8502/)
-
---------
-
-# Deploy to GCP
+## Deploy to GCP
 
 This step must only be finished if you want to deploy the code on GCP VMs and build the CI/CD with GitHub Actions.
 
