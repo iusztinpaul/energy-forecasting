@@ -21,10 +21,11 @@ More concretely, you will learn how to build, train, serve, and monitor an ML mo
 </p>
 
 Check out the video below to better understand what you will build during this course 👇
-[![Introduction Video](https://img.youtube.com/vi/OKk9U310qYE/0.jpg)](https://youtu.be/OKk9U310qYE)
 
 <div align="center">
-  <a href="https://youtu.be/OKk9U310qYE"><img src="https://img.youtube.com/vi/OKk9U310qYE/0.jpg" alt="Introduction Video"></a>
+  <a href="https://youtu.be/OKk9U310qYE">
+    <img src="https://img.youtube.com/vi/OKk9U310qYE/0.jpg" alt="Introduction Video" style="width:100%;">
+  </a>
 </div>
 
 You can safely use this code as you like, as long as you respect the terms and agreement of the MIT License.
