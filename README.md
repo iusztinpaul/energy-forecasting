@@ -6,6 +6,8 @@
 
 This repository is a **7-lesson course** that will walk you step-by-step through how to **design, implement, and deploy an ML system** using **MLOps good practices**. During the course, you will build a production-ready model forecasting energy consumption for the next 24 hours across multiple consumer types from Denmark.
 
+More concretely, you will learn how to build, train, serve, and monitor an ML model using a batch architecture. Also, you will learn how to integrate an experiment tracker, a model registry, a feature store, Airflow, and more!
+
 This course targets mid/advanced machine learning engineers who want to level up their skills by building their own end-to-end projects.
 
 Following the documentation and the [Medium articles](#lessons), you can reproduce and understand every piece of the code!
@@ -14,15 +16,13 @@ Following the documentation and the [Medium articles](#lessons), you can reprodu
 
 Don't worry if something doesn't make sense to you. I will explain everything in detail in the [Medium series](#lessons).
 
-More concretely, you will learn how to build, train, serve, and monitor an ML model using a batch architecture. 
-
 <p align="center">
   <img src="images/architecture.png">
 </p>
 
 <div align="center">
+  <strong>Check out the video below to better understand what you will build during this course 👇</strong>
   <a href="https://youtu.be/OKk9U310qYE">
-    <p>Check out the video below to better understand what you will build during this course 👇</p>
     <img src="https://img.youtube.com/vi/OKk9U310qYE/0.jpg" alt="Introduction Video" style="width:50%;">
   </a>
 </div>
