@@ -147,7 +147,7 @@ gcloud compute ssh ml-pipeline --zone europe-west3-c --quiet --tunnel-through-ia
 **NOTE 1:** Change the `zone` if you haven't created a VM within the same zone as us.<br/>
 **NOTE 2:** Your `project-id` is NOT your `project name`. Go to your GCP projects list and find the project id.
 
-Starting this point, if you configured the firewalls and service account correctly, as everything is Dockerized, all the steps will be 99% similar to the ones from the [Set Up Additional Tools](https://github.com/iusztinpaul/energy-forecasting#-set-up-additional-tools-) and [Usage](https://github.com/iusztinpaul/energy-forecasting#usage) sections.
+Starting this point, if you configured the firewalls and service account correctly, as everything is Dockerized, all the steps will be 99% similar to the ones from the [Set Up Additional Tools](https://github.com/iusztinpaul/energy-forecasting#tools) and [Usage](https://github.com/iusztinpaul/energy-forecasting#usage) sections.
 
 You can follow the same steps while your terminal has an SSH connection with the GCP machine.
 
@@ -230,10 +230,11 @@ gcloud compute ssh app --zone europe-west3-c --quiet --tunnel-through-iap --proj
 **NOTE 1:** Change the `zone` if you haven't created a VM within the same zone as us.<br/>
 **NOTE 2:** Your `project-id` is NOT your `project name`. Go to your GCP projects list and find the project id.
 
-This time you are in luck. You can repeat the same steps as in the [Deploy - The Pipeline Section](https://github.com/iusztinpaul/energy-forecasting/blob/main/README_DEPLOY.md#deploy---the-pipeline).
+Here the process is similar to deploying the ML Pipeline.
 
-You have to consider the exact same observations while repeating the steps for `The Web App` from the [Set Up Additional Tools](https://github.com/iusztinpaul/energy-forecasting#-set-up-additional-tools-) and [Usage](https://github.com/iusztinpaul/energy-forecasting#usage) sections.
+You can deploy the web app following the exact same steps described in [Lesson 6](https://towardsdatascience.com/fastapi-and-streamlit-the-python-duo-you-must-know-about-72825def1243) or in the [Set Up Additional Tools](https://github.com/iusztinpaul/energy-forecasting#tools) & [Usage](https://github.com/iusztinpaul/energy-forecasting#usage) sections of the GitHub repository.
 
+But don't forget to keep in mind the same edge cases described in the [Deploy - The Pipeline](https://github.com/iusztinpaul/energy-forecasting/blob/main/README_DEPLOY.md#deploy---the-pipeline) section.
 
 ----
 
