@@ -39,7 +39,7 @@ You have to create 5 variables that will be used by the GitHub Actions scripts:
 
 In the same `Secrets and variables/Actions` section, hit the `Secrets` tab. 
 
-You can create a new secret by pressing the `New repository variable` button.
+You can create a new secret by pressing the `New repository secret` button.
 
 These are similar to the variables we just completed, but after you fill in their values, you can't see them anymore. That is why these are called secrets. Here is where you add all your sensitive information. In our case, the GCP credentials and private keys.
 
@@ -77,7 +77,7 @@ Copy the output from the terminal and create the `GCP_SSH_PRIVATE_KEY` variable.
 
 ## Run the CI/CD Pipeline
 
-Now make any change to the code, push it to git, and the GitHub Actions should trigger automatically.
+Now make any change to the code, push it to the main branch, and the GitHub Actions files should trigger automatically.
 
 To see their results, check your GitHub repository's `Actions` tab.
 

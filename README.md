@@ -74,8 +74,8 @@ The course consists of 7 lessons hosted on Medium Towards Data Science publicati
 3. [Batch Prediction Pipeline. Package Python Modules with Poetry.](https://medium.com/towards-data-science/unlock-the-secret-to-efficient-batch-prediction-pipelines-using-python-a-feature-store-and-gcs-17a1462ca489)
 4. [Private PyPi Server. Orchestrate Everything with Airflow.](https://towardsdatascience.com/unlocking-mlops-using-airflow-a-comprehensive-guide-to-ml-system-orchestration-880aa9be8cff)
 5. [Data Validation for Quality and Integrity using GE. Model Performance Continuous Monitoring.](https://towardsdatascience.com/ensuring-trustworthy-ml-systems-with-data-validation-and-real-time-monitoring-89ab079f4360)
-6. Build Your Own App with FastAPI and Streamlit.
-8. Deploy Everything to GCP. Build a CI/CD Pipeline using GitHub Actions.
+6. [Consume and Visualize your Model's Predictions using FastAPI and Streamlit. Dockerize Everything.](https://towardsdatascience.com/fastapi-and-streamlit-the-python-duo-you-must-know-about-72825def1243)
+7. [Deploy All the ML Components to GCP. Build a CI/CD Pipeline Using Github Actions.](https://towardsdatascience.com/seamless-ci-cd-pipelines-with-github-actions-on-gcp-your-tools-for-effective-mlops-96f676f72012)
 
 
 ---------
