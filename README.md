@@ -22,7 +22,6 @@ Don't worry if something doesn't make sense to you. We will explain everything i
 
 <div align="center">
   <a href="https://youtu.be/OKk9U310qYE">
-    <br/>
     <strong>Check out the video below to better understand what you will build during this course 👇</strong>
     <br/>
     <br/>
