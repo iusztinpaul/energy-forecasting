@@ -14,7 +14,7 @@ Following the documentation and the [lessons on Medium](#lessons), you have *2.5
 
 **At the end of the course, you will know how to build everything from the diagram below 👇**
 
-Don't worry if something doesn't make sense to you. I will explain everything in detail in the [Medium lessons](#lessons).
+Don't worry if something doesn't make sense to you. We will explain everything in detail in the [Medium lessons](#lessons).
 
 <p align="center">
   <img src="images/architecture.png">
@@ -66,7 +66,7 @@ Don't worry if something doesn't make sense to you. I will explain everything in
 * deploy everything to GCP
 * build a CI/CD pipeline using GitHub Actions
 
-If that sounds like a lot, don't worry. After you cover this course, you will understand everything I said before. Most importantly, you will know WHY I used all these tools and how they work together as a system.
+If that sounds like a lot, don't worry. After you cover this course, you will understand everything we said before. Most importantly, you will know WHY we used all these tools and how they work together as a system.
 
 # 🤌 2. Lessons & Tutorials <a name=lessons></a>
 
@@ -223,7 +223,7 @@ cat ~/.config/pypoetry/auth.toml
 
 You will use [Hopsworks](https://www.hopsworks.ai/) as your serverless feature store. Thus, you have to create an account and a project on Hopsworks. We will show you how to configure the code to use your Hopsworks project later.
 
-[I explained in this lesson how to create an API Key on Hopsworks.](https://medium.com/towards-data-science/a-framework-for-building-a-production-ready-feature-engineering-pipeline-f0b29609b20f) But long story short, you can go to your Hopsworks account settings and create the API Key from there.
+[We explained on Medium in Lesson 1 how to create a Hopsworks API Key.](https://medium.com/towards-data-science/a-framework-for-building-a-production-ready-feature-engineering-pipeline-f0b29609b20f) But long story short, you can go to your Hopsworks account settings and create the API Key from there.
 
 **If you want everything to work with the default settings, use the following naming conventions:**
 - create a `project` called `energy_consumption`
@@ -238,7 +238,7 @@ You will use [Hopsworks](https://www.hopsworks.ai/) as your serverless feature s
 
 You will use Weights & Biases as your serverless ML platform. Thus, you must create an account and a project on Weights & Biases. We will show you how to configure the code to use your W&B project later.
 
-[On Medium, I explained in **Lesson 2** how to create an API Key on W&B.](https://towardsdatascience.com/a-guide-to-building-effective-training-pipelines-for-maximum-results-6fdaef594cee) But long story short, you can go to your W&B user settings and create the API Key from there.
+[On Medium, we explained in **Lesson 2** how to create an API Key on W&B.](https://towardsdatascience.com/a-guide-to-building-effective-training-pipelines-for-maximum-results-6fdaef594cee) But long story short, you can go to your W&B user settings and create the API Key from there.
 
 **If you want everything to work with the default settings, use the following naming conventions:**
 - create an `entity` called `teaching-mlops`
@@ -258,7 +258,7 @@ First, you must install the `gcloud` GCP CLI on your machine.
 
 As before, you have to create an account and a project on GCP. Using solely the bucket as storage will be free of charge.
 
-When I am writing this documentation, GCS is free until 5GB.
+When we were writing this documentation, GCS was free until 5GB.
 
 **If you want everything to work with the default settings, use the following naming conventions:**
 - create a `project` called `energy_consumption`
@@ -282,7 +282,7 @@ Your `bucket read-only service account` should have assigned the following role:
 * [Docs for creating a service account on GCP.](https://cloud.google.com/iam/docs/service-accounts-create)<br/>
 * [Docs for creating a JSON key for a GCP service account.](https://cloud.google.com/iam/docs/keys-create-delete)<br/>
 
-**NOTE:** When I write this course, GCP storage is free until 5GB.
+**NOTE:** When we were writing this documentation, GCS was free until 5GB.
 
 **If you want everything to work with the default settings, use the following naming conventions:**
 - create a `project` called `energy_consumption`
@@ -298,9 +298,9 @@ Your `bucket read-only service account` should have assigned the following role:
 
 This step must only be finished if you want to deploy the code on GCP VMs and build the CI/CD with GitHub Actions.
 
-Note that this step might result in a few costs on GCP. It won't be much. While developing this course, I spent only ~20$, which will probably be less for you.
+Note that this step might result in a few costs on GCP. It won't be much. While developing this course, we spent only ~20$.
 
-Also, you can get some free credits if you create a new GCP account (I had a new account and received 300$ in GCP credits). Just be sure to delete the resources after you finish the course.
+Also, you can get some free credits if you create a new GCP account (we created a new account and received 300$ in GCP credits). Just be sure to delete the resources after you finish the course.
 
 See [this document](/README_DEPLOY.md) for detailed instructions.
 
@@ -547,7 +547,7 @@ docker compose -f deploy/app-docker-compose.yml -f deploy/app-docker-compose.loc
 
 The code is under the MIT License. Thus, as long as you keep distributing the License, feel free to share, clone, or change the code as you like.
 
-Also, if you find any bugs or missing pieces in the documentation, I encourage you to add an issue on GitHub. I will respond to you and adapt the code and docs for future readers.
+Also, if you find any bugs or missing pieces in the documentation, I encourage you to add an issue on GitHub or a PR. Based on your support, I will adapt the code and docs for future readers.
 
 Furthermore, you can contact me directly on [LinkedIn](https://www.linkedin.com/in/pauliusztin/) if you have any questions.
 
