@@ -10,7 +10,7 @@ This **course targets** *mid/advanced ML engineers* who want to *level up their 
 
 Following the documentation and the [lessons on Medium](#lessons), you have *2.5 hours of reading & video materials* which will help you understand every piece of the code!
 
-**At the end of the course, you will know how to build everything from the diagram below.**
+**At the end of the course, you will know how to build everything from the diagram below 👇**
 
 Don't worry if something doesn't make sense to you. I will explain everything in detail in the [Medium lessons](#lessons).
 
@@ -30,9 +30,9 @@ Don't worry if something doesn't make sense to you. I will explain everything in
 <br/>
 <br/>
 
-You can safely use this code as you like, as long as you respect the terms and agreement of the MIT License.
+*You can safely use this code as you like, as long as you respect the terms and agreement of the MIT License.*
 
-``<<< Using all the tools suggested in the course will be free of charge, except the ones from Lesson 7 (last lesson), where you will be deploying your application to GCP which will cost you ~20$. >>>``
+``<<< Using all the tools suggested in the course will be free of charge, except the ones from Lesson 7, where you will be deploying your application to GCP which will cost you ~20$. >>>``
 
 # Table of Contents
 1. [What You Will Learn](#learn)
