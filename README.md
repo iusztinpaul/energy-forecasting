@@ -321,7 +321,9 @@ Check out [Lesson 4](https://towardsdatascience.com/unlocking-mlops-using-airflo
 #### Run 
 You will run the pipeline using Airflow (`free usage`). Don't be scared. Docker makes everything very simple to set up.
 
-**NOTE:** We also hooked the **private PyPi server** in the same docker-compose.yaml file with Airflow. Thus, everything will start with one command.
+**Note:** We also hooked the **private PyPi server** in the same docker-compose.yaml file with Airflow. Thus, everything will start with one command.
+
+**Important:** If you plan to run `the pipeline` outside Airflow, be sure to check the [🧑‍💻 7. Installation & Usage for Development](https://github.com/iusztinpaul/energy-forecasting/tree/main#-7-installation--usage-for-development-) section.
 
 ```shell
 # Move to the airflow directory.
@@ -440,7 +442,11 @@ docker run -p 80:8080 -v ~/.htpasswd:/data/.htpasswd pypiserver/pypiserver:lates
 
 ## The Web App
 
-Here, everything is a lot simpler. This time, we need to set up only a few credentials. <br/>
+Check out [Lesson 6](https://medium.com/towards-data-science/fastapi-and-streamlit-the-python-duo-you-must-know-about-72825def1243) on Medium to better understand how the web app components work together.
+
+**Important:** If you plan to run `the web app` components without docker-compose, check the [🧑‍💻 7. Installation & Usage for Development](https://github.com/iusztinpaul/energy-forecasting/tree/main#-7-installation--usage-for-development-) section.
+
+Fortunately, everything is a lot simpler when setting up the web app. This time, we need to configure only a few credentials. <br/>
 
 Copy the bucket read-only GCP credentials to the root directory of your `energy-forecasting` project:
 ```shell
@@ -508,7 +514,7 @@ If Poetry is not using Python 3.9, you can follow the next steps:
 
 ### Set Up the ML_PIPELINE_ROOT_DIR Variable
 
-**!!!** Before installing and running every module individually, **one key step** is to set the `ML_PIPELINE_ROOT_DIR` variable to your root directory of the `energy-forecasting` project (or any other directory - just make sure to set it):
+**Important:** Before installing and running every module individually, **one key step** is to set the `ML_PIPELINE_ROOT_DIR` variable to your root directory of the `energy-forecasting` project (or any other directory - just make sure to set it):
 Export it to your `~/.bashrc` file:
 ```shell
 gedit ~/.bashrc
