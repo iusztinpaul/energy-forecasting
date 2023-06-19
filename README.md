@@ -8,6 +8,8 @@ More concretely, you will learn how to build, train, serve, and monitor an ML mo
 
 This **course targets** *mid/advanced ML engineers* who want to *level up their skills* by building their own end-to-end projects or *SWE* who want to *transition to ML engineering*.
 
+------
+
 Following the documentation and the [lessons on Medium](#lessons), you have *2.5 hours of reading & video materials* which will help you understand every piece of the code!
 
 **At the end of the course, you will know how to build everything from the diagram below 👇**
