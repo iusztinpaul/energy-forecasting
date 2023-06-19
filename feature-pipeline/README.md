@@ -1,6 +1,8 @@
 # Feature Pipeline
 
-Check out [Lesson 1](https://medium.com/towards-data-science/a-framework-for-building-a-production-ready-feature-engineering-pipeline-f0b29609b20f) on Medium to better understand how we built the FE pipeline. Also, check out [Lesson 5](https://towardsdatascience.com/ensuring-trustworthy-ml-systems-with-data-validation-and-real-time-monitoring-89ab079f4360) to learn how we implemented the data validation layer using Great Expectations.
+Check out [Lesson 1](https://medium.com/towards-data-science/a-framework-for-building-a-production-ready-feature-engineering-pipeline-f0b29609b20f) on Medium to better understand how we built the FE pipeline. 
+
+Also, check out [Lesson 5](https://towardsdatascience.com/ensuring-trustworthy-ml-systems-with-data-validation-and-real-time-monitoring-89ab079f4360) to learn how we implemented the data validation layer using Great Expectations.
 
 ## Install for Development
 
