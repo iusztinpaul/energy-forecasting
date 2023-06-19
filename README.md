@@ -1,14 +1,14 @@
 # The Full Stack 7-Steps MLOps Framework
 
-`**Learn MLE & MLOps** for free by designing, building, deploying and monitoring an end-to-end ML batch system | *source code + 2.5 hours of reading & video materials on Medium*`
+`Learn MLE & MLOps for free by designing, building, deploying and monitoring an end-to-end ML batch system | source code + 2.5 hours of reading & video materials on Medium`
 
 This repository contains a **7-lesson course** that will walk you step-by-step through how to **design, implement, deploy, and monitor an ML batch system** using **MLOps good practices**. During the course, you will build a production-ready model forecasting energy consumption levels for the next 24 hours across multiple consumer types from Denmark.
 
 More concretely, you will learn how to build, train, serve, and monitor an ML model using a batch architecture. Also, you will learn how to integrate an experiment tracker, a model registry, a feature store, Docker, Airflow, GitHub Actions and more!
 
-This *course targets mid/advanced ML engineers* who want to *level up their skills* by building their own end-to-end projects or *SWE* who want to *transition to ML engineering*.
+This **course targets** *mid/advanced ML engineers* who want to *level up their skills* by building their own end-to-end projects or *SWE* who want to *transition to ML engineering*.
 
-Following the documentation and the [lessons on Medium](#lessons) you have *2.5 hours of reading & video materials* which will help you understand every piece of the code!
+Following the documentation and the [lessons on Medium](#lessons), you have *2.5 hours of reading & video materials* which will help you understand every piece of the code!
 
 **At the end of the course, you will know how to build everything from the diagram below.**
 
