@@ -538,9 +538,11 @@ By doing so, all the 3 pipeline projects (feature, training, batch) will load an
 - [Training Pipeline](/training-pipeline/README.md)
 - [Batch Prediction Pipeline](/batch-prediction-pipeline/README.md)
 
+<br/> 
+<br/> 
 
 ## The Web App
-**We support Docker to run the web app. Check out the [Usage](#usage) section if you only want to run it as a whole.**<br/><br/> 
+**We support Docker to run the web app. Check out the [Usage](#usage) section if you only want to run it as a whole.**<br/>
 
 **See here how to install every project individually:**
 - [API](/app-api/README.md)
