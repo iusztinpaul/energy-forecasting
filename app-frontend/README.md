@@ -1,5 +1,7 @@
 # Frontend - Web APP
 
+Check out [Lesson 6](https://towardsdatascience.com/fastapi-and-streamlit-the-python-duo-you-must-know-about-72825def1243) on Medium to better understand how we built the Streamlit predictions dashboard.
+
 ## Install for Development
 
 Create virtual environment:
@@ -20,5 +22,3 @@ streamlit run frontend/main.py --server.port 8501
 ```
 
 Access http://127.0.0.1:8501/ to see the app.
-
-Check out this [Medium article](placeholder-medium-article) for more details about this module.

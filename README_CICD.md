@@ -4,7 +4,7 @@ Congratulations, you are close to the whole experience if you reached this far. 
 
 **NOTE:** You can finish this lesson only if you deploy your code to GCP. If you haven't. [Check out this section to see how.](https://github.com/iusztinpaul/energy-forecasting/blob/main/README_DEPLOY.md)
 
-[Access the step-by-step Medium Lesson.](placeholder for Medium article).
+[Access Lesson 7 on Medium for more detailed step-by-step instructions.](https://towardsdatascience.com/seamless-ci-cd-pipelines-with-github-actions-on-gcp-your-tools-for-effective-mlops-96f676f72012).
 
 # CI/CD
 
@@ -87,4 +87,4 @@ To see their results, check your GitHub repository's `Actions` tab.
 
 Two actions will be triggered. One will build and deploy the `ml-pipeline` modules to your `ml-pipeline` GCP VM, and one will build and deploy the `web app` to your `app` GCP VM. 
 
-If you want to understand better how we wrote the GitHub Actions scripts under the `.github/workflows` directory [check out this Medium article](placeholder for Medium article) that explains everything in detail.
+If you want to understand better how we wrote the GitHub Actions scripts under the `.github/workflows` directory [check out the **"CI/CD Pipeline Using GitHub Actions"** section of Lesson 7 on Medium](https://towardsdatascience.com/seamless-ci-cd-pipelines-with-github-actions-on-gcp-your-tools-for-effective-mlops-96f676f72012) that explains everything in detail.

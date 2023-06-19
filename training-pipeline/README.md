@@ -1,6 +1,6 @@
 # Training Pipeline
 
-Check out this [Medium article](https://medium.com/towards-data-science/a-guide-to-building-effective-training-pipelines-for-maximum-results-6fdaef594cee) for more details about this module.
+Check out [Lesson 2](https://medium.com/towards-data-science/a-guide-to-building-effective-training-pipelines-for-maximum-results-6fdaef594cee) on Medium to better understand how we built the training pipeline.
 
 ## Install for Development
 
@@ -33,4 +33,4 @@ python -m training_pipeline.best_config
 python -m training_pipeline.train
 ```
 
-**NOTE:** Be careful to set the `ML_PIPELINE_ROOT_DIR` variable as explain in this [section](https://github.com/iusztinpaul/energy-forecasting#set-up-the-ml_pipeline_root_dir-variable).
+**NOTE:** Be careful to set the `ML_PIPELINE_ROOT_DIR` variable as explained in the [Set Up the ML_PIPELINE_ROOT_DIR Variable](https://github.com/iusztinpaul/energy-forecasting#set-up-the-ml_pipeline_root_dir-variable) section of the main README.

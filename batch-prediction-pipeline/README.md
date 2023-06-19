@@ -1,6 +1,6 @@
 # Batch Prediction Pipeline
 
-Check out this [Medium article](https://towardsdatascience.com/unlock-the-secret-to-efficient-batch-prediction-pipelines-using-python-a-feature-store-and-gcs-17a1462ca489) for more details about this module.
+Check out [Lesson 3](https://towardsdatascience.com/unlock-the-secret-to-efficient-batch-prediction-pipelines-using-python-a-feature-store-and-gcs-17a1462ca489) on Medium to better understand how we built the batch prediction pipeline. Also, check out [Lesson 5](https://towardsdatascience.com/ensuring-trustworthy-ml-systems-with-data-validation-and-real-time-monitoring-89ab079f4360) to learn how we implemented the monitoring layer to compute the model's real-time performance.
 
 ## Install for Development
 
@@ -37,4 +37,4 @@ To compute the monitoring metrics based, run the following:
 python -m batch_prediction_pipeline.monitoring
 ```
 
-**NOTE:** Be careful to set the `ML_PIPELINE_ROOT_DIR` variable as explained in this [section](https://github.com/iusztinpaul/energy-forecasting#set-up-the-ml_pipeline_root_dir-variable).
+**NOTE:** Be careful to set the `ML_PIPELINE_ROOT_DIR` variable as explained in the [Set Up the ML_PIPELINE_ROOT_DIR Variable](https://github.com/iusztinpaul/energy-forecasting#set-up-the-ml_pipeline_root_dir-variable) section of the main README.

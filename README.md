@@ -234,7 +234,7 @@ You will use [Hopsworks](https://www.hopsworks.ai/) as your serverless feature s
 
 You will use Weights & Biases as your serverless ML platform. Thus, you must create an account and a project on Weights & Biases. We will show you how to configure the code to use your W&B project later.
 
-[I explained in this lesson how to create an API Key on W&B.](placeholder Medium article) But long story short, you can go to your W&B user settings and create the API Key from there.
+[On Medium, I explained in **Lesson 2** how to create an API Key on W&B.](https://towardsdatascience.com/a-guide-to-building-effective-training-pipelines-for-maximum-results-6fdaef594cee) But long story short, you can go to your W&B user settings and create the API Key from there.
 
 **If you want everything to work with the default settings, use the following naming conventions:**
 - create an `entity` called `teaching-mlops`
@@ -286,7 +286,7 @@ Your `bucket read-only service account` should have assigned the following role:
 - rename your downloaded `admin` JSON service key to `admin-buckets.json`
 - rename your downloaded `read-only` JSON service key to `read-buckets.json`
 
-Check out our [Medium article](placeholder Medium article) for more step-by-step instructions.
+[Check out **Lesson 3** on Medium to better understand **how we set up the GCP bucket** and its role in the batch prediction pipeline.](https://towardsdatascience.com/unlock-the-secret-to-efficient-batch-prediction-pipelines-using-python-a-feature-store-and-gcs-17a1462ca489).
 
 
 ### Deployment
@@ -312,7 +312,7 @@ Also, if you have any questions, you can contact me directly on [LinkedIn](https
 
 ## The Pipeline
 
-Check out this [lesson on Medium](https://towardsdatascience.com/unlocking-mlops-using-airflow-a-comprehensive-guide-to-ml-system-orchestration-880aa9be8cff) to understand how everything is orchestrated using Airflow. 
+Check out [Lesson 4](https://towardsdatascience.com/unlocking-mlops-using-airflow-a-comprehensive-guide-to-ml-system-orchestration-880aa9be8cff) on Medium to better understand how everything is orchestrated using Airflow. 
 
 #### Run 
 You will run the pipeline using Airflow (`free usage`). Don't be scared. Docker makes everything very simple to set up.

@@ -8,7 +8,7 @@ Note that this step might result in a few costs on GCP. It won't be much. While 
 
 Also, you can get some free credits if you have a new GCP account (I had 300$ free credits). Just be sure to delete the resources after you finish the course.
 
-[Access the step-by-step Medium Lesson.](placeholder for Medium article)
+[Access Lesson 7 on Medium for more detailed step-by-step instructions.](https://towardsdatascience.com/seamless-ci-cd-pipelines-with-github-actions-on-gcp-your-tools-for-effective-mlops-96f676f72012).
 
 ------
 

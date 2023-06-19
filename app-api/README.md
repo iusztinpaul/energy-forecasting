@@ -1,5 +1,7 @@
 # API - Web APP
 
+Check out [Lesson 6](https://towardsdatascience.com/fastapi-and-streamlit-the-python-duo-you-must-know-about-72825def1243) on Medium to better understand how we built the FastAPI backend.
+
 ## Install for Development
 
 Create virtual environment:
@@ -19,6 +21,3 @@ sh run.sh
 ```
 
 Access http://127.0.0.1:8001/api/v1/docs to see the docs.
-
-
-Check out this [Medium article](placeholder-medium-article) for more details about this module.
