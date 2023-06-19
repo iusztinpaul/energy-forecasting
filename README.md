@@ -10,7 +10,7 @@ This **course targets** *mid/advanced ML engineers* who want to *level up their 
 
 ------
 
-Following the documentation and the [lessons on Medium](#lessons), you have *2.5 hours of reading & video materials* which will help you understand every piece of the code!
+Following the **documentation on GitHub** and the [lessons on Medium](#lessons), you have *2.5 hours of reading & video materials*, which will help you understand every piece of the code!
 
 **At the end of the course, you will know how to build everything from the diagram below 👇**
 
@@ -25,6 +25,7 @@ Don't worry if something doesn't make sense to you. We will explain everything i
 <div align="center">
   <a href="https://youtu.be/OKk9U310qYE">
     <strong>Check out the video below to better understand what you will build during this course 👇</strong>
+    <br/>
     <img src="images/screenshot_introduction_video.png" alt="Introduction Video" style="width:75%;">
   </a>
 </div>
