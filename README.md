@@ -96,7 +96,7 @@ The data has 4 main attributes:
 * **Consumer Type**: The consumer type is the Industry Code DE35, owned and maintained by Danish Energy.
 * **Total Consumption**: Total electricity consumption in kWh
 
-**Note:** The observations have a lag of 15 days! But for our demo use case, that is not a problem, as we can simulate the same steps as it would be in real-time.
+**Note:** The observations have a lag of 15 days! But for our demo use case, that is not a problem, as we can simulate the same steps as it would be in real time.
 
 <p align="center">
   <img src="images/forecasting_demo_screenshot.png">
@@ -108,7 +108,7 @@ We will model the data as multiple time series. Each unique price area and consu
 
 Thus, we will build a model that independently forecasts the energy consumption for the next 24 hours for every time series.
 
-[Check out our live demo to better understand how the data looks.](http://35.207.134.188:8501/)
+[Check out this video to better understand what the data looks like.](https://youtu.be/OKk9U310qYE)
 
 ----------
 
