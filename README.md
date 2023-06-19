@@ -323,7 +323,7 @@ You will run the pipeline using Airflow (`free usage`). Don't be scared. Docker 
 
 **Note:** We also hooked the **private PyPi server** in the same docker-compose.yaml file with Airflow. Thus, everything will start with one command.
 
-**Important:** If you plan to run `the pipeline` outside Airflow, be sure to check the [🧑‍💻 7. Installation & Usage for Development](https://github.com/iusztinpaul/energy-forecasting/tree/main#-7-installation--usage-for-development-) section.
+**Important:** If you plan to run the pipeline outside Airflow, be sure to check the [🧑‍💻 7. Installation & Usage for Development](https://github.com/iusztinpaul/energy-forecasting/tree/main#-7-installation--usage-for-development-) section.
 
 ```shell
 # Move to the airflow directory.
@@ -444,9 +444,9 @@ docker run -p 80:8080 -v ~/.htpasswd:/data/.htpasswd pypiserver/pypiserver:lates
 
 Check out [Lesson 6](https://medium.com/towards-data-science/fastapi-and-streamlit-the-python-duo-you-must-know-about-72825def1243) on Medium to better understand how the web app components work together.
 
-**Important:** If you plan to run `the web app` components without docker-compose, check the [🧑‍💻 7. Installation & Usage for Development](https://github.com/iusztinpaul/energy-forecasting/tree/main#-7-installation--usage-for-development-) section.
-
 Fortunately, everything is a lot simpler when setting up the web app. This time, we need to configure only a few credentials. <br/>
+
+**Important:** If you plan to run the web app components without docker-compose, check the [🧑‍💻 7. Installation & Usage for Development](https://github.com/iusztinpaul/energy-forecasting/tree/main#-7-installation--usage-for-development-) section.
 
 Copy the bucket read-only GCP credentials to the root directory of your `energy-forecasting` project:
 ```shell
@@ -504,13 +504,14 @@ All the modules support Poetry. Thus the installation is straightforward.
 
 ## The Pipeline
 
-**We support Docker to run the whole pipeline. Check out the [Usage](#usage) section if you only want to run it as a whole.**<br/><br/> 
+**We support Docker to run the whole pipeline. Check out the [Usage](#usage) section if you only want to run it as a whole.**<br/>
 
 If Poetry is not using Python 3.9, you can follow the next steps:
 1. Install Python 3.9 on your machine.
 2. `cd /path/to/project`, for example, `cd ./feature-pipeline`
 3. run `which python3.9` to find where Python3.9 is located
 4. run `poetry env use /path/to/python3.9`
+<br/> 
 
 ### Set Up the ML_PIPELINE_ROOT_DIR Variable
 
@@ -537,8 +538,6 @@ By doing so, all the 3 pipeline projects (feature, training, batch) will load an
 - [Feature Pipeline](/feature-pipeline/README.md)
 - [Training Pipeline](/training-pipeline/README.md)
 - [Batch Prediction Pipeline](/batch-prediction-pipeline/README.md)
-
-<br/> 
 <br/> 
 
 ## The Web App
