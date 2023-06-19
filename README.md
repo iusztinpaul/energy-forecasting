@@ -1,16 +1,18 @@
 # The Full Stack 7-Steps MLOps Framework
 
-This repository contains a **7-lesson course** that will walk you step-by-step through how to **design, implement, and deploy an ML system** using **MLOps good practices**. During the course, you will build a production-ready model forecasting energy consumption for the next 24 hours across multiple consumer types from Denmark.
+`**Learn MLE & MLOps** for free by designing, building, deploying and monitoring an end-to-end ML batch system | *source code + 2.5 hours of reading & video materials on Medium*`
 
-More concretely, you will learn how to build, train, serve, and monitor an ML model using a batch architecture. Also, you will learn how to integrate an experiment tracker, a model registry, a feature store, Airflow, and more!
+This repository contains a **7-lesson course** that will walk you step-by-step through how to **design, implement, deploy, and monitor an ML batch system** using **MLOps good practices**. During the course, you will build a production-ready model forecasting energy consumption levels for the next 24 hours across multiple consumer types from Denmark.
 
-This course targets mid/advanced machine learning engineers who want to level up their skills by building their own end-to-end projects.
+More concretely, you will learn how to build, train, serve, and monitor an ML model using a batch architecture. Also, you will learn how to integrate an experiment tracker, a model registry, a feature store, Docker, Airflow, GitHub Actions and more!
 
-Following the documentation and the [Medium articles](#lessons), you can reproduce and understand every piece of the code!
+This *course targets mid/advanced ML engineers* who want to *level up their skills* by building their own end-to-end projects or *SWE* who want to *transition to ML engineering*.
+
+Following the documentation and the [lessons on Medium](#lessons) you have *2.5 hours of reading & video materials* which will help you understand every piece of the code!
 
 **At the end of the course, you will know how to build everything from the diagram below.**
 
-Don't worry if something doesn't make sense to you. I will explain everything in detail in the [Medium series](#lessons).
+Don't worry if something doesn't make sense to you. I will explain everything in detail in the [Medium lessons](#lessons).
 
 <p align="center">
   <img src="images/architecture.png">

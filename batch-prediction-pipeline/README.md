@@ -1,6 +1,8 @@
 # Batch Prediction Pipeline
 
-Check out [Lesson 3](https://towardsdatascience.com/unlock-the-secret-to-efficient-batch-prediction-pipelines-using-python-a-feature-store-and-gcs-17a1462ca489) on Medium to better understand how we built the batch prediction pipeline. Also, check out [Lesson 5](https://towardsdatascience.com/ensuring-trustworthy-ml-systems-with-data-validation-and-real-time-monitoring-89ab079f4360) to learn how we implemented the monitoring layer to compute the model's real-time performance.
+Check out [Lesson 3](https://towardsdatascience.com/unlock-the-secret-to-efficient-batch-prediction-pipelines-using-python-a-feature-store-and-gcs-17a1462ca489) on Medium to better understand how we built the batch prediction pipeline. 
+
+Also, check out [Lesson 5](https://towardsdatascience.com/ensuring-trustworthy-ml-systems-with-data-validation-and-real-time-monitoring-89ab079f4360) to learn how we implemented the monitoring layer to compute the model's real-time performance.
 
 ## Install for Development
 
