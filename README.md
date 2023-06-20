@@ -70,7 +70,9 @@ If that sounds like a lot, don't worry. After you cover this course, you will un
 
 # 🤌 2. Lessons & Tutorials <a name=lessons></a>
 
-The course consists of 7 lessons hosted on Medium Towards Data Science publication. To get the best out of this course, you should also run the code while you read the articles.
+The course consists of 7 lessons hosted on Medium Towards Data Science publication. We also provide a bonus lesson where we openly discuss potential improvements that could be made to the current architecture and trade-offs we had to take during the course. The course adds up to *2.5 hours of reading and video materials*. 
+
+`We recommend running the code along the articles to get the best out of this course, as we provide detailed instructions to set everything up.`
 
 **👇 Access the step-by-step lessons on Medium 👇**
 1. [Batch Serving. Feature Stores. Feature Engineering Pipelines.](https://medium.com/towards-data-science/a-framework-for-building-a-production-ready-feature-engineering-pipeline-f0b29609b20f)
@@ -80,7 +82,7 @@ The course consists of 7 lessons hosted on Medium Towards Data Science publicati
 5. [Data Validation for Quality and Integrity using GE. Model Performance Continuous Monitoring.](https://towardsdatascience.com/ensuring-trustworthy-ml-systems-with-data-validation-and-real-time-monitoring-89ab079f4360)
 6. [Consume and Visualize your Model's Predictions using FastAPI and Streamlit. Dockerize Everything.](https://towardsdatascience.com/fastapi-and-streamlit-the-python-duo-you-must-know-about-72825def1243)
 7. [Deploy All the ML Components to GCP. Build a CI/CD Pipeline Using Github Actions.](https://towardsdatascience.com/seamless-ci-cd-pipelines-with-github-actions-on-gcp-your-tools-for-effective-mlops-96f676f72012)
-
+8. [\[Bonus\] Behind the Scenes of an ‘Imperfect’ ML Project — Lessons and Insights.](https://towardsdatascience.com/imperfections-unveiled-the-intriguing-reality-behind-our-mlops-course-creation-6ff7d52ecb7e)
 
 ---------
 
