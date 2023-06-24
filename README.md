@@ -512,6 +512,8 @@ All the modules support Poetry. Thus the installation is straightforward.
 
 **NOTE:** Just ensure you have installed Python 3.9, not Python 3.8 or Python 3.10.
 
+If you are working on macOS M1/M2, be sure to check the [macOS M1/M2 Poetry Issues](https://github.com/iusztinpaul/energy-forecasting/tree/main#macos-m1m2-poetry-issues) section.
+
 ## The Pipeline
 
 **We support Docker to run the whole pipeline. Check out the [Usage](#usage) section if you only want to run it as a whole.**<br/>
