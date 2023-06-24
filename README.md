@@ -188,7 +188,7 @@ poetry --version
 
 
 #### macOS M1/M2 Poetry Issues
-*NOTE:* If you have issues creating Poetry environments on macOS M1/M2 devices, [Hongnan Gao](https://github.com/gao-hongnan) implemented a script that will solve all the dependency issues. Just run the following before creating a Poetry environment:
+**!!!** If you have issues creating Poetry environments on macOS M1/M2 devices, [Hongnan Gao](https://github.com/gao-hongnan) implemented a script that will solve all the dependency issues. Just run the following before creating a Poetry environment:
 ```shell
 bash scripts/install_poetry_macos_m1_chip.sh
 ```
