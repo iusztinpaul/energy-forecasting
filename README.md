@@ -184,7 +184,7 @@ source ~/.bashrc
 poetry --version
 ```
 
-[Official Poetry installation instructions.](https://python-poetry.org/docs/#installation)
+[If necessary, here are the official Poetry installation instructions.](https://python-poetry.org/docs/#installation)
 
 
 #### macOS M1/M2 Poetry Issues
