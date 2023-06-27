@@ -19,7 +19,7 @@ def to_feature_store(
 
     # Connect to feature store.
     project = hopsworks.login(
-        api_key_value=SETTINGS["FS_API_KEY"], project="energy_consumption"
+        api_key_value=SETTINGS["FS_API_KEY"], project=SETTINGS["FS_PROJECT_NAME"]
     )
     feature_store = project.get_feature_store()
 
