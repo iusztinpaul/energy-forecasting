@@ -24,7 +24,7 @@ def load_dataset_from_feature_store(
     """
 
     project = hopsworks.login(
-        api_key_value=SETTINGS["FS_API_KEY"], project="energy_consumption"
+        api_key_value=SETTINGS["FS_API_KEY"], project=settings.SETTINGS["FS_PROJECT_NAME"]
     )
     fs = project.get_feature_store()
 

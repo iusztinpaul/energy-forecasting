@@ -43,7 +43,7 @@ def compute(feature_view_version: Optional[int] = None) -> None:
 
     logger.info("Connecting to the feature store...")
     project = hopsworks.login(
-        api_key_value=settings.SETTINGS["FS_API_KEY"], project="energy_consumption"
+        api_key_value=settings.SETTINGS["FS_API_KEY"], project=settings.SETTINGS["FS_PROJECT_NAME"]
     )
     fs = project.get_feature_store()
     logger.info("Successfully connected to the feature store.")

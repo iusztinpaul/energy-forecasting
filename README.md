@@ -154,6 +154,12 @@ To follow the structure in its natural flow, read the folders in the following o
 
 **The code is tested only on Ubuntu 20.04 and 22.04 using Python 3.9.**
 
+We use a `.env` file to store all our credentials. Every module that needs a `.env` file has a `.env.default` in the module's main directory that acts as a template. Thus, you have to run:
+```shell
+cp .env.default .env
+```
+... and complete what is surrounded by `<...>`. For now, don't do anything. We will explain in detail in later steps what you have to do. 
+
 If you have problems during the setup, please leave us an issue, and we will respond to you and update the README for future readers.
 
 Also, if you have any questions, you can contact me directly on [LinkedIn](https://www.linkedin.com/in/pauliusztin/).
@@ -233,10 +239,9 @@ cat ~/.config/pypoetry/auth.toml
 
 You will use [Hopsworks](https://www.hopsworks.ai/) as your serverless feature store. Thus, you have to create an account and a project on Hopsworks. We will show you how to configure the code to use your Hopsworks project later.
 
-[We explained on Medium in **Lesson 1** how to create a Hopsworks API Key.](https://medium.com/towards-data-science/a-framework-for-building-a-production-ready-feature-engineering-pipeline-f0b29609b20f) But long story short, you can go to your Hopsworks account settings and create the API Key from there.
+[We explained on Medium in **Lesson 1** how to create a Hopsworks API Key.](https://medium.com/towards-data-science/a-framework-for-building-a-production-ready-feature-engineering-pipeline-f0b29609b20f) But long story short, you can go to your Hopsworks account settings and get the API Key from there. Afterward, you must create a new project and add these credentials to the `.env` file. 
 
-**If you want everything to work with the default settings, use the following naming conventions:**
-- create a `project` called `energy_consumption`
+Note that Hopsworks enforces unique project names for all projects. Thus, you won't be able to call your project the same as us, more concretely, `energy_consumption`.
 
 [Click here to start with Hopsworks](https://www.hopsworks.ai/).
 
@@ -248,7 +253,7 @@ You will use [Hopsworks](https://www.hopsworks.ai/) as your serverless feature s
 
 You will use Weights & Biases as your serverless ML platform. Thus, you must create an account and a project on Weights & Biases. We will show you how to configure the code to use your W&B project later.
 
-[On Medium, we explained in **Lesson 2** how to create an API Key on W&B.](https://towardsdatascience.com/a-guide-to-building-effective-training-pipelines-for-maximum-results-6fdaef594cee) But long story short, you can go to your W&B user settings and create the API Key from there.
+[On Medium, we explained in **Lesson 2** how to create an API Key on W&B.](https://towardsdatascience.com/a-guide-to-building-effective-training-pipelines-for-maximum-results-6fdaef594cee) But long story short, you can go to your W&B user settings and create the API Key from there and the W&B entity & project. After you have to add these credentials to the `.env` file.
 
 **If you want everything to work with the default settings, use the following naming conventions:**
 - create an `entity` called `teaching-mlops`
@@ -302,6 +307,8 @@ Your `bucket read-only service account` should have assigned the following role:
 
 [Check out **Lesson 3** on Medium to better understand **how we set up the GCP bucket** and its role in the batch prediction pipeline.](https://towardsdatascience.com/unlock-the-secret-to-efficient-batch-prediction-pipelines-using-python-a-feature-store-and-gcs-17a1462ca489).
 
+**NOTE:** Don't forget to add the GCP credentials to the `.env` file. 
+
 
 ### Deployment
 ##### ``<< ~20$ >>``
@@ -335,6 +342,7 @@ You will run the pipeline using Airflow (`free usage`). Don't be scared. Docker 
 
 **Important:** If you plan to run the pipeline outside Airflow, be sure to check the [🧑‍💻 7. Installation & Usage for Development](https://github.com/iusztinpaul/energy-forecasting/tree/main#-7-installation--usage-for-development-) section.
 
+Run:
 ```shell
 # Move to the airflow directory.
 cd airflow
@@ -349,7 +357,7 @@ echo -e "AIRFLOW_UID=$(id -u)" > .env
 echo "ML_PIPELINE_ROOT_DIR=/opt/airflow/dags" >> .env
 ```
 
-Now move to the DAGS directory:
+Now from the `airflow` directory move to the `dags` directory and run:
 ```shell
 cd ./dags
 
@@ -363,6 +371,11 @@ mkdir -p credentials/gcp/energy_consumption
 cp -r /path/to/admin/gcs/credentials/admin-buckets.json credentials/gcp/energy_consumption
 # NOTE that if you want everything to work outside the box your JSON file should be called admin-buckets.json.
 # Otherwise, you have to manually configure the GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON_PATH variable from the .env file. 
+```
+
+Now go back to the `airflow` directory and run the following:
+```shell
+cd ..
 
 # Initialize the Airflow database
 docker compose up airflow-init
@@ -383,7 +396,7 @@ Use the following default credentials to log in:
   <img src="images/airflow_login_screenshot.png">
 </p>
 
-Before starting the pipeline DAG, you must deploy the modules to the private PyPi server. Go back to the root folder of the `energy-forecasting` repository and run the following to build and deploy the pipeline modules to your private PyPi server:
+Before starting the pipeline DAG, you must deploy the modules to the private PyPi server. Go back to the `root folder` of the `energy-forecasting` repository and run the following to build and deploy the pipeline modules to your private PyPi server:
 ```shell
 # Set the experimental installer of Poetry to False. For us, it crashed when it was on True.
 poetry config experimental.new-installer false
