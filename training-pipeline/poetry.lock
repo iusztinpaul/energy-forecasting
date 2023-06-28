@@ -86,13 +86,13 @@ tests-no-zope = ["cloudpickle", "cloudpickle", "hypothesis", "hypothesis", "mypy
 
 [[package]]
 name = "avro"
-version = "1.10.2"
+version = "1.11.0"
 description = "Avro is a serialization and RPC framework."
 category = "main"
 optional = false
-python-versions = ">=2.7"
+python-versions = ">=3.6"
 files = [
-    {file = "avro-1.10.2.tar.gz", hash = "sha256:381b990cc4c4444743c3297348ffd46e0c3a5d7a17e15b2f4a9042f6e955c31a"},
+    {file = "avro-1.11.0.tar.gz", hash = "sha256:1206365cc30ad561493f735329857dd078533459cee4e928aec2505f341ce445"},
 ]
 
 [package.extras]
@@ -567,6 +567,18 @@ files = [
 ]
 
 [[package]]
+name = "dataclasses"
+version = "0.6"
+description = "A backport of the dataclasses module for Python 3.6"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "dataclasses-0.6-py3-none-any.whl", hash = "sha256:454a69d788c7fda44efd71e259be79577822f5e3f53f029a22d08004e951dc9f"},
+    {file = "dataclasses-0.6.tar.gz", hash = "sha256:6988bd2b895eef432d562370bb707d540f32f7360ab13da45340101bc2307d84"},
+]
+
+[[package]]
 name = "decorator"
 version = "5.1.1"
 description = "Decorators for Humans"
@@ -785,14 +797,14 @@ gitdb = ">=4.0.1,<5"
 
 [[package]]
 name = "great-expectations"
-version = "0.14.12"
+version = "0.14.13"
 description = "Always know what to expect from your data."
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "great_expectations-0.14.12-py3-none-any.whl", hash = "sha256:84bed3248a16c5726d6a24842b44512a5825e3eaa5cd4ac06d64aff11d5066eb"},
-    {file = "great_expectations-0.14.12.tar.gz", hash = "sha256:897f5cd1d2dbf5281d366279b72520ec7bf91a7c335782dce4456e7bad00abc0"},
+    {file = "great_expectations-0.14.13-py3-none-any.whl", hash = "sha256:c0c8c16debcafa7ef9c2551e9dda971106aef648bbab130c26618cf3e634c86e"},
+    {file = "great_expectations-0.14.13.tar.gz", hash = "sha256:784eed628b11ef434e50ab031d2d6c8d6aad8e27479675f9f27a234719849541"},
 ]
 
 [package.dependencies]
@@ -800,12 +812,13 @@ altair = ">=4.0.0,<5"
 Click = ">=7.1.2"
 colorama = ">=0.4.3"
 cryptography = ">=3.2"
+dataclasses = "*"
 importlib-metadata = ">=1.7.0"
-ipywidgets = ">=7.5.1"
+Ipython = ">=7.16.3"
 jinja2 = ">=2.10,<3.1.0"
 jsonpatch = ">=1.22"
 jsonschema = ">=2.5.1"
-mistune = ">=0.8.4,<2.0.0"
+mistune = ">=0.8.4"
 nbformat = ">=5.0"
 numpy = ">=1.14.1"
 packaging = "*"
@@ -919,20 +932,20 @@ test = ["objgraph", "psutil"]
 
 [[package]]
 name = "hopsworks"
-version = "3.0.5"
+version = "3.2.0"
 description = "HOPSWORKS: An environment independent client to interact with the Hopsworks API"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "hopsworks-3.0.5.tar.gz", hash = "sha256:72e31fab672c8f8616e699b767e55ff9c90609bbf2a5fe0eacaa916591a8255d"},
+    {file = "hopsworks-3.2.0.tar.gz", hash = "sha256:56733bf35fca6a5f9157349ee2a12da1ccddd8d308c8c8646c2bc4396be6a9a6"},
 ]
 
 [package.dependencies]
 boto3 = "*"
 furl = "*"
-hsfs = {version = ">=3.0.0,<3.1.0", extras = ["python"]}
-hsml = ">=3.0.0,<3.1.0"
+hsfs = {version = ">=3.2.0,<3.3.0", extras = ["python"]}
+hsml = ">=3.2.0,<3.3.0"
 mock = "*"
 pyhumps = "1.6.1"
 pyjks = "*"
@@ -945,26 +958,26 @@ docs = ["keras_autodoc @ git+https://git@github.com/moritzmeister/keras-autodoc@
 
 [[package]]
 name = "hsfs"
-version = "3.0.5"
+version = "3.2.0"
 description = "HSFS: An environment independent client to interact with the Hopsworks Featurestore"
 category = "main"
 optional = false
-python-versions = ">=3.7,<3.10"
+python-versions = ">=3.7,<3.11"
 files = [
-    {file = "hsfs-3.0.5.tar.gz", hash = "sha256:ee7afcbc63b70e7096ffbe40f280a4bf092e27a30d630e91eeeb87187351aa75"},
+    {file = "hsfs-3.2.0.tar.gz", hash = "sha256:a546c70442ffce93448361e18b30ed816ed2da8ba6400bcd534289a8cbebcad2"},
 ]
 
 [package.dependencies]
-avro = "1.10.2"
+avro = "1.11.0"
 boto3 = "*"
-confluent-kafka = {version = "1.8.2", optional = true, markers = "extra == \"python\""}
-fastavro = {version = "1.4.11", optional = true, markers = "extra == \"python\""}
+confluent-kafka = {version = "<=1.9.0", optional = true, markers = "extra == \"python\""}
+fastavro = {version = ">=1.4.11,<=1.7.3", optional = true, markers = "extra == \"python\""}
 furl = "*"
-great_expectations = "0.14.12"
+great_expectations = "0.14.13"
 markupsafe = "<2.1.0"
 mock = "*"
 numpy = "*"
-pandas = ">=1.2.0"
+pandas = ">=1.2.0,<2.0.0"
 pyarrow = {version = "*", optional = true, markers = "extra == \"python\""}
 pyhopshive = {version = "*", extras = ["thrift"], optional = true, markers = "extra == \"python\""}
 pyhumps = "1.6.1"
@@ -973,22 +986,23 @@ PyMySQL = {version = "*", extras = ["rsa"]}
 requests = "*"
 sqlalchemy = "*"
 tqdm = {version = "*", optional = true, markers = "extra == \"python\""}
+tzlocal = "*"
 
 [package.extras]
-dev = ["black", "flake8", "moto[s3]", "pytest (==7.1.2)"]
-docs = ["keras_autodoc @ git+https://git@github.com/moritzmeister/keras-autodoc@split-tags-properties", "markdown (==3.3.7)", "markdown-include", "mike (==1.1.2)", "mkdocs (==1.3.0)", "mkdocs-jupyter (==0.21.0)", "mkdocs-material (==8.2.8)", "pymdown-extensions", "sphinx (==3.5.4)"]
-hive = ["confluent-kafka (==1.8.2)", "fastavro (==1.4.11)", "pyarrow", "pyhopshive[thrift]"]
-python = ["confluent-kafka (==1.8.2)", "fastavro (==1.4.11)", "pyarrow", "pyhopshive[thrift]", "tqdm"]
+dev = ["black", "flake8", "moto[s3]", "pyspark (==3.1.1)", "pytest (==7.1.2)", "pytest-mock (==3.8.2)"]
+docs = ["keras_autodoc @ git+https://git@github.com/moritzmeister/keras-autodoc@split-tags-properties", "markdown (==3.3.7)", "markdown-include", "mike (==1.1.2)", "mkdocs (==1.3.0)", "mkdocs-jupyter (==0.21.0)", "mkdocs-macros-plugin (==0.7.0)", "mkdocs-material (==8.2.8)", "pymdown-extensions", "sphinx (==3.5.4)"]
+hive = ["confluent-kafka (<=1.9.0)", "fastavro (>=1.4.11,<=1.7.3)", "pyarrow", "pyhopshive[thrift]"]
+python = ["confluent-kafka (<=1.9.0)", "fastavro (>=1.4.11,<=1.7.3)", "pyarrow", "pyhopshive[thrift]", "tqdm"]
 
 [[package]]
 name = "hsml"
-version = "3.0.3"
+version = "3.2.0"
 description = "HSML: An environment independent client to interact with the Hopsworks Model Registry"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "hsml-3.0.3.tar.gz", hash = "sha256:1044fee9b7ce04ad93854c2680167607661c4d2f17ae79b856cc1ad75d4ae263"},
+    {file = "hsml-3.2.0.tar.gz", hash = "sha256:406a67ff6d20e720b0bc353796b9a776a73ab376d21df9dbb107de91ea77a9a2"},
 ]
 
 [package.dependencies]
@@ -1095,27 +1109,6 @@ parallel = ["ipyparallel"]
 qtconsole = ["qtconsole"]
 test = ["pytest (<7.1)", "pytest-asyncio", "testpath"]
 test-extra = ["curio", "matplotlib (!=3.2.0)", "nbformat", "numpy (>=1.21)", "pandas", "pytest (<7.1)", "pytest-asyncio", "testpath", "trio"]
-
-[[package]]
-name = "ipywidgets"
-version = "8.0.5"
-description = "Jupyter interactive widgets"
-category = "main"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "ipywidgets-8.0.5-py3-none-any.whl", hash = "sha256:a6e5c0392f86207fae304688a670afb26b2fd819592cfc0812777c2fdf22dbad"},
-    {file = "ipywidgets-8.0.5.tar.gz", hash = "sha256:89a1930b9ef255838571a2415cc4a15e824e4316b8f067805d1d03b98b6a8c5f"},
-]
-
-[package.dependencies]
-ipython = ">=6.1.0"
-jupyterlab-widgets = ">=3.0,<4.0"
-traitlets = ">=4.3.1"
-widgetsnbextension = ">=4.0,<5.0"
-
-[package.extras]
-test = ["ipykernel", "jsonschema", "pytest (>=3.6.0)", "pytest-cov", "pytz"]
 
 [[package]]
 name = "javaobj-py3"
@@ -1258,18 +1251,6 @@ traitlets = ">=5.3"
 [package.extras]
 docs = ["myst-parser", "sphinx-autodoc-typehints", "sphinxcontrib-github-alt", "sphinxcontrib-spelling", "traitlets"]
 test = ["ipykernel", "pre-commit", "pytest", "pytest-cov", "pytest-timeout"]
-
-[[package]]
-name = "jupyterlab-widgets"
-version = "3.0.6"
-description = "Jupyter interactive widgets for JupyterLab"
-category = "main"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "jupyterlab_widgets-3.0.6-py3-none-any.whl", hash = "sha256:e95d08adf4f9c37a57da5fff8a65d00480199885fd2ecd2583fd9560b594b4e9"},
-    {file = "jupyterlab_widgets-3.0.6.tar.gz", hash = "sha256:a464d68a7b9ebabdc135196389381412a39503d89302be0867d0ff3b2428ebb8"},
-]
 
 [[package]]
 name = "kiwisolver"
@@ -3171,18 +3152,6 @@ files = [
 
 [package.extras]
 test = ["pytest (>=6.0.0)"]
-
-[[package]]
-name = "widgetsnbextension"
-version = "4.0.6"
-description = "Jupyter interactive widgets for Jupyter Notebook"
-category = "main"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "widgetsnbextension-4.0.6-py3-none-any.whl", hash = "sha256:7df2bffa274b0b416c1fa0789e321451858a9e276e1220b40a16cc994192e2b7"},
-    {file = "widgetsnbextension-4.0.6.tar.gz", hash = "sha256:1a07d06c881a7c16ca7ab4541b476edbe2e404f5c5f0cf524ffa2406a8bd7c80"},
-]
 
 [[package]]
 name = "wrapt"

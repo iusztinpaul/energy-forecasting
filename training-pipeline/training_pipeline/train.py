@@ -307,7 +307,7 @@ def attach_best_model_to_feature_store(
     """Adds the best model artifact to the model registry."""
 
     project = hopsworks.login(
-        api_key_value=SETTINGS["FS_API_KEY"], project=settings.SETTINGS["FS_PROJECT_NAME"]
+        api_key_value=SETTINGS["FS_API_KEY"], project=SETTINGS["FS_PROJECT_NAME"]
     )
     fs = project.get_feature_store()
     feature_view = fs.get_feature_view(
