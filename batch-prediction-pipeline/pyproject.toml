@@ -15,7 +15,6 @@ lightgbm = "^3.3.5"
 sktime = "^0.16.1"
 google-cloud-storage = "^2.7.0"
 fire = "^0.5.0"
-# training_pipeline = { file = "wheels/training_pipeline-0.1.0-py3-none-any.whl" }
 training-pipeline = "^0.1.0"
 
 
