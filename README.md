@@ -545,7 +545,7 @@ If Poetry is not using Python 3.9, you can follow the next steps:
 
 
 **Every pipeline component must load its credential from the `.env` file. Thus, you have two options:**
-1. Recommended option: run `cp .env.default .env` into the folder where the `ML_PIPELINE_ROOT_DIR` env var is pointing to & fill in the credentials of the `.env` file. Check the [section below](https://github.com/iusztinpaul/energy-forecasting/tree/main#set-up-the-ml_pipeline_root_dir-variable) to see how to set it up. 
+1. **Recommended option:** run `cp .env.default .env` into the folder where the `ML_PIPELINE_ROOT_DIR` env var is pointing to & fill in the credentials of the `.env` file. Check the [section below](https://github.com/iusztinpaul/energy-forecasting/tree/main#set-up-the-ml_pipeline_root_dir-variable) to see how to set it up. 
 2. Create a copy by running `cp .env.default .env` in every pipeline directory individually. But note that by taking this approach, you won't be able to run the system as a whole.
 
 
