@@ -167,6 +167,8 @@ Also, if you have any questions, you can contact me directly on [LinkedIn](https
 ## Poetry
 ##### ``<< free usage >>``
 
+**Note:** During the course, we used `Poetry 1.4.2`. To avoid potential issues when installing the dependencies using Poetry, we recommend you use the same version (or if there are any errors & you have a different version, you can delete and regenerate the `poetry.lock` file).
+
 Install Python system dependencies:
 ```shell
 sudo apt-get install -y python3-distutils
@@ -325,7 +327,9 @@ See [this document](/README_DEPLOY.md) for detailed instructions.
 
 # 🔎 6. Usage <a name=usage></a>
 
-**The code is tested only on Ubuntu 20.04 and 22.04 using Python 3.9.**
+**The code is fully tested on Ubuntu 20.04 & 22.04 using Python 3.9 and Poetry 1.4.2.**
+
+**Note:** If you are working on macOS M1/M2, be sure to check the [macOS M1/M2 Poetry Issues](https://github.com/iusztinpaul/energy-forecasting/tree/main#macos-m1m2-poetry-issues) section.
 
 If you have problems during the usage instructions, please leave us an issue, and we will respond to you and update the README for future readers.
 
@@ -523,9 +527,9 @@ docker compose -f deploy/app-docker-compose.yml -f deploy/app-docker-compose.loc
 
 All the modules support Poetry. Thus the installation is straightforward.
 
-**NOTE:** Just ensure you have installed Python 3.9, not Python 3.8 or Python 3.10.
-
-If you are working on macOS M1/M2, be sure to check the [macOS M1/M2 Poetry Issues](https://github.com/iusztinpaul/energy-forecasting/tree/main#macos-m1m2-poetry-issues) section.
+**Note 1:** Just ensure you have installed Python 3.9, not Python 3.8 or Python 3.10.
+**Note 2:** During the course, we used `Poetry 1.4.2`. To avoid potential issues when installing the dependencies using Poetry, we recommend you use the same version (or if there are any errors & you have a different version, you can delete and regenerate the `poetry.lock` file).
+**Note 3:** If you are working on macOS M1/M2, be sure to check the [macOS M1/M2 Poetry Issues](https://github.com/iusztinpaul/energy-forecasting/tree/main#macos-m1m2-poetry-issues) section.
 
 ## The Pipeline
 
