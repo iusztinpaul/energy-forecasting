@@ -367,7 +367,7 @@ cd ./dags
 
 # Make a copy of the env default file.
 cp .env.default .env
-# Open the .env file and complete the WANDB_API_KEY and FS_API_KEY credentials 
+# Open the .env file and complete the FS_API_KEY, FS_PROJECT_NAME and WANDB_API_KEY credentials 
 
 # Create the folder where the program expects its GCP credentials.
 mkdir -p credentials/gcp/energy_consumption
