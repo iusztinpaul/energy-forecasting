@@ -241,7 +241,7 @@ cat ~/.config/pypoetry/auth.toml
 
 You will use [Hopsworks](https://www.hopsworks.ai/) as your serverless feature store. Thus, you have to create an account and a project on Hopsworks. We will show you how to configure the code to use your Hopsworks project later.
 
-[We explained on Medium in **Lesson 1** how to create a Hopsworks API Key.](https://medium.com/towards-data-science/a-framework-for-building-a-production-ready-feature-engineering-pipeline-f0b29609b20f) But long story short, you can go to your Hopsworks account settings and get the API Key from there. Afterward, you must create a new project and add these credentials to the `.env` file under the `FS_` prefix.
+[We explained on Medium in **Lesson 1** how to create a Hopsworks API Key.](https://medium.com/towards-data-science/a-framework-for-building-a-production-ready-feature-engineering-pipeline-f0b29609b20f) But long story short, you can go to your Hopsworks account settings and get the API Key from there. Afterward, you must create a new project (or use the default one) and add these credentials to the `.env` file under the `FS_` prefix.
 
 **!!!** Be careful to name your project differently than **energy_consumption,** as Hopsworks requires unique names across its serverless deployment.
 
@@ -256,10 +256,6 @@ You will use [Hopsworks](https://www.hopsworks.ai/) as your serverless feature s
 You will use Weights & Biases as your serverless ML platform. Thus, you must create an account and a project on Weights & Biases. We will show you how to configure the code to use your W&B project later.
 
 [On Medium, we explained in **Lesson 2** how to create an API Key on W&B.](https://towardsdatascience.com/a-guide-to-building-effective-training-pipelines-for-maximum-results-6fdaef594cee) But long story short, you can go to your W&B user settings and create the API Key from there and the W&B entity & project. After you have to add these credentials to the `.env` file under the `WANDB_` prefix.
-
-**If you want everything to work with the default settings, use the following naming conventions:**
-- create an `entity` called `teaching-mlops`
-- create a `project` called `energy_consumption`
 
 [Click here to start with Weights & Biases](https://wandb.ai/).
 
