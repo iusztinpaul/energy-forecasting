@@ -36,6 +36,11 @@ def run(
     data, metadata = extract.from_api(
         export_end_reference_datetime, days_delay, days_export, url
     )
+    if metadata["num_unique_samples_per_time_series"] < days_export * 24:
+        raise RuntimeError(
+            f"Could not extract the expected number of samples from the api: {metadata['num_unique_samples_per_time_series']} < {days_export * 24}. \
+            Check out the API at: https://www.energidataservice.dk/tso-electricity/ConsumptionDE35Hour "
+        )
     logger.info("Successfully extracted data from API.")
 
     logger.info(f"Transforming data.")

@@ -30,7 +30,7 @@ def build_data_plot(area: int, consumer_type: int):
         energy_consumption = json_response.get("energy_consumption")
         pred_datetime_utc = json_response.get("preds_datetime_utc")
         pred_energy_consumption = json_response.get("preds_energy_consumption")
-        
+
         train_df = build_dataframe(datetime_utc, energy_consumption)
         preds_df = build_dataframe(pred_datetime_utc, pred_energy_consumption)
 
@@ -70,7 +70,7 @@ def build_dataframe(datetime_utc: List[int], energy_consumption_values: List[flo
     Build DataFrame for plotting from timestamps and energy consumption values.
 
     Args:
-        datetime_utc (List[int]): list of timestamp values in UTC 
+        datetime_utc (List[int]): list of timestamp values in UTC
         values (List[float]): list of energy consumption values
     """
 

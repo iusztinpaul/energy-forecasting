@@ -10,7 +10,8 @@ def clean():
     """
 
     project = hopsworks.login(
-        api_key_value=settings.SETTINGS["FS_API_KEY"], project=settings.SETTINGS["FS_PROJECT_NAME"]
+        api_key_value=settings.SETTINGS["FS_API_KEY"],
+        project=settings.SETTINGS["FS_PROJECT_NAME"],
     )
     fs = project.get_feature_store()
 

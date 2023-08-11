@@ -80,9 +80,14 @@ def build_data_plot(area: int, consumer_type: int):
             "predictions_monitoring_energy_consumptionc", []
         )
 
-        train_df = build_dataframe(y_monitoring_datetime_utc, y_monitoring_energy_consumption)
-        preds_df = build_dataframe(predictions_monitoring_datetime_utc, predictions_monitoring_energy_consumptionc)
-        
+        train_df = build_dataframe(
+            y_monitoring_datetime_utc, y_monitoring_energy_consumption
+        )
+        preds_df = build_dataframe(
+            predictions_monitoring_datetime_utc,
+            predictions_monitoring_energy_consumptionc,
+        )
+
         title = "Predictions vs. Observations | Energy Consumption"
 
     # Create plot.
@@ -117,12 +122,17 @@ def build_data_plot(area: int, consumer_type: int):
 
     return fig
 
-def build_dataframe(datetime_utc: List[int], energy_consumption_values: List[float], values_column_name: str = "energy_consumption"):
+
+def build_dataframe(
+    datetime_utc: List[int],
+    energy_consumption_values: List[float],
+    values_column_name: str = "energy_consumption",
+):
     """
     Build DataFrame for plotting from timestamps and energy consumption values.
 
     Args:
-        datetime_utc (List[int]): list of timestamp values in UTC 
+        datetime_utc (List[int]): list of timestamp values in UTC
         values (List[float]): list of energy consumption values
         values_column_name (str): name of the column containing the values
     """
