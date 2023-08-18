@@ -284,7 +284,7 @@ def ml_pipeline():
     days_export = int(Variable.get("ml_pipeline_days_export", default_var=30))
     url = Variable.get(
         "ml_pipeline_url",
-        default_var="https://api.energidataservice.dk/dataset/ConsumptionDE35Hour",
+        default_var="https://media.githubusercontent.com/media/iusztinpaul/energy-forecasting/main/data/ConsumptionDE35Hour.csv",
     )
     feature_group_version = int(
         Variable.get("ml_pipeline_feature_group_version", default_var=1)
