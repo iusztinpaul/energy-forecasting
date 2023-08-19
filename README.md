@@ -16,11 +16,11 @@ Following the **documentation on GitHub** and the [lessons on Medium](#lessons),
 
 Don't worry if something doesn't make sense to you. We will explain everything in detail in the [Medium lessons](#lessons).
 
-In case you are not sure this course is for you, here is a [high-level presentation](https://pub.towardsai.net/the-full-stack-7-steps-mlops-framework-6599a0c6e295) of all the components you will build during the series.
-
 <p align="center">
   <img src="images/architecture.png">
 </p>
+
+In case you are not sure this course is for you, here is a [high-level presentation](https://pub.towardsai.net/the-full-stack-7-steps-mlops-framework-6599a0c6e295) of all the components you will build during the series.
 
 <div align="center">
   <a href="https://youtu.be/OKk9U310qYE">
