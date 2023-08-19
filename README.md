@@ -317,7 +317,7 @@ Your `bucket read-only service account` should have assigned the following role:
 **NOTE:** Don't forget to add the GCP credentials to the `.env` file under the `GOOGLE_CLOUD_` prefix:
 * *GOOGLE_CLOUD_PROJECT*: your project name (e.g., "energy_consumption")
 * *GOOGLE_CLOUD_BUCKET_NAME*: your bucket name (e.g., "hourly-batch-predictions")
-* *GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON_PATH:*: absolute path to the JSON key file.
+* *GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON_PATH:*: absolute path to the JSON key file. (e.g., ""path/to/your/service-account.json")
 
 
 ### Deployment
