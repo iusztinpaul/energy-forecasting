@@ -16,13 +16,15 @@ Following the **documentation on GitHub** and the [lessons on Medium](#lessons),
 
 Don't worry if something doesn't make sense to you. We will explain everything in detail in the [Medium lessons](#lessons).
 
+In case you are not sure this course is for you, here is a [high-level presentation](https://pub.towardsai.net/the-full-stack-7-steps-mlops-framework-6599a0c6e295) of all the components you will build during the series.
+
 <p align="center">
   <img src="images/architecture.png">
 </p>
 
 <div align="center">
   <a href="https://youtu.be/OKk9U310qYE">
-    <strong>Check out the video below to better understand what you will build during this course 👇</strong>
+    <strong>Also, check out the video below to better understand what the final outcome of the course is 👇</strong>
     <br/>
     <br/>
     <img src="images/screenshot_introduction_video.png" alt="Introduction Video" style="width:75%;">
@@ -75,6 +77,9 @@ The course consists of 7 lessons hosted on Medium Towards Data Science publicati
 `We recommend running the code along the articles to get the best out of this course, as we provide detailed instructions to set everything up.`
 
 **👇 Access the step-by-step lessons on Medium 👇**
+
+Here is a [high-level presentation](https://pub.towardsai.net/the-full-stack-7-steps-mlops-framework-6599a0c6e295) of all the components you will build during the course.
+
 1. [Batch Serving. Feature Stores. Feature Engineering Pipelines.](https://medium.com/towards-data-science/a-framework-for-building-a-production-ready-feature-engineering-pipeline-f0b29609b20f)
 2. [Training Pipelines. ML Platforms. Hyperparameter Tuning.](https://medium.com/towards-data-science/a-guide-to-building-effective-training-pipelines-for-maximum-results-6fdaef594cee)
 3. [Batch Prediction Pipeline. Package Python Modules with Poetry.](https://medium.com/towards-data-science/unlock-the-secret-to-efficient-batch-prediction-pipelines-using-python-a-feature-store-and-gcs-17a1462ca489)
@@ -266,7 +271,9 @@ You will use [Hopsworks](https://www.hopsworks.ai/) as your serverless feature s
 
 You will use Weights & Biases as your serverless ML platform. Thus, you must create an account and a project on Weights & Biases. We will show you how to configure the code to use your W&B project later.
 
-[On Medium, we explained in **Lesson 2** how to create an API Key on W&B.](https://towardsdatascience.com/a-guide-to-building-effective-training-pipelines-for-maximum-results-6fdaef594cee) But long story short, you can go to your W&B user settings and create the API Key from there and the W&B entity & project. After you have to add these credentials to the `.env` file under the `WANDB_` prefix.
+[On Medium, we explained in **Lesson 2** how to create an API Key on W&B.](https://towardsdatascience.com/a-guide-to-building-effective-training-pipelines-for-maximum-results-6fdaef594cee) But long story short, you can go to your W&B and create an entity & project. Afterward, you must navigate to user settings and create the API Key from there. In the end, you must add these credentials to the `.env` file under the `WANDB_` prefix.
+
+**!!!** Be careful to name your entity differently than **teaching-mlops,** as W&B requires unique names across its serverless deployment.
 
 [Click here to start with Weights & Biases](https://wandb.ai/).
 
