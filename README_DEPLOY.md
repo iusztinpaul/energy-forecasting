@@ -14,7 +14,7 @@ Also, you can get some free credits if you have a new GCP account (I had 300$ fr
 
 ## General Set Up
 
-Before setting up the code, we must go to your GCP `energy_consumption` project and create a few resources. After, you can SSH to your machines and deploy your code.
+Before setting up the code, we must go to your GCP project and create a few resources. After, you can SSH to your machines and deploy your code.
 
 #### GCP Resources
 
@@ -62,7 +62,7 @@ Here is how my firewall rule looks like:
 
 ### VM for the Pipeline
 
-Go to your GCP `energy_consumption` project -> `VM Instances` -> `Create Instance`
+Go to your GCP project -> `VM Instances` -> `Create Instance`
 
 Choose `e2-standard-2: 2 vCPU cores - 8 GB RAM` as your VM instance type.
 
@@ -83,7 +83,7 @@ Here are 2 docs that helped me create and configure the ports for the firewall r
 
 ### VM for the Web App
 
-Go to your GCP `energy_consumption` project -> `VM Instances` -> `Create Instance`
+Go to your GCP project -> `VM Instances` -> `Create Instance`
 
 Choose: `e2-micro: 0.25 2 vCPU - 1 GB memory` as your VM instance type.
 

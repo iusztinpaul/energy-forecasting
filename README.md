@@ -291,9 +291,6 @@ As before, you have to create an account and a project on GCP. Using solely the 
 
 When we were writing this documentation, GCS was free until 5GB.
 
-**If you want everything to work with the default settings, use the following naming conventions:**
-- create a `project` called `energy_consumption`
-
 ### Storage
 ##### ``<< free usage >>``
 
@@ -315,15 +312,12 @@ Your `bucket read-only service account` should have assigned the following role:
 
 **NOTE:** When we were writing this documentation, GCS was free until 5GB.
 
-**If you want everything to work with the default settings, use the following naming conventions:**
-- create a `project` called `energy_consumption`
-- create a `non-public bucket` called `hourly-batch-predictions` (Pick any region, but just be aware of it.)
-- rename your downloaded `admin` JSON service key to `admin-buckets.json`
-- rename your downloaded `read-only` JSON service key to `read-buckets.json`
-
 [Check out **Lesson 3** on Medium to better understand **how we set up the GCP bucket** and its role in the batch prediction pipeline.](https://towardsdatascience.com/unlock-the-secret-to-efficient-batch-prediction-pipelines-using-python-a-feature-store-and-gcs-17a1462ca489).
 
-**NOTE:** Don't forget to add the GCP credentials to the `.env` file under the `GOOGLE_CLOUD_` prefix.
+**NOTE:** Don't forget to add the GCP credentials to the `.env` file under the `GOOGLE_CLOUD_` prefix:
+* *GOOGLE_CLOUD_PROJECT*: projects name (e.g., "energy_consumption")
+* *GOOGLE_CLOUD_BUCKET_NAME*: bucket's name (e.g., "hourly-batch-predictions")
+* *GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON_PATH:*: absolute path to the JSON key file.
 
 
 ### Deployment
