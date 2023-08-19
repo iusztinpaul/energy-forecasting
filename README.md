@@ -498,7 +498,8 @@ Go to the API folder and make a copy of the `.env.default` file:
 cd ./app-api
 cp .env.default .env
 ```
-**NOTE:** You shouldn't change anything else if you respect all the naming conventions suggested in this README.
+
+**NOTE:** Remember to complete the `.env` with your own variables. 
 
 That is it!
 
