@@ -315,8 +315,8 @@ Your `bucket read-only service account` should have assigned the following role:
 [Check out **Lesson 3** on Medium to better understand **how we set up the GCP bucket** and its role in the batch prediction pipeline.](https://towardsdatascience.com/unlock-the-secret-to-efficient-batch-prediction-pipelines-using-python-a-feature-store-and-gcs-17a1462ca489).
 
 **NOTE:** Don't forget to add the GCP credentials to the `.env` file under the `GOOGLE_CLOUD_` prefix:
-* *GOOGLE_CLOUD_PROJECT*: projects name (e.g., "energy_consumption")
-* *GOOGLE_CLOUD_BUCKET_NAME*: bucket's name (e.g., "hourly-batch-predictions")
+* *GOOGLE_CLOUD_PROJECT*: your project name (e.g., "energy_consumption")
+* *GOOGLE_CLOUD_BUCKET_NAME*: your bucket name (e.g., "hourly-batch-predictions")
 * *GOOGLE_CLOUD_SERVICE_ACCOUNT_JSON_PATH:*: absolute path to the JSON key file.
 
 
