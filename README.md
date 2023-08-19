@@ -106,7 +106,7 @@ The API will become obsolete during 2023. Its latest data points are from June 2
 
 Thus, instead of querying the API, we will mock the same behavior by loading the data from the file. But don't worry, you will learn precisely the same thing.
 
-**ALL RIGHTS RESERVED TO www.energidataservice.dk**
+**-> All Rights Reserved to: www.energidataservice.dk**
 
 Note that because the file is large we had to upload it using `github lfs`. Thus it won't be downloaded with the typical `git clone`, unless you have `git lfs` installed (it will download only a reference). But you don't have to bother, as during the `feature-pipeline`, we automatically download & cache the file. But if you are curius to learn more about `git lfs`, you can start [here](https://git-lfs.com/). \[Optional\] To set it up, just download it & run `git lfs install`, and you are ready to go. 
 
