@@ -499,7 +499,7 @@ cd ./app-api
 cp .env.default .env
 ```
 
-**NOTE:** Remember to complete the `.env` with your own variables. 
+**NOTE:** Remember to complete the `.env` file with your own variables. 
 
 That is it!
 
