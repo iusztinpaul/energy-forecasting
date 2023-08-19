@@ -100,6 +100,17 @@ The data has 4 main attributes:
 
 **Note:** The observations have a lag of 15 days! But for our demo use case, that is not a problem, as we can simulate the same steps as it would be in real time.
 
+### IMPORTANT OBSERVATION
+
+The API will become obsolete during 2023. Its latest data points are from June 2023, and the API will become unavailable during 2023. We created a copy of the data from 2020-07-01 and 2023-06-30 to bypass this issue. Thus, there are 3 years of data to play with. More than enough for the purpose of this course. The file is stored in this repository under `data/ConsumptionDE35Hour.csv`. 
+
+Thus, instead of querying the API, we will mock the same behavior by loading the data from the file. But don't worry, you will learn precisely the same thing.
+
+**ALL RIGHTS RESERVED TO www.energidataservice.dk**
+
+Note that because the file is large we had to upload it using `github lfs`. Thus it won't be downloaded with the typical `git clone`, unless you have `git lfs` installed (it will download only a reference). But you don't have to bother, as during the `feature-pipeline`, we automatically download & cache the file. But if you are curius to learn more about `git lfs`, you can start [here](https://git-lfs.com/). \[Optional\] To set it up, just download it & run `git lfs install`, and you are ready to go. 
+
+
 <p align="center">
   <img src="images/forecasting_demo_screenshot.png">
 </p>

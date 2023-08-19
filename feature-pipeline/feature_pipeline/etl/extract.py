@@ -89,7 +89,7 @@ def _extract_records_from_file_url(url: str, export_start: datetime.datetime, ex
 
         logger.info(f"Successfully downloaded data to: {file_path}")
     else:
-        logger.info(f"Data already downloaded: {file_path}")
+        logger.info(f"Data already downloaded at: {file_path}")
 
     data = pd.read_csv(file_path, delimiter=";")
 

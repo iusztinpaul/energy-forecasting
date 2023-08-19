@@ -13,7 +13,7 @@ def run(
     export_end_reference_datetime: Optional[datetime.datetime] = None,
     days_delay: int = 15,
     days_export: int = 30,
-    url: str = "c",
+    url: str = "https://media.githubusercontent.com/media/iusztinpaul/energy-forecasting/main/data/ConsumptionDE35Hour.csv",
     feature_group_version: int = 1,
 ) -> dict:
     """
