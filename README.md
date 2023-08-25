@@ -2,9 +2,9 @@
 
 `Learn MLE & MLOps for free by designing, building, deploying and monitoring an end-to-end ML batch system | source code + 2.5 hours of reading & video materials on Medium`
 
-This repository contains a **7-lesson FREE course** to teach you how to build a production-ready ML batch system. Its primary focus is to engineer a scalable system using MLOps good practices. You will implement an ML system for forecasting hourly energy consumption levels across Denmark.
+This repository contains a **7-lesson FREE course** to teach you how to **build a production-ready ML batch system**. Its primary focus is to engineer a scalable system using MLOps good practices. You will implement an ML system for forecasting hourly energy consumption levels across Denmark.
 
-You will learn how to build, train, serve, and monitor an ML system using a batch architecture. We will show you how to integrate an experiment tracker, a model registry, a feature store, Docker, Airflow, GitHub Actions and more!
+You will **learn how to build, train, serve, and monitor an ML system** using a batch architecture. We will show you how to integrate an experiment tracker, a model registry, a feature store, Docker, Airflow, GitHub Actions and more!
 
 This **course targets** junior/mid-level ML engineers and SWE who want to transition to MLE.
 
