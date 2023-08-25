@@ -2,11 +2,11 @@
 
 `Learn MLE & MLOps for free by designing, building, deploying and monitoring an end-to-end ML batch system | source code + 2.5 hours of reading & video materials on Medium`
 
-This repository contains a **7-lesson FREE course** that will walk you step-by-step through how to **design, implement, train, deploy, and monitor an ML batch system** using **MLOps good practices**. During the course, you will build a production-ready model forecasting energy consumption levels for the next 24 hours across multiple consumer types from Denmark.
+This repository contains a **7-lesson FREE course** to teach you how to build a production-ready ML batch system. Its primary focus is to engineer a scalable system using MLOps good practices. You will implement an ML system for forecasting hourly energy consumption levels across Denmark.
 
-More concretely, you will learn how to build, train, serve, and monitor an ML model using a batch architecture. Also, you will learn how to integrate an experiment tracker, a model registry, a feature store, Docker, Airflow, GitHub Actions and more!
+You will learn how to build, train, serve, and monitor an ML system using a batch architecture. We will show you how to integrate an experiment tracker, a model registry, a feature store, Docker, Airflow, GitHub Actions and more!
 
-This **course targets** *mid/advanced ML engineers* who want to *level up their skills* by building their own end-to-end projects or *SWE* who want to *transition to ML engineering*.
+This **course targets** junior/mid-level ML engineers and SWE who want to transition to MLE.
 
 ------
 
@@ -16,7 +16,7 @@ Following the **documentation on GitHub** and the [lessons on Medium](#lessons),
 
 Don't worry if something doesn't make sense to you. We will explain everything in detail in the [Medium lessons](#lessons).
 
-If you are unsure if this course is for you, [here is a high-level presentation](https://pub.towardsai.net/the-full-stack-7-steps-mlops-framework-6599a0c6e295) of all the components you will build during the series.
+If you are unsure if this course is for you, [here is an article presenting a high-level overview](https://pub.towardsai.net/the-full-stack-7-steps-mlops-framework-6599a0c6e295) of all the components you will build during the series.
 
 <p align="center">
   <img src="images/architecture.png">
@@ -78,7 +78,7 @@ The course consists of 7 lessons hosted on Medium Towards Data Science publicati
 
 **👇 Access the step-by-step lessons on Medium 👇**
 
-Here is a [high-level presentation](https://pub.towardsai.net/the-full-stack-7-steps-mlops-framework-6599a0c6e295) of all the components you will build during the course.
+Here is an [article presenting a high-level overviewn](https://pub.towardsai.net/the-full-stack-7-steps-mlops-framework-6599a0c6e295) of all the components you will build during the course.
 
 1. [Batch Serving. Feature Stores. Feature Engineering Pipelines.](https://medium.com/towards-data-science/a-framework-for-building-a-production-ready-feature-engineering-pipeline-f0b29609b20f)
 2. [Training Pipelines. ML Platforms. Hyperparameter Tuning.](https://medium.com/towards-data-science/a-guide-to-building-effective-training-pipelines-for-maximum-results-6fdaef594cee)
