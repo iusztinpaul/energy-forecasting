@@ -221,6 +221,8 @@ bash scripts/install_poetry_macos_m1_chip.sh
 ## Docker
 ##### ``<< free usage >>``
 
+During the course we used `Docker version 24.0.5`.
+
 * [Install Docker on Ubuntu.](https://docs.docker.com/engine/install/ubuntu/)
 * [Install Docker on Mac.](https://docs.docker.com/desktop/install/mac-install/)
 * [Install Docker on Windows.](https://docs.docker.com/desktop/install/windows-install/)
@@ -470,7 +472,7 @@ airflow tasks clear --start-date "2023/04/11 00:00:00" --end-date "2023/04/13 23
 
 The private PyPi server is already hooked to the airflow docker compose file. But if you want to run it separately for whatever reason, you can run this command instead:
 ```shell
-docker run -p 80:8080 -v ~/.htpasswd:/data/.htpasswd pypiserver/pypiserver:latest run -P .htpasswd/htpasswd.txt --overwrite
+docker run -p 80:8080 -v ~/.htpasswd:/data/.htpasswd pypiserver/pypiserver:v1.5.2 run -P .htpasswd/htpasswd.txt --overwrite
 ```
 
 ------

@@ -24,7 +24,7 @@
 # The following variables are supported:
 #
 # AIRFLOW_IMAGE_NAME           - Docker image name used to run Airflow.
-#                                Default: apache/airflow:2.6.2
+#                                Default: apache/airflow:2.7.0
 # AIRFLOW_UID                  - User ID in Airflow containers
 #                                Default: 50000
 # AIRFLOW_PROJ_DIR             - Base path to which all the files will be volumed.
@@ -50,7 +50,7 @@ x-airflow-common:
   # In order to add custom dependencies or upgrade provider packages you can use your extended image.
   # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
-  # image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.6.2}
+  # image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.7.0}
   build: .
   environment:
     &airflow-common-env
@@ -152,9 +152,10 @@ services:
     <<: *airflow-common
     command: celery worker
     healthcheck:
+      # yamllint disable rule:line-length
       test:
         - "CMD-SHELL"
-        - 'celery --app airflow.executors.celery_executor.app inspect ping -d "celery@$${HOSTNAME}"'
+        - 'celery --app airflow.providers.celery.executors.celery_executor.app inspect ping -d "celery@$${HOSTNAME}" || celery --app airflow.executors.celery_executor.app inspect ping -d "celery@$${HOSTNAME}"'
       interval: 30s
       timeout: 10s
       retries: 5
@@ -254,7 +255,7 @@ services:
     # yamllint enable rule:line-length
     environment:
       <<: *airflow-common-env
-      _AIRFLOW_DB_UPGRADE: 'true'
+      _AIRFLOW_DB_MIGRATE: 'true'
       _AIRFLOW_WWW_USER_CREATE: 'true'
       _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow}
       _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
@@ -299,7 +300,7 @@ services:
         condition: service_completed_successfully
 
   my-private-pypi:
-    image: pypiserver/pypiserver:latest
+    image: pypiserver/pypiserver:v1.5.2
     restart: always
     ports:
       - "80:8080"

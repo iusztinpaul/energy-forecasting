@@ -1,4 +1,4 @@
-FROM apache/airflow:2.6.2
+FROM apache/airflow:2.7.0
 
 ARG CURRENT_USER=$USER
 
