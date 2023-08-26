@@ -6,7 +6,7 @@ This repository contains a **7-lesson FREE course** to teach you how to **build 
 
 You will **learn how to build, train, serve, and monitor an ML system** using a batch architecture. We will show you how to integrate an experiment tracker, a model registry, a feature store, Docker, Airflow, GitHub Actions and more!
 
-**Level:** Intermediate to advanced --- This **course targets** MLEs who want to build end-to-end ML systems and SWEs who wish to transition to MLE.
+**Level:** Intermediate to advanced | This **course targets** MLEs who want to build end-to-end ML systems and SWEs who wish to transition to MLE.
 
 ------
 
