@@ -1,6 +1,7 @@
 import datetime
 from json import JSONDecodeError
 from pathlib import Path
+from pandas.errors import EmptyDataError
 from typing import Any, Dict, Tuple, Optional
 
 import pandas as pd
@@ -18,7 +19,7 @@ def from_file(
     export_end_reference_datetime: Optional[datetime.datetime] = None,
     days_delay: int = 15,
     days_export: int = 30,
-    url: str = "https://media.githubusercontent.com/media/iusztinpaul/energy-forecasting/main/data/ConsumptionDE35Hour.csv",
+    url: str = "https://drive.google.com/uc?export=download&id=1y48YeDymLurOTUO-GeFOUXVNc9MCApG5",
     datetime_format: str = "%Y-%m-%d %H:%M",
     cache_dir: Optional[Path] = None,
 ) -> Optional[Tuple[pd.DataFrame, Dict[str, Any]]]:
@@ -26,10 +27,10 @@ def from_file(
     Extract data from the DK energy consumption API.
 
     As the official API expired in July 2023, we will use a copy of the data to simulate the same behavior. 
-    We made a copy of the data between 2020-07-01 and 2023-06-30. Thus, there are 3 years of data to play with.
+    We made a copy of the data between '2020-06-30 22:00' and '2023-06-30 21:00'. Thus, there are 3 years of data to play with.
 
     Here is the link to the official obsolete dataset: https://www.energidataservice.dk/tso-electricity/ConsumptionDE35Hour
-    Here is the link to the copy of the dataset: https://github.com/iusztinpaul/energy-forecasting/tree/main/data/ConsumptionDE35Hour.csv
+    Here is the link to the copy of the dataset: https://drive.google.com/file/d/1y48YeDymLurOTUO-GeFOUXVNc9MCApG5/view?usp=drive_link
     
     Args:
         export_end_reference_datetime: The end reference datetime of the export window. If None, the current time is used.
@@ -63,17 +64,15 @@ def from_file(
 
 
 def _extract_records_from_file_url(url: str, export_start: datetime.datetime, export_end: datetime.datetime, datetime_format: str, cache_dir: Optional[Path] = None) -> Optional[pd.DataFrame]:
-    """Extract records from the copied file on GitHub based on the given export window."""
+    """Extract records from the file backup based on the given export window."""
 
     if cache_dir is None:
         cache_dir = settings.OUTPUT_DIR / "data"
         cache_dir.mkdir(parents=True, exist_ok=True)
-
-    file_name = url.split("/")[-1]
-    file_path = cache_dir / file_name
-
+        
+    file_path = cache_dir / "ConsumptionDE35Hour.csv"
     if not file_path.exists():
-        logger.info(f"Downloading data from GitHub: {url}")
+        logger.info(f"Downloading data from: {url}")
 
         try:
             response = requests.get(url)
@@ -83,6 +82,9 @@ def _extract_records_from_file_url(url: str, export_start: datetime.datetime, ex
             )
 
             return None
+        
+        if response.status_code != 200:
+            raise ValueError(f"Response status = {response.status_code}. Could not download the file.")
     
         with file_path.open("w") as f:
             f.write(response.text)
@@ -91,7 +93,12 @@ def _extract_records_from_file_url(url: str, export_start: datetime.datetime, ex
     else:
         logger.info(f"Data already downloaded at: {file_path}")
 
-    data = pd.read_csv(file_path, delimiter=";")
+    try:
+        data = pd.read_csv(file_path, delimiter=";")
+    except EmptyDataError:
+        file_path.unlink(missing_ok=True)
+        
+        raise ValueError(f"Downloaded file at {file_path} is empty. Could not load it into a DataFrame.")
 
     records = data[(data["HourUTC"] >= export_start.strftime(datetime_format)) & (data["HourUTC"] < export_end.strftime(datetime_format))]
 

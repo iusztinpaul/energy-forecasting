@@ -107,13 +107,11 @@ The data has 4 main attributes:
 
 ### IMPORTANT OBSERVATION
 
-The API will become obsolete during 2023. Its latest data points are from June 2023, and the API will become unavailable during 2023. We created a copy of the data from 2020-07-01 and 2023-06-30 to bypass this issue. Thus, there are 3 years of data to play with. More than enough for the purpose of this course. The file is stored in this repository under `data/ConsumptionDE35Hour.csv`. 
+The API will become obsolete during 2023. Its latest data points are from June 2023, and the API will become unavailable during 2023. We created a copy of the data from 2020-07-01 and 2023-06-30 to bypass this issue. Thus, there are 3 years of data to play with. More than enough for the purpose of this course. The file is stored in Google Drive accessible [at this link](https://drive.google.com/file/d/1y48YeDymLurOTUO-GeFOUXVNc9MCApG5/view?usp=drive_link).
 
-Thus, instead of querying the API, we will mock the same behavior by loading the data from the file. But don't worry, you will learn precisely the same thing.
+Thus, instead of querying the API, we will mock the same behavior by loading the data from the file. Therefore, you don't have to download your file yourself. The code will download it and load the data from the file instead of the API, simulating 100% the same behavior.
 
 **---> All Rights Reserved to: www.energidataservice.dk**
-
-Note that because the file is large we had to upload it using `github lfs`. Thus it won't be downloaded with the typical `git clone`, unless you have `git lfs` installed (it will download only a reference). But you don't have to bother, as during the `feature-pipeline`, we automatically download & cache the file. But if you are curius to learn more about `git lfs`, you can start [here](https://git-lfs.com/). \[Optional\] To set it up, just download it & run `git lfs install`, and you are ready to go. 
 
 
 <p align="center">

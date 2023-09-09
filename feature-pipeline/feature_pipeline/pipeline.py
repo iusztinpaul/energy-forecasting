@@ -13,17 +13,17 @@ def run(
     export_end_reference_datetime: Optional[datetime.datetime] = None,
     days_delay: int = 15,
     days_export: int = 30,
-    url: str = "https://media.githubusercontent.com/media/iusztinpaul/energy-forecasting/main/data/ConsumptionDE35Hour.csv",
+    url: str = "https://drive.google.com/uc?export=download&id=1y48YeDymLurOTUO-GeFOUXVNc9MCApG5",
     feature_group_version: int = 1,
 ) -> dict:
     """
     Extract data from the API, transform it, and load it to the feature store.
 
     As the official API expired in July 2023, we will use a copy of the data to simulate the same behavior. 
-    We made a copy of the data between 2020-07-01 and 2023-06-30. Thus, there are 3 years of data to play with.
+    We made a copy of the data between '2020-06-30 22:00' and '2023-06-30 21:00'. Thus, there are 3 years of data to play with.
 
     Here is the link to the official obsolete dataset: https://www.energidataservice.dk/tso-electricity/ConsumptionDE35Hour
-    Here is the link to the copy of the dataset: https://github.com/iusztinpaul/energy-forecasting/tree/main/data/ConsumptionDE35Hour.csv
+    Here is the link to the copy of the dataset: https://drive.google.com/file/d/1y48YeDymLurOTUO-GeFOUXVNc9MCApG5/view?usp=drive_link
 
     Args:
         export_end_reference_datetime: The end reference datetime of the export window. If None, the current time is used.
