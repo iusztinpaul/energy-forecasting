@@ -9,7 +9,7 @@ packages = [{include = "batch_prediction_pipeline"}]
 [tool.poetry.dependencies]
 python = "~3.9"
 category-encoders = "^2.6.0"
-hopsworks = "3.2.0"
+hopsworks = "3.4.*"
 python-dotenv = "^1.0.0"
 lightgbm = "^3.3.5"
 sktime = "^0.16.1"
