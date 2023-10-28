@@ -162,9 +162,7 @@ def from_best_config(
         run.finish()
         artifact.wait()
 
-    model_version = attach_best_model_to_feature_store(
-        feature_view_version, training_dataset_version, artifact
-    )
+    model_version = add_best_model_to_model_registry(artifact)
 
     metadata = {"model_version": model_version}
     utils.save_json(metadata, file_name="train_metadata.json")
@@ -299,32 +297,11 @@ def forecast(forecaster, X_forecast: pd.DataFrame):
     return forecaster.predict(X=X_forecast)
 
 
-def attach_best_model_to_feature_store(
-    feature_view_version: int,
-    training_dataset_version: int,
-    best_model_artifact: wandb.Artifact,
-) -> int:
+def add_best_model_to_model_registry(best_model_artifact: wandb.Artifact) -> int:
     """Adds the best model artifact to the model registry."""
 
     project = hopsworks.login(
         api_key_value=SETTINGS["FS_API_KEY"], project=SETTINGS["FS_PROJECT_NAME"]
-    )
-    fs = project.get_feature_store()
-    feature_view = fs.get_feature_view(
-        name="energy_consumption_denmark_view", version=feature_view_version
-    )
-
-    # Attach links to the best model artifact in the feature view and the training dataset of the feature store.
-    fs_tag = {
-        "name": "best_model",
-        "version": best_model_artifact.version,
-        "type": best_model_artifact.type,
-        "url": f"https://wandb.ai/{SETTINGS['WANDB_ENTITY']}/{SETTINGS['WANDB_PROJECT']}/artifacts/{best_model_artifact.type}/{best_model_artifact._name}/{best_model_artifact.version}/overview",
-        "artifact_name": f"{SETTINGS['WANDB_ENTITY']}/{SETTINGS['WANDB_PROJECT']}/{best_model_artifact.name}",
-    }
-    feature_view.add_tag(name="wandb", value=fs_tag)
-    feature_view.add_training_dataset_tag(
-        training_dataset_version=training_dataset_version, name="wandb", value=fs_tag
     )
 
     # Upload the model to the Hopsworks model registry.
