@@ -15,6 +15,18 @@ poetry install
 
 Check the [Set Up Additional Tools](https://github.com/iusztinpaul/energy-forecasting#-set-up-additional-tools-) and [Usage](https://github.com/iusztinpaul/energy-forecasting#usage) sections to see **how to set up** the **additional tools** and **credentials** you need to run this project.
 
+> [!IMPORTANT]  
+> If you are on OSX and poetry fails because of `fatal error: 'librdkafka/rdkafka.h' file not found`, you should follow Hopsworks [instructions](https://docs.hopsworks.ai/3.4/user_guides/client_installation/) to install librdkafka:
+> ```
+> curl -O https://raw.githubusercontent.com/Homebrew/homebrew-core/f7d0f40bbc4075177ecf16812fd95951a723a996/Formula/librdkafka.rb
+> brew install --build-from-source librdkafka.rb
+> # After librdkafka is installed
+> export C_INCLUDE_PATH=$(brew --prefix)/include
+> export LIBRARY_PATH=$(brew --prefix)/lib
+> poetry install
+> ```
+
+
 ## Usage for Development
 
 To start the ETL pipeline run:
