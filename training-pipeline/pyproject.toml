@@ -18,6 +18,7 @@ sktime = "^0.16.1"
 seaborn = "^0.12.2"
 fire = "^0.5.0"
 Jinja2 = "3.0.1"
+llvmlite = "0.38.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"

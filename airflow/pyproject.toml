@@ -23,6 +23,7 @@ google-cloud-storage = "^2.7.0"
 yarl = "^1.8.2"
 fire = "^0.5.0"
 Jinja2 = "3.0.1"
+llvmlite = "0.38.1"
 
 [tool.poetry.dev-dependencies]
 

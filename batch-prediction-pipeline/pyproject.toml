@@ -16,6 +16,7 @@ sktime = "^0.16.1"
 google-cloud-storage = "^2.7.0"
 fire = "^0.5.0"
 training-pipeline = "^0.1.0"
+llvmlite = "0.38.1"
 
 
 [tool.poetry.group.dev.dependencies]
