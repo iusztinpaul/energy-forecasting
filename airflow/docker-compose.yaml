@@ -300,7 +300,7 @@ services:
         condition: service_completed_successfully
 
   my-private-pypi:
-    image: pypiserver/pypiserver:v1.5.2
+    image: cmdjulian/pypiserver:v1.5.1
     restart: always
     ports:
       - "80:8080"
