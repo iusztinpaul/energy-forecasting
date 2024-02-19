@@ -91,6 +91,7 @@ x-airflow-common:
 services:
   postgres:
     image: postgres:13
+    platform: linux/amd64
     environment:
       POSTGRES_USER: airflow
       POSTGRES_PASSWORD: airflow
@@ -301,6 +302,7 @@ services:
 
   my-private-pypi:
     image: pypiserver/pypiserver:v1.5.2
+    platform: linux/amd64
     restart: always
     ports:
       - "80:8080"
